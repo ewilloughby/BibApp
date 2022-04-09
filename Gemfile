@@ -42,6 +42,9 @@ gem "net-ldap"
 #TODO may need to update or replace as rails version goes up
 gem 'will_paginate'
 
+# Broken out in Rails 4 into a separate Gem
+gem 'activerecord-session_store'
+
 #CMess - Assists with handling parsing citations from a non-Unicode text file
 #  See: http://prometheus.rubyforge.org/cmess/
 gem 'cmess'
