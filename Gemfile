@@ -139,9 +139,8 @@ group :test, :development do
   #gem 'ruby-debug-ide19'
   gem 'byebug'
   gem 'shoulda'
-  gem 'factory_girl'
+  gem 'factory_bot'
   gem 'simplecov'
-  gem 'cucumber-rails'
   gem 'test-unit'
 
   #I'd prefer to add metric_fu directly here, but something it pulls
@@ -153,5 +152,5 @@ group :test, :development do
 end
 
 group :test do
-  gem 'cucumber-rails'
+  'gem cucumber-rails, require: false'
 end
