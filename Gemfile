@@ -142,7 +142,6 @@ group :test, :development do
   gem 'factory_girl'
   gem 'simplecov'
   gem 'cucumber-rails'
-  gem 'database_cleaner'
   gem 'test-unit'
 
   #I'd prefer to add metric_fu directly here, but something it pulls
