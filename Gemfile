@@ -77,6 +77,9 @@ gem 'pg'
 #while I am porting to Rails 3 I'm not going to worry about it.
 gem 'yaml_db'
 
+# Puma
+gem 'puma'
+
 #authorization, replacing plugin used previously
 #We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
 gem 'authorization'
