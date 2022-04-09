@@ -13,6 +13,9 @@ Bibapp::Application.configure do
   config.action_controller.perform_caching = true
   config.action_controller.cache_store = :file_store, File.join(Rails.root, 'tmp', 'cache', Rails.env)
 
+  # Do not eager load code on boot.
+  config.eager_load = true
+
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host                  = "http://assets.example.com"
 
