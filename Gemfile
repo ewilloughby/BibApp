@@ -44,6 +44,7 @@ gem 'will_paginate'
 
 # Broken out in Rails 4 into a separate Gem
 gem 'activerecord-session_store'
+gem 'rails-observers'
 
 #CMess - Assists with handling parsing citations from a non-Unicode text file
 #  See: http://prometheus.rubyforge.org/cmess/
