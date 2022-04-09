@@ -2,7 +2,7 @@ source "http://rubygems.org"
 source "http://gems.github.com"
 
 #Rails itself
-gem "rails", "~> 3.2.6"
+gem "rails", "~> 4.2.4"
 
 #Use jquery for javascript - in Rails 3.0 this involves running a generator too
 #once we get to 3.1 all that should be necessary is adding some includes
@@ -14,7 +14,7 @@ gem 'rake'
 #Haml - Haml plugin will fail initialization if haml gem is not installed.
 gem "haml"
 
-#Make resourceful - used by some controllers
+#Make resourceful - used by some controllers 
 #backports may be needed by a 1.8 ruby to make make_resourceful work
 gem 'make_resourceful'
 
@@ -31,7 +31,7 @@ gem "namecase"
 gem "rubyzip"
 
 #Sword2Ruby - used for SWORD interaction
-gem "sword2ruby", ">=0.0.6", :git => 'git://github.com/BibApp/sword2ruby.git'
+gem "sword2ruby", ">=0.0.6", :git => 'git@github.com:BibApp/sword2ruby.git'
 
 #Solr-Ruby - Solr connections for ruby
 gem "solr-ruby"
@@ -56,9 +56,9 @@ gem 'lisbn'
 
 #delayed jobs
 gem 'delayed_job'
-gem 'delayed_job_active_record', "~> 0.3.2"
+gem 'delayed_job_active_record' #, "~> 0.3.2"
 
-gem 'daemons', '1.1.9'
+gem 'daemons' #, '1.1.9'
 
 #data structures
 gem 'acts_as_list'
