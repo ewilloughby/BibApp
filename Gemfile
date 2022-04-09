@@ -1,5 +1,4 @@
-source "http://rubygems.org"
-source "http://gems.github.com"
+source "https://rubygems.org"
 
 #Rails itself
 gem "rails", "~> 4.2.4"
@@ -31,7 +30,7 @@ gem "namecase"
 gem "rubyzip"
 
 #Sword2Ruby - used for SWORD interaction
-gem "sword2ruby", ">=0.0.6", :git => 'git@github.com:BibApp/sword2ruby.git'
+gem "sword2ruby", ">=0.0.6", :git => 'https://github.com/BibApp/sword2ruby.git'
 
 #Solr-Ruby - Solr connections for ruby
 gem "solr-ruby"
@@ -130,9 +129,10 @@ group :test, :development do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'email_spec'
-  gem 'ruby-debug-base19'
-  gem 'ruby-debug19'
-  gem 'ruby-debug-ide19'
+  #gem 'ruby-debug-base19'
+  #gem 'ruby-debug19'
+  #gem 'ruby-debug-ide19'
+  gem 'byebug'
   gem 'shoulda'
   gem 'factory_girl'
   gem 'simplecov'
