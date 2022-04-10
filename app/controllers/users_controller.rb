@@ -3,6 +3,11 @@ class UsersController < ApplicationController
 
   # Require user be logged in for *everything* except signing up, or activating an account
   before_filter :login_required, :except => [:show, :new, :create, :activate]
+  
+  #Replace model user with secure user params
+  def user_params
+    params.require(:user).permit(:username, :email, :password, :password_confirmation)
+  end
 
   make_resourceful do
     build :index, :show, :new, :edit

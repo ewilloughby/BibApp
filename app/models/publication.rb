@@ -3,7 +3,7 @@ class Publication < PubCommon
 
   belongs_to :publisher
   belongs_to :authority, :class_name => "Publication", :foreign_key => :authority_id
-  has_many :works, :conditions => ["work_state_id = ?", Work::STATE_ACCEPTED] #accepted works
+  has_many :works, -> { where("work_state_id = ?", Work::STATE_ACCEPTED) } #accepted works
 
   has_many :identifyings, :as => :identifiable
   has_many :identifiers, :through => :identifyings
@@ -27,9 +27,9 @@ class Publication < PubCommon
   after_save :reindex_callback, :if => :do_reindex
 
   #### Scopes ####
-  scope :authorities, where("id = authority_id")
+  scope :authorities, -> { where("id = authority_id") }
   scope :for_authority, lambda { |authority_id| where(:authority_id => authority_id) }
-  scope :order_by_name, order('name')
+  scope :order_by_name, -> { order('name ASC') }
   scope :sort_name_like, lambda { |name| where('sort_name like ?', name.downcase) }
   scope :name_like, lambda { |name| where('name like ?', name) }
 

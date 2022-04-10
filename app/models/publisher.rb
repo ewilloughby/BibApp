@@ -7,7 +7,7 @@ class Publisher < PubCommon
   has_many :publications
   belongs_to :authority, :class_name => "Publisher", :foreign_key => :authority_id
 
-  has_many :works, :conditions => ["work_state_id = ?", Work::STATE_ACCEPTED] #accepted works
+  has_many :works, -> { where("work_state_id = ?", Work::STATE_ACCEPTED) } #accepted works
 
   ROMEO_COLORS = ['blue', 'yellow', 'green', 'white', 'gray', 'unknown']
 
@@ -23,9 +23,9 @@ class Publisher < PubCommon
   after_save :reindex_callback, :if => :do_reindex
 
   #### Scopes ####
-  scope :authorities, where("id = authority_id")
+  scope :authorities, -> { where("id = authority_id") }
   scope :for_authority, lambda { |authority_id| where(:authority_id => authority_id) }
-  scope :order_by_name, order('name')
+  scope :order_by_name, -> { order('name ASC') }
   scope :name_like, lambda { |name| where('name like ?', name) }
   scope :sort_name_like, lambda { |name| where('sort_name like ?', name.downcase) }
 
