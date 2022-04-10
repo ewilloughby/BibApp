@@ -65,7 +65,7 @@ gem 'daemons' #, '1.1.9'
 
 #data structures
 gem 'acts_as_list'
-gem 'acts_as_tree_rails3'
+gem 'acts_as_tree'
 
 #Rails translations
 gem 'rails-i18n'

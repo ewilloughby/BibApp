@@ -9,9 +9,7 @@ class Group < ActiveRecord::Base
   include SolrUpdater
   include StopWordNameSorter
 
-  #acts_as_tree :order => "name"
-  #acts_as_tree, -> { order('name ASC') }
-  #acts_as_tree, -> { order('name') }
+  acts_as_tree order: "name"
   acts_as_authorizable #some actions on groups require authorization
 
   #### Associations ####
