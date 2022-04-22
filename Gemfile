@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 #Rails itself
-gem "rails", "~> 4.2.4"
+gem "rails", "~> 5.2.7"
 
 #Use jquery for javascript - in Rails 3.0 this involves running a generator too
 #once we get to 3.1 all that should be necessary is adding some includes
