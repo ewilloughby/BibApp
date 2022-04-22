@@ -103,19 +103,6 @@ module ApplicationHelper
     return link_text, base_url, suffix
   end
 
-  #mark stylesheets for inclusion in layout via yield :stylesheets
-  #prevent including the same one more than once - note we could do
-  #this more efficiently if need be
-  def include_stylesheets(*paths)
-    paths.each do |path|
-      new_link = stylesheet_link_tag(path)
-      unless content_for(:stylesheets).include?(new_link)
-        content_for(:stylesheets, new_link + "\n")
-      end
-    end
-  end
-
-  alias include_stylesheet include_stylesheets
 
   def include_javascripts(*paths)
     paths.each do |path|
@@ -131,7 +118,7 @@ module ApplicationHelper
   def include_data_tables
     include_javascript('datatables/jquery.dataTables')
     include_javascript('datatables/dataTables.hiddenStringSort.js')
-    include_stylesheet('common/datatables')
+    # include_stylesheet('common/datatables')
   end
 
   #make a hidden div with the given id containing the given data, converted to json and html
