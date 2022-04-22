@@ -63,6 +63,9 @@ module Bibapp
 
     #log deprecations
     config.active_support.deprecation = :log
+
+    # new with this version - replacing config/initializers/assets.rb
+    config.assets.precompile = ["manifest.js"]
   end
 
 end
