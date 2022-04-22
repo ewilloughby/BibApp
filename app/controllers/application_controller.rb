@@ -14,10 +14,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   # Find the @saved variable, used to display "add" or "remove" links for saved Works
-  before_filter :find_saved
+  before_action :find_saved
 
   # i18n set the locale
-  before_filter :set_locale
+  before_action :set_locale
 
   # Adds the locale parameter
   def set_locale

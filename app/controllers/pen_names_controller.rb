@@ -3,12 +3,12 @@ require 'database_methods'
 class PenNamesController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_filter :login_required, :only => [:new, :create, :destroy]
+  before_action :login_required, :only => [:new, :create, :destroy]
 
-  before_filter :find_pen_name, :only => [:destroy]
-  before_filter :find_person, :only => [:create, :create_name_string, :new, :destroy]
-  before_filter :find_name_string, :only => [:create, :create_name_string, :destroy]
-  before_filter :ajax_setup, :only => [:ajax_add, :ajax_destroy]
+  before_action :find_pen_name, :only => [:destroy]
+  before_action :find_person, :only => [:create, :create_name_string, :new, :destroy]
+  before_action :find_name_string, :only => [:create, :create_name_string, :destroy]
+  before_action :ajax_setup, :only => [:ajax_add, :ajax_destroy]
 
   make_resourceful do
     build :index, :show, :new, :update

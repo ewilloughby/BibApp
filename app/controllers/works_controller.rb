@@ -3,11 +3,11 @@ require 'set'
 class WorksController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_filter :login_required,
+  before_action :login_required,
                 :only => [:new, :create, :edit, :update, :destroy, :destroy_multiple,
                           :orphans]
 
-  before_filter :find_authorities, :only => [:new, :edit]
+  before_action :find_authorities, :only => [:new, :edit]
 
   make_resourceful do
     build :show, :new, :edit, :destroy

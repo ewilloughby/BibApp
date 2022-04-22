@@ -3,7 +3,7 @@ class GroupsController < ApplicationController
   include KeywordCloudHelper
 
   #Require a user be logged in to create / update / destroy
-  before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy, :hide]
+  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy, :hide]
 
   make_resourceful do
     build :all
