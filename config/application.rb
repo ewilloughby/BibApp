@@ -70,6 +70,9 @@ module Bibapp
 
     # new with this version - replacing config/initializers/assets.rb
     config.assets.precompile = ["manifest.js"]
+
+    # Configure database schema format as ruby
+    config.active_record.schema_format = :ruby
   end
 
 end
