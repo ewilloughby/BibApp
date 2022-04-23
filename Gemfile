@@ -86,9 +86,12 @@ gem 'yaml_db'
 # Puma
 gem 'puma'
 
-#authorization, replacing plugin used previously
-#We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
-gem 'authorization'
+# authorization, replacing plugin used previously
+# We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
+# 
+#gem 'authorization'
+#replacing authorization with cancancan
+gem 'cancancan'
 
 #authentication
 gem 'authlogic'
