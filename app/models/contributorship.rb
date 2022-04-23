@@ -14,18 +14,18 @@ class Contributorship < ActiveRecord::Base
 
   #### Named Scopes ####
   #Various Contributorship statuses
-  scope :unverified, where(:contributorship_state_id => STATE_UNVERIFIED)
-  scope :verified, where(:contributorship_state_id => STATE_VERIFIED)
-  scope :denied, where(:contributorship_state_id => STATE_DENIED)
+  scope :unverified, -> { where contributorship_state_id: STATE_UNVERIFIED }
+  scope :verified, -> { where contributorship_state_id: STATE_VERIFIED }
+  scope :denied, -> { where contributorship_state_id: STATE_DENIED }
   # TODO: For now we don't want editors showing up as contributors
   #   although in the future we might want them to show up for whole
   #   conference proceedings, entire books, et cetera
-  scope :visible, where(:hide => false, :role => "Author")
+  scope :visible, -> { where hide: false, role: "Author" }
   #By default, show all verified, visible contributorships
-  scope :to_show, where(:hide => false, :contributorship_state_id => STATE_VERIFIED)
+  scope :to_show, -> { where hide: false, contributorship_state_id: STATE_VERIFIED }
   #All contributorships for a specified work or person
-  scope :for_work, lambda { |work_id| where(:work_id => work_id) }
-  scope :for_person, lambda { |person_id| where(:person_id => person_id) }
+  scope :for_work, lambda { |work_id| where(work_id: work_id) }
+  scope :for_person, lambda { |person_id| where(person_id: person_id) }
 
   #### Validations ####
   validates_presence_of :person_id, :work_id, :pen_name_id

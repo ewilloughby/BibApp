@@ -20,11 +20,12 @@ class User < ActiveRecord::Base
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :email, :password, :password_confirmation, :default_locale
+  #attr_accessible :email, :password, :password_confirmation, :default_locale
 
   #### Associations ####
   has_and_belongs_to_many :roles
-  has_many :imports, :order => "created_at DESC"
+  #has_many :imports, :order => "created_at DESC"
+  has_many :imports, -> { order('created_at DESC') }
   has_many :taggings, :dependent => :destroy
   has_many :tags, :through => :taggings
   has_many :users, :through => :taggings

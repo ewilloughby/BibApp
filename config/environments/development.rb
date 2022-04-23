@@ -16,6 +16,10 @@ Bibapp::Application.configure do
   # disable caching
   config.action_controller.perform_caching = false
 
+
+# Do not eager load code on boot.
+  config.eager_load = false
+
   #enable caching on the file system
   #config.action_controller.perform_caching = true
   #config.action_controller.cache_store = :file_store, File.join(Rails.root, 'tmp', 'cache', Rails.env)

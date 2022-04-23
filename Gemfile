@@ -1,8 +1,7 @@
-source "http://rubygems.org"
-source "http://gems.github.com"
+source "https://rubygems.org"
 
 #Rails itself
-gem "rails", "~> 3.2.6"
+gem "rails", "~> 4.2.4"
 
 #Use jquery for javascript - in Rails 3.0 this involves running a generator too
 #once we get to 3.1 all that should be necessary is adding some includes
@@ -14,7 +13,7 @@ gem 'rake'
 #Haml - Haml plugin will fail initialization if haml gem is not installed.
 gem "haml"
 
-#Make resourceful - used by some controllers
+#Make resourceful - used by some controllers 
 #backports may be needed by a 1.8 ruby to make make_resourceful work
 gem 'make_resourceful'
 
@@ -31,7 +30,7 @@ gem "namecase"
 gem "rubyzip"
 
 #Sword2Ruby - used for SWORD interaction
-gem "sword2ruby", ">=0.0.6", :git => 'git://github.com/BibApp/sword2ruby.git'
+gem "sword2ruby", ">=0.0.6", :git => 'https://github.com/BibApp/sword2ruby.git'
 
 #Solr-Ruby - Solr connections for ruby
 gem "solr-ruby"
@@ -42,6 +41,10 @@ gem "net-ldap"
 #Will Paginate - for fancy pagination
 #TODO may need to update or replace as rails version goes up
 gem 'will_paginate'
+
+# Broken out in Rails 4 into a separate Gem
+gem 'activerecord-session_store'
+gem 'rails-observers'
 
 #CMess - Assists with handling parsing citations from a non-Unicode text file
 #  See: http://prometheus.rubyforge.org/cmess/
@@ -56,13 +59,13 @@ gem 'lisbn'
 
 #delayed jobs
 gem 'delayed_job'
-gem 'delayed_job_active_record', "~> 0.3.2"
+gem 'delayed_job_active_record' #, "~> 0.3.2"
 
-gem 'daemons', '1.1.9'
+gem 'daemons' #, '1.1.9'
 
 #data structures
 gem 'acts_as_list'
-gem 'acts_as_tree_rails3'
+gem 'acts_as_tree'
 
 #Rails translations
 gem 'rails-i18n'
@@ -72,11 +75,16 @@ gem 'rails-i18n'
 #production, for example. Note that the appropriate database for your
 #set up does need to be specified here, though, or things will fail
 #pretty quickly.
-gem 'pg'
+#gem 'pg'
+
+gem 'mysql2', '0.5.3'
 
 #dump database in YAML form - honestly, I'm not sure why we need this, but
 #while I am porting to Rails 3 I'm not going to worry about it.
 gem 'yaml_db'
+
+# Puma
+gem 'puma'
 
 #authorization, replacing plugin used previously
 #We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
@@ -130,14 +138,13 @@ group :test, :development do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'email_spec'
-  gem 'ruby-debug-base19'
-  gem 'ruby-debug19'
-  gem 'ruby-debug-ide19'
+  #gem 'ruby-debug-base19'
+  #gem 'ruby-debug19'
+  #gem 'ruby-debug-ide19'
+  gem 'byebug'
   gem 'shoulda'
-  gem 'factory_girl'
+  gem 'factory_bot'
   gem 'simplecov'
-  gem 'cucumber-rails'
-  gem 'database_cleaner'
   gem 'test-unit'
 
   #I'd prefer to add metric_fu directly here, but something it pulls
@@ -149,5 +156,5 @@ group :test, :development do
 end
 
 group :test do
-  gem 'cucumber-rails'
+  'gem cucumber-rails, require: false'
 end

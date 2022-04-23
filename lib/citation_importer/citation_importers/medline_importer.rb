@@ -201,7 +201,6 @@ class MedlineImporter < BaseImporter
       "meta-analysis"  => "Generic",
       "monograph"  => "Monograph",
       "multicenter study"  => "Generic",
-      "news"  => "Generic",
       "newspaper article"  => "Generic",
       "nurses' instruction"  => "Generic",
       "outlines"  => "Generic",

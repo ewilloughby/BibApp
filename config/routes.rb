@@ -139,7 +139,7 @@ Bibapp::Application.routes.draw do
       end
       resource :password
       collection do
-        match 'activate(/:activation_code)', :to => 'users#activate', :as => 'activate'
+        get 'activate(/:activation_code)', :to => 'users#activate', :as => 'activate'
       end
       member do
         get :update_email
@@ -158,25 +158,25 @@ Bibapp::Application.routes.draw do
     ####
     # Search route
     ####
-    match 'search', :to => 'search#index', :as => 'search'
-    match 'search/advanced', :to => 'search#advanced', :as => 'advanced_search'
+    get 'search', :to => 'search#index', :as => 'search'
+    get 'search/advanced', :to => 'search#advanced', :as => 'advanced_search'
 
     ####
     # Saved routes
     ####
-    match 'saved', :to => 'user_sessions#saved', :as => 'saved'
-    match 'sessions/delete_saved', :to => 'user_sessions#delete_saved',
+    get 'saved', :to => 'user_sessions#saved', :as => 'saved'
+    get 'sessions/delete_saved', :to => 'user_sessions#delete_saved',
           :as => 'delete_saved'
-    match 'sessions/add_many_to_saved', :to => 'user_sessions#add_many_to_saved',
+    get 'sessions/add_many_to_saved', :to => 'user_sessions#add_many_to_saved',
           :as => 'add_many_to_saved'
     ####
     # Authentication routes
     ####
     # Make easier routes for authentication (via restful_authentication)
-    match 'signup', :to => 'users#new', :as => 'signup'
-    match 'login', :to => 'user_sessions#new', :as => 'login'
-    match 'logout', :to => 'user_sessions#destroy', :as => 'logout'
-    match 'activate/:activation_code', :to => 'users#activate', :as => 'activate'
+    get 'signup', :to => 'users#new', :as => 'signup'
+    get 'login', :to => 'user_sessions#new', :as => 'login'
+    get 'logout', :to => 'user_sessions#destroy', :as => 'logout'
+    get 'activate/:activation_code', :to => 'users#activate', :as => 'activate'
 
     ####
     # DEFAULT ROUTES
@@ -208,24 +208,24 @@ Bibapp::Application.routes.draw do
     # Default homepage to works index action
     root :to => 'works#index'
 
-    match 'citations', :to => 'works#index'
+    get 'citations', :to => 'works#index'
 
     resource :user_session
 
     resources :authentications
-    match '/auth/:provider/callback' => 'authentications#create'
-    match '/admin/index' => "admin#index"
-    match 'admin/duplicates' => "admin#duplicates"
-    match 'admin/ready_to_archive' => "admin#ready_to_archive"
-    match 'admin/update_sherpa_data' => "admin#update_sherpa_data"
-    match 'admin/deposit_via_sword' => "admin#deposit_via_sword"
-    match 'admin/update_publishers_from_sherpa' => "admin#update_publishers_from_sherpa"
+    get '/auth/:provider/callback' => 'authentications#create'
+    get '/admin/index' => "admin#index"
+    get 'admin/duplicates' => "admin#duplicates"
+    get 'admin/ready_to_archive' => "admin#ready_to_archive"
+    get 'admin/update_sherpa_data' => "admin#update_sherpa_data"
+    get 'admin/deposit_via_sword' => "admin#deposit_via_sword"
+    get 'admin/update_publishers_from_sherpa' => "admin#update_publishers_from_sherpa"
 
-    match 'roles/index' => "roles#index"
-    match 'roles/destroy' => "roles#destroy"
-    match 'roles/create' => "roles#create"
-    match 'roles/new_admin' => "roles#new_admin"
-    match 'roles/new_editor' => "roles#new_editor"
+    get 'roles/index' => "roles#index"
+    get 'roles/destroy' => "roles#destroy"
+    get 'roles/create' => "roles#create"
+    get 'roles/new_admin' => "roles#new_admin"
+    get 'roles/new_editor' => "roles#new_editor"
   end
 
   if I18n.available_locales.many?

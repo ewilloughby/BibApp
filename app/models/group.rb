@@ -9,21 +9,20 @@ class Group < ActiveRecord::Base
   include SolrUpdater
   include StopWordNameSorter
 
-  acts_as_tree :order => "name"
+  acts_as_tree order: "name"
   acts_as_authorizable #some actions on groups require authorization
 
   #### Associations ####
 
-  has_many :people,
-           :through => :memberships,
-           :order => "last_name, first_name"
+  #has_many :people, :through => :memberships,:order => "last_name, first_name"
+  has_many :people, -> {order("last_name, first_name")}, through: :memberships
   has_many :memberships
 
-  scope :hidden, where(:hide => true)
-  scope :unhidden, where(:hide => false)
+  scope :hidden, -> {where hide: true}
+  scope :unhidden, -> {where hide: false}
   scope :sort_name_like, lambda {|name| where('sort_name like ?', name.downcase)}
   scope :name_like, lambda { |name| where('name like ?', name) }
-  scope :order_by_name, order('name')
+  scope :order_by_name, -> { order('name ASC') }
   #### Callbacks ####
 
   before_save :update_machine_name

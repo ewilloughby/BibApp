@@ -22,12 +22,19 @@ class Work < ActiveRecord::Base
   belongs_to :publication
   belongs_to :publisher
 
-  has_many :name_strings, :through => :work_name_strings, :order => "position"
+  #has_many :name_strings, :through => :work_name_strings, :order => "position"
 
-  has_many :work_name_strings, :order => "position", :dependent => :destroy
+  #has_many :work_name_strings, :order => "position", :dependent => :destroy
 
-  has_many :people, :through => :contributorships,
-           :conditions => ["contributorship_state_id = ?", Contributorship::STATE_VERIFIED]
+# Replaced above syntax for :order with below  
+  has_many :name_strings, -> { order("position ASC") }, through: :work_name_strings
+
+  has_many :work_name_strings, -> { order("position ASC") }, dependent: :destroy
+
+
+ # has_many :people, :through => :contributorships,
+ #          :conditions => ["contributorship_state_id = ?", Contributorship::STATE_VERIFIED]
+ has_many :people, -> { where("contributorship_state_id = ?", Contributorship::STATE_VERIFIED) }, through: :contributorships
 
   has_many :contributorships, :dependent => :destroy
 
@@ -72,33 +79,33 @@ class Work < ActiveRecord::Base
   STATE_IN_PROCESS = 1
   STATE_DUPLICATE = 2
   STATE_ACCEPTED = 3
-  scope :in_process, where(:work_state_id => STATE_IN_PROCESS)
-  scope :duplicate, where(:work_state_id => STATE_DUPLICATE)
-  scope :accepted, where(:work_state_id => STATE_ACCEPTED)
+  scope :in_process, -> { where(work_state_id: STATE_IN_PROCESS) }
+  scope :duplicate, -> { where(work_state_id: STATE_DUPLICATE) }
+  scope :accepted, -> { where(work_state_id: STATE_ACCEPTED) }
 
   ARCHIVE_STATE_INITIAL = 1
   ARCHIVE_STATE_READY_TO_ARCHIVE = 2
   ARCHIVE_STATE_ARCHIVED = 3
   #Various Work Archival Statuses
-  scope :ready_to_archive, where(:work_archive_state_id => ARCHIVE_STATE_READY_TO_ARCHIVE)
-  scope :archived, where(:work_archive_state_id => ARCHIVE_STATE_ARCHIVED)
+  scope :ready_to_archive, -> { where(work_archive_state_id: ARCHIVE_STATE_READY_TO_ARCHIVE) }
+  scope :archived, -> { where(work_archive_state_id: ARCHIVE_STATE_ARCHIVED) }
 
   TO_BE_BATCH_INDEXED = 1
   NOT_TO_BE_BATCH_INDEXED = 0
 
-  scope :to_batch_index, where(:batch_index => TO_BE_BATCH_INDEXED)
+  scope :to_batch_index, -> { where(batch_index: TO_BE_BATCH_INDEXED) }
 
   #Various Work Contribution Statuses
-  scope :unverified, where('contributorships.contributorship_state_id = ?', Contributorship::STATE_UNVERIFIED)
-  scope :verified, where('contributorships.contributorship_state_id = ?', Contributorship::STATE_VERIFIED)
-  scope :denied, where('contributorships.contributorship_state_id = ?', Contributorship::STATE_DENIED)
-  scope :visible, where('contributorships.hide = ?', false)
+  scope :unverified, -> { where('contributorships.contributorship_state_id = ?', Contributorship::STATE_UNVERIFIED) }
+  scope :verified,   -> { where('contributorships.contributorship_state_id = ?', Contributorship::STATE_VERIFIED) }
+  scope :denied,     -> { where('contributorships.contributorship_state_id = ?', Contributorship::STATE_DENIED) }
+  scope :visible,    -> { where('contributorships.hide = ?', false) }
 
   scope :for_authority_publication,
         lambda { |authority_publication_id| where(:authority_publication_id => authority_publication_id) }
 
-  scope :most_recent_first, order('updated_at DESC')
-  scope :by_publication_date, order('publication_date_year DESC, publication_date_month DESC, publication_date_day DESC')
+  scope :most_recent_first, -> { order('updated_at DESC') }
+  scope :by_publication_date, -> { order('publication_date_year DESC, publication_date_month DESC, publication_date_day DESC') }
 
   def self.orphans
     (self.orphans_no_contributorships + self.orphans_denied_contributorships).uniq.sort { |a, b| a.title_primary <=> b.title_primary }
