@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 #Rails itself
-gem "rails", "~> 4.2.4"
+gem "rails", "~> 5.2.7"
 
 #Use jquery for javascript - in Rails 3.0 this involves running a generator too
 #once we get to 3.1 all that should be necessary is adding some includes
@@ -119,6 +119,7 @@ gem 'capistrano'
 #dependency conflicts
 group :development do
   gem 'thin'
+  gem 'listen'
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,
   #so whenever adding new Gems or otherwise generating a new Gemfile.lock to check in

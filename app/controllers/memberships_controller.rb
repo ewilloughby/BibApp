@@ -1,11 +1,11 @@
 class MembershipsController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
 
-  before_filter :find_membership, :only => [:destroy]
-  before_filter :find_person, :only => [:create, :create_group, :new, :destroy, :sort, :ajax_sort]
-  before_filter :find_group, :only => [:create, :create_group, :destroy]
+  before_action :find_membership, :only => [:destroy]
+  before_action :find_person, :only => [:create, :create_group, :new, :destroy, :sort, :ajax_sort]
+  before_action :find_group, :only => [:create, :create_group, :destroy]
 
   make_resourceful do
     build :index, :show, :new, :update

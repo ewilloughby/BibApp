@@ -2,7 +2,7 @@ class PublishersController < ApplicationController
   include PubCommonHelper
 
   #Require a user be logged in to create / update / destroy
-  before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
 
   make_resourceful do
     build :index, :show, :new, :edit, :create, :update

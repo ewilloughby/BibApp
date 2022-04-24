@@ -1,10 +1,11 @@
-require File.expand_path('../boot', __FILE__)
+#require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'rails/all'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(:default, Rails.env) if defined?(Bundler)
+Bundler.require(*Rails.groups)
 
 #AUTHORIZATION_MIXIN = "object roles"
 {:LOGIN_REQUIRED_REDIRECTION => {:controller => '/user_sessions', :action => 'new'},
@@ -16,6 +17,9 @@ end
 
 module Bibapp
   class Application < Rails::Application
+
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.0
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -63,6 +67,12 @@ module Bibapp
 
     #log deprecations
     config.active_support.deprecation = :log
+
+    # new with this version - replacing config/initializers/assets.rb
+    config.assets.precompile = ["manifest.js"]
+
+    # Configure database schema format as ruby
+    config.active_record.schema_format = :ruby
   end
 
 end

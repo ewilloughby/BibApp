@@ -1,8 +1,8 @@
 class ImportsController < ApplicationController
 
   # Require user be logged in for *everything*
-  before_filter :login_required
-  before_filter :pen_name_setup, :only => [:create_pen_name, :destroy_pen_name]
+  before_action :login_required
+  before_action :pen_name_setup, :only => [:create_pen_name, :destroy_pen_name]
 
   def index
     # List all imports
