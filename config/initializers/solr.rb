@@ -12,7 +12,8 @@
 require 'solr' if defined? Solr
 
 # Solr Path (in /vendor/solr by default)
-SOLR_PATH = "#{File.dirname(__FILE__)}/../../vendor/solr" unless defined? SOLR_PATH
+#SOLR_PATH = "#{File.dirname(__FILE__)}/../../vendor/solr" unless defined? SOLR_PATH
+SOLR_PATH = "/opt/solr/server" unless defined? SOLR_PATH
 
 # Solr Home Path (in /vendor/bibapp-solr by default)
 SOLR_HOME_PATH = "#{File.dirname(__FILE__)}/../../vendor/bibapp-solr" unless defined? SOLR_HOME_PATH
@@ -38,7 +39,10 @@ SOLR_STOP_PORT = SOLR_SETTINGS['stop_port'] if SOLR_SETTINGS and SOLR_SETTINGS['
 SOLR_STOP_PORT = "8097" unless defined? SOLR_STOP_PORT
 
 # Build our Solr URL (used by Solr Connection below)
-SOLR_URL = "http://127.0.0.1:#{SOLR_PORT}/solr" unless defined? SOLR_URL
+# SOLR_URL = "http://127.0.0.1:#{SOLR_PORT}/solr" unless defined? SOLR_URL
+SOLR_URL = "http://localhost:#{SOLR_PORT}/solr/works" unless defined? SOLR_URL
+SOLR_PEEP_URL = "http://localhost:#{SOLR_PORT}/solr/people" unless defined? SOLR_PEEP_URL
 
 # Solr Connection (used by /app/models/index.rb)
 SOLRCONN = Solr::Connection.new(SOLR_URL)
+SOLRPEOPLECONN = Solr::Connection.new(SOLR_PEEP_URL)
