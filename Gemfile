@@ -15,7 +15,8 @@ gem "haml"
 
 #Make resourceful - used by some controllers 
 #backports may be needed by a 1.8 ruby to make make_resourceful work
-gem 'make_resourceful'
+#gem 'make_resourceful'
+gem "make_resourceful", github: "hcatlin/make_resourceful", branch: "main"
 
 #file attachment - to replace attachment_fu
 #TODO Can remove version requirement after 1.9 migration

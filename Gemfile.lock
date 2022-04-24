@@ -6,6 +6,13 @@ GIT
       activerecord
       ratom
 
+GIT
+  remote: https://github.com/hcatlin/make_resourceful.git
+  revision: 1b6ca6b9e3e1e1b467969242a2d26ab2140fbd10
+  branch: main
+  specs:
+    make_resourceful (2.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -141,7 +148,6 @@ GEM
       loofah (>= 1.0.0)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
-    make_resourceful (1.0.2)
     marcel (1.0.2)
     method_source (1.0.0)
     mime-types (3.4.1)
@@ -319,7 +325,7 @@ DEPENDENCIES
   lisbn
   listen
   loofah-activerecord
-  make_resourceful
+  make_resourceful!
   mysql2 (= 0.5.3)
   namecase
   net-ldap
