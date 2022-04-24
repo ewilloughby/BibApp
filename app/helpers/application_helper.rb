@@ -5,12 +5,10 @@ module ApplicationHelper
     if selected
       pen_name = PenName.find_by_person_id_and_name_string_id(person.id, name_string.id)
       js = remote_function(:url => pen_name_url(pen_name, :reload => reload, :person_id => person.id,
-                                                :name_string_id => name_string.id),
-                           :method => :delete)
+        :name_string_id => name_string.id), :method => :delete)
     else
       js = remote_function(:url => pen_names_url(:person_id => person.id, :reload => reload,
-                                                 :name_string_id => name_string.id),
-                           :method => :post)
+        :name_string_id => name_string.id), :method => :post)
     end
     check_box_tag("name_string_#{name_string.id}_toggle", 1, selected, {:onclick => js})
   end
@@ -107,8 +105,12 @@ module ApplicationHelper
   def include_javascripts(*paths)
     paths.each do |path|
       new_link = javascript_include_tag(path)
-      unless content_for(:javascripts).include?(new_link)
+      if content_for(:javascripts).nil?
         content_for(:javascripts, new_link + "\n")
+      else
+        unless content_for(:javascripts).include?(new_link)
+          content_for(:javascripts, new_link + "\n")
+        end
       end
     end
   end
@@ -118,7 +120,6 @@ module ApplicationHelper
   def include_data_tables
     include_javascript('datatables/jquery.dataTables')
     include_javascript('datatables/dataTables.hiddenStringSort.js')
-    # include_stylesheet('common/datatables')
   end
 
   #make a hidden div with the given id containing the given data, converted to json and html
