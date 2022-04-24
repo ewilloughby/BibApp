@@ -5,7 +5,7 @@ class Work < ActiveRecord::Base
   include MachineName
   include StopWordNameSorter
 
-  acts_as_authorizable #some actions on Works require authorization
+  #acts_as_authorizable #some actions on Works require authorization
 
   cattr_accessor :current_user
 

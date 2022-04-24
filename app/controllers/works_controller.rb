@@ -3,11 +3,12 @@ require 'set'
 class WorksController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required,
-                :only => [:new, :create, :edit, :update, :destroy, :destroy_multiple,
-                          :orphans]
+  #before_action :login_required,
+   #             :only => [:new, :create, :edit, :update, :destroy, :destroy_multiple,
+   #                       :orphans]
 
   before_action :find_authorities, :only => [:new, :edit]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :destroy_multiple, :orphans]
 
    # CanCanCan
    load_and_authorize_resource :except => [:show, :index, :add_to_saved, :add_many_to_saved, :remove_from_saved, :delete_saved, :search, :find_saved, :json_name_search]

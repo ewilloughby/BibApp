@@ -10,7 +10,7 @@ class Group < ActiveRecord::Base
   include StopWordNameSorter
 
   acts_as_tree order: "name"
-  acts_as_authorizable #some actions on groups require authorization
+  #acts_as_authorizable #some actions on groups require authorization
 
   #### Associations ####
 

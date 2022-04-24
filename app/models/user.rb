@@ -5,9 +5,12 @@ class User < ActiveRecord::Base
     #c.act_like_restful_authentication = true
   end
 
+  #cancancan
+  ROLES = %i[guest author editor admin superadmin]
+
   # Authorization plugin
-  acts_as_authorized_user
-  acts_as_authorizable
+ # acts_as_authorized_user
+ # acts_as_authorizable
 
   validates_presence_of :email
   validates_presence_of :password, :if => :require_password?
@@ -51,121 +54,6 @@ class User < ActiveRecord::Base
   # Returns true if the user has just been activated.
   def recently_activated?
     @activated
-  end
-
-  #Override has_role? in 'authorization' plugin
-  # to support cascading roles based on the
-  # role hierarchy defined for BibApp
-  #
-  # Returns if user has a specified role.
-  def has_role?(role_name, authorizable_obj = nil)
-
-    ##################################################
-    # Cascade System Roles to everything!
-    ##################################################
-    return true if cascade_system_role?(role_name, authorizable_obj)
-
-    ##################################
-    # Setup Role Hierarchy for BibApp
-    ##################################
-    return true if cascade_role_name?(role_name, authorizable_obj)
-
-    ##################################
-    # Setup Class Hierarchy for BibApp
-    ##################################
-    if authorizable_obj.is_a?(Class)
-      return true if cascade_role_class?(role_name, authorizable_obj)
-    else
-      return true if cascade_role_object?(role_name, authorizable_obj)
-    end
-
-    #call overridden has_role? method for default settings
-    super
-  end
-
-
-  #If user is a System Admin, then user has permissions to do ANYTHING
-  #If user has this role System-Wide, then this role should cascade to everything else!
-  def cascade_system_role?(role_name, authorizable_object)
-    return false if authorizable_object == System
-    return has_role?('admin', System) || has_role?(role_name, System)
-  end
-
-  def cascade_role_name?(role_name, authorizable_object)
-    case role_name
-      #  - All Admins are also Editors
-      when 'editor'
-        return has_role?('admin', authorizable_object)
-      else
-        return false
-    end
-  end
-
-  #Cascade based on Class hierarchy, so following is true:
-  #  (1) All Roles on a Group cascade to the People in that group (and their Works)
-  #  (2) All Roles on a Person cascade to their Works
-  # If this is a Class object, then cascade based on class types
-  def cascade_role_class?(role_name, authorizable_object)
-    case authorizable_object.to_s
-      when 'Group'
-        return has_any_role?(role_name, Group)
-      when 'Person'
-        return has_role?(role_name, Group) || has_any_role?(role_name, Group)
-      when 'Work'
-        return has_role?(role_name, Person) || has_any_role?(role_name, Person)
-      else
-        return false
-    end
-  end
-
-  def cascade_role_object?(role_name, authorizable_object)
-    case authorizable_object.class.base_class.to_s
-      when 'Person'
-        #Look for role on each group associated with the person
-        return authorizable_object.groups.detect {|group| has_role?(role_name, group)}
-      when 'Work'
-        #Look for role on each person associated with the work
-        return authorizable_object.people.detect {|person| has_role?(role_name, person)}
-      else
-        return false
-    end
-  end
-
-  #Checks to see if user has a specified role on ANY instance
-  #of the passed in Class.
-  #
-  # (e.g.) has_any_role?('editor', Group)
-  #
-  # The above would check if the user has the 'editor' role
-  # on ANY group within the system.
-  def has_any_role?(role_name, authorizable_class)
-
-    ##################################################
-    # Cascade System Roles to everything!
-    ##################################################
-    return true if cascade_system_role?(role_name, authorizable_class)
-
-    #See if user has a role with the specified role_name and authorizable type
-    return self.roles.where(:name => role_name, :authorizable_type => authorizable_class.to_s).exists?
-
-  end
-
-  # Checks to see if user explicitly has the specified role
-  # In other words, it doesn't check parent objects or take
-  # into account any cascading of roles
-  #
-  # (e.g.) has_explicit_role?('editor', group)
-  #
-  # The above would check if the user has the 'editor' role
-  # specified explicitly for the group (and not at a system-wide level)
-  def has_explicit_role?(role_name, authorizable_obj = nil)
-    if authorizable_obj.class == Class
-      self.roles.named(role_name).where(:authorizable_type => authorizable_obj.to_s,
-                                        :authorizable_id => nil).exists?
-    else
-      self.roles.named(role_name).where(:authorizable_type => authorizable_obj.class.to_s,
-                                        :authorizable_id => authorizable_obj.id).exists?
-    end
   end
 
   def email_update_code(new_email)
