@@ -1,4 +1,3 @@
-- include_stylesheet('specific/works/_local_authors')
 - if @work.people.size > 0
   = render :layout => 'layouts/right_box_no_border' do
     .box_heading #{t 'works.local_authors.heading', :university_name => t('personalize.university_short_name')}

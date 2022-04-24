@@ -1,4 +1,3 @@
-- include_stylesheet('specific/publishers/show')
 - if current_user_any_role?("editor", Group) and @export.blank?
   = render :layout => 'layouts/admin_bar' do
     %li #{link_to t('common.publishers.edit'), edit_publisher_path(@publisher)}
