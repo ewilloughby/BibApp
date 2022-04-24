@@ -3,11 +3,16 @@ require 'set'
 class WorksController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required,
-                :only => [:new, :create, :edit, :update, :destroy, :destroy_multiple,
-                          :orphans]
+  #before_action :login_required,
+   #             :only => [:new, :create, :edit, :update, :destroy, :destroy_multiple,
+   #                       :orphans]
 
   before_action :find_authorities, :only => [:new, :edit]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :destroy_multiple, :orphans]
+
+   # CanCanCan
+   load_and_authorize_resource :except => [:show, :index, :add_to_saved, :add_many_to_saved, :remove_from_saved, :delete_saved, :search, :find_saved, :json_name_search]
+   skip_authorization_check :only => [:show, :index, :add_to_saved, :add_many_to_saved, :remove_from_saved, :delete_saved, :search, :find_saved, :json_name_search] 
 
   make_resourceful do
     build :show, :new, :edit, :destroy
@@ -41,10 +46,12 @@ class WorksController < ApplicationController
 
       if @person
         #If adding to a person, must be an 'editor' of that person
-        permit "editor on person", :person => @person
+        #permit "editor on person", :person => @person
+        authorize!(:editor, @person)
       else
         #Default: anyone with 'editor' role (anywhere) can add works
-        permit "editor"
+        #permit "editor"
+        authorize!(:editor, Work) 
       end
 
       #if 'type' unspecified, default to first type in list
@@ -56,7 +63,9 @@ class WorksController < ApplicationController
     end
 
     before :show do
-      @recommendations = Index.recommendations(@current_object).collect { |r| r.first }
+      @recommendations = Index.recommendations(@current_object).collect { |r| r.first } rescue []
+      # SOLR index does get out of sync
+      @recommendations.keep_if {|doc| Work.exists?(doc['id'])}
       # Specify text at end of HTML title tag
       @title = @current_object.title_primary
       true
@@ -64,7 +73,8 @@ class WorksController < ApplicationController
 
     before :edit do
       #Anyone with 'editor' role on this work can edit it
-      permit "editor on Work"
+      #permit "editor on Work"
+      authorize!(:editor, Work) 
 
       #Check if there was a path passed along to return to
       @return_path = params[:return_path]
@@ -72,7 +82,8 @@ class WorksController < ApplicationController
 
     before :destroy do
       #Anyone with 'admin' role on this work can destroy it
-      permit "admin on Work"
+      #permit "admin on Work"
+      authorize!(:superadmin, Work)
     end
 
   end # end make_resourceful
@@ -102,13 +113,14 @@ class WorksController < ApplicationController
   end
 
   def orphans
-    permit "editor for Work"
+    #permit "editor for Work"
     @title = t('common.works.orphans')
     @orphans = Work.orphans.paginate(:page => params[:page] || 1, :per_page => params[:per_page] || 20)
   end
 
   def orphans_delete
-    permit "editor for Work"
+    #permit "editor for Work"
+    authorize!(:superadmin, Work)
     if params[:orphan_delete]
       Work.find(params[:orphan_delete][:orphan_id]).each do |w|
         w.destroy
@@ -120,14 +132,21 @@ class WorksController < ApplicationController
   def change_type
     t = params[:type]
     work = Work.find(params[:id])
+    authorize!(:superadmin, work)
 
-    # lazy mapping of all creator/contributor roles to top creator role
-    authors = work.work_name_strings.collect { |wns| [:name => wns.name_string.name, :role => t.constantize.creator_role] }
+    wtypes = Work.types.collect {|type| type.gsub(/[()\/\s]/, '')}
+    
+    if t && wtypes.include?(t) #.constantize.to_s
 
-    work.update_type_and_save(t) if t
-    work.set_work_name_strings authors
+      # lazy mapping of all creator/contributor roles to top creator role
+      authors = work.work_name_strings.collect { |wns| [:name => wns.name_string.name, :role => t.constantize.creator_role] }
 
-    Index.update_solr(work)
+      work.update_type_and_save(t)
+      work.set_work_name_strings authors
+
+      #Index.update_solr(work)
+      Index.update_solr( work.becomes(t.constantize) )
+    end
 
     respond_to do |format|
       format.html { redirect_to edit_work_path(work.id) }
@@ -145,14 +164,6 @@ class WorksController < ApplicationController
   def create
     #check if we are adding new works directly to a person
     person_from_person_id
-
-    if @person
-      #If adding to a person, must be an 'editor' of that person
-      permit "editor on person", :person => @person
-    else
-      #Default: anyone with 'editor' role (anywhere) can add works
-      permit "editor"
-    end
 
     #Check if user hit cancel button
     if params['cancel']
@@ -186,6 +197,7 @@ class WorksController < ApplicationController
         end
       else
         respond_to do |format|
+          flash[:notice] = error_msg.to_s ||= ''
           format.html { render 'new' }
           format.xml { render :xml => @work.errors.to_xml }
         end
@@ -197,6 +209,7 @@ class WorksController < ApplicationController
   def update
 
     @work = Work.find(params[:id])
+    authorize!(:editor, @work)
 
     #Check if there was a path and page passed along to return to
     return_path = params[:return_path]
@@ -216,10 +229,10 @@ class WorksController < ApplicationController
 
     else #Only perform update if 'save' button was pressed
          #Anyone with 'editor' role on this work can edit it
-      permit "editor on work", :work => @work
+      #permit "editor on work", :work => @work
 
       #First, update work attributes (ensures deduplication keys are updated)
-      @work.attributes = params[:work]
+      @work.attributes = work_params #params[:work]
 
       # Create attribute hash from params
       r_hash = create_attribute_hash
@@ -248,9 +261,10 @@ class WorksController < ApplicationController
   end
 
   def destroy
-    permit "admin"
+    #permit "admin"
 
     work = Work.find(params[:id])
+    authorize!(:superadmin, work)
     return_path = params[:return_path] || works_url
 
     full_success = true
@@ -292,7 +306,8 @@ class WorksController < ApplicationController
     #Anyone who is minimally an admin (on anything in system) can delete works
     #(NOTE: User will actually have to be an 'admin' on all works in this batch,
     #       otherwise he/she will not be able to destroy *all* the works)
-    permit "admin"
+    #permit "admin"
+    authorize!(:superadmin, Work)
 
     work_ids = params[:work_id]
     return_path = params[:return_path]
@@ -305,7 +320,7 @@ class WorksController < ApplicationController
         work = Work.find_by_id(work_id)
 
         #One final check...only an admin on this work can destroy it
-        if logged_in? && current_user.has_role?("admin", work)
+        if logged_in? && current_user.role?(:admin)
           work.destroy
         else
           full_success = false
@@ -323,6 +338,29 @@ class WorksController < ApplicationController
       format.html { redirect_to return_path }
       format.xml { head :ok }
     end
+  end
+
+  def verify_people
+    
+    #permit "editor"
+    
+    work_id = params[:id]
+    @authors = []
+    @counts = []
+    @work = nil
+    
+    if work_id && work_id.sub(/\d+/,'').empty?
+      @work = Work.find(work_id)
+      @authors = Work.verify_people(work_id)
+      
+      tarr = Array.new  
+      @authors.collect {|auth| tarr << auth['contributorship_state_id']} 
+      # keys are nil, 1, 2, 3 where nil is people not known to app, and 1,2,3 the various contributorship states
+      # 1, unverified, 2 verified, 3 denied
+      @counts = tarr.inject(Hash.new(0)) {|h,x| h[x] +=1; h}
+      
+    end 
+    
   end
 
 
@@ -487,7 +525,12 @@ class WorksController < ApplicationController
   end
 
   def ensure_admin(work, user)
-    work.accepts_role('admin', user) unless user.has_role?('admin', work)
+    #work.accepts_role('admin', user) unless user.has_role?('admin', work)
+    authorize!(:admin, work)
+  end
+
+  def work_params
+    params.require(:work).permit(:type,:title_primary,:title_secondary,:title_tertiary,:volume,:issue,:start_page,:end_page,:abstract,:notes,:links,:publication_id,:publisher_id,:language,:copyright_holder,:publication_place,:sponsor,:date_range,:identifier,:location,:publication_date)
   end
 
 end

@@ -8,7 +8,7 @@ class Person < ActiveRecord::Base
   include SolrHelperMethods
   include SolrUpdater
 
-  acts_as_authorizable #some actions on people require authorization
+  #acts_as_authorizable #some actions on people require authorization
 
   serialize :scoring_hash
 

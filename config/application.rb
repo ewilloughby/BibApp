@@ -8,12 +8,12 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 #AUTHORIZATION_MIXIN = "object roles"
-{:LOGIN_REQUIRED_REDIRECTION => {:controller => '/user_sessions', :action => 'new'},
- :PERMISSION_DENIED_REDIRECTION => {:controller => 'works', :action => 'index'},
- :STORE_LOCATION_METHOD => :store_location}.each do |k, v|
-  Authorization::Base.send(:remove_const, k) if Authorization::Base.const_defined?(k)
-  Authorization::Base.const_set(k, v)
-end
+#{:LOGIN_REQUIRED_REDIRECTION => {:controller => '/user_sessions', :action => 'new'},
+# :PERMISSION_DENIED_REDIRECTION => {:controller => 'works', :action => 'index'},
+# :STORE_LOCATION_METHOD => :store_location}.each do |k, v|
+#  Authorization::Base.send(:remove_const, k) if Authorization::Base.const_defined?(k)
+#  Authorization::Base.const_set(k, v)
+#end
 
 module Bibapp
   class Application < Rails::Application

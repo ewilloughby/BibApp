@@ -15,7 +15,8 @@ gem "haml"
 
 #Make resourceful - used by some controllers 
 #backports may be needed by a 1.8 ruby to make make_resourceful work
-gem 'make_resourceful'
+#gem 'make_resourceful'
+gem "make_resourceful", github: "hcatlin/make_resourceful", branch: "main"
 
 #file attachment - to replace attachment_fu
 #TODO Can remove version requirement after 1.9 migration
@@ -86,9 +87,12 @@ gem 'yaml_db'
 # Puma
 gem 'puma'
 
-#authorization, replacing plugin used previously
-#We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
-gem 'authorization'
+# authorization, replacing plugin used previously
+# We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
+# 
+#gem 'authorization'
+#replacing authorization with cancancan
+gem 'cancancan'
 
 #authentication
 gem 'authlogic'
