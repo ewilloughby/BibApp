@@ -99,10 +99,14 @@ gem 'puma'
 gem 'cancancan'
 
 #authentication
-gem 'authlogic'
+#gem 'authlogic'
 
 # Authlogic needs this
-gem "scrypt", "~> 3.0"
+#gem "scrypt", "~> 3.0"
+
+# Replacing authlogic authentication with Devise
+gem 'devise'
+
 #TODO will require some work to go to 1.0 series
 gem 'omniauth'
 
