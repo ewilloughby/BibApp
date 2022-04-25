@@ -311,13 +311,13 @@ ActiveRecord::Schema.define(version: 2022_04_24_023439) do
 
   create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "email"
-    t.string "crypted_password", limit: 40
-    t.string "salt", limit: 40
+    t.string "crypted_password"
+    t.string "salt"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "remember_token"
     t.datetime "remember_token_expires_at"
-    t.string "activation_code", limit: 40
+    t.string "activation_code"
     t.datetime "activated_at"
     t.string "persistence_token", default: "", null: false
     t.string "default_locale"
