@@ -6,7 +6,8 @@ module PubCommonHelper
   def update_multiple_generic(klass)
     with_key_and_path_setup(klass) do |key, path|
       #Only system-wide editors can assign authorities
-      permit "editor of Group"
+      #permit "editor of Group"
+      authorize!(:editor, klass)
 
       pub_ids = params[:pub_ids]
       auth_id = params[:auth_id]
