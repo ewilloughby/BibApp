@@ -18,6 +18,10 @@ gem "haml"
 #gem 'make_resourceful'
 gem "make_resourceful", github: "hcatlin/make_resourceful", branch: "main"
 
+# For Solr Atomic Updates/Indexing
+gem 'typhoeus', '>= 1.4.0'
+gem 'rest-client', '2.0.2'
+
 #file attachment - to replace attachment_fu
 #TODO Can remove version requirement after 1.9 migration
 gem 'paperclip'
@@ -96,6 +100,9 @@ gem 'cancancan'
 
 #authentication
 gem 'authlogic'
+
+# Authlogic needs this
+gem "scrypt", "~> 3.0"
 #TODO will require some work to go to 1.0 series
 gem 'omniauth'
 
