@@ -83,7 +83,7 @@ class WorksController < ApplicationController
     before :destroy do
       #Anyone with 'admin' role on this work can destroy it
       #permit "admin on Work"
-      authorize!(:superadmin, Work)
+      authorize!(:admin, Work)
     end
 
   end # end make_resourceful
@@ -120,7 +120,7 @@ class WorksController < ApplicationController
 
   def orphans_delete
     #permit "editor for Work"
-    authorize!(:superadmin, Work)
+    authorize!(:admin, Work)
     if params[:orphan_delete]
       Work.find(params[:orphan_delete][:orphan_id]).each do |w|
         w.destroy
@@ -132,7 +132,7 @@ class WorksController < ApplicationController
   def change_type
     t = params[:type]
     work = Work.find(params[:id])
-    authorize!(:superadmin, work)
+    authorize!(:admin, work)
 
     wtypes = Work.types.collect {|type| type.gsub(/[()\/\s]/, '')}
     
@@ -264,7 +264,7 @@ class WorksController < ApplicationController
     #permit "admin"
 
     work = Work.find(params[:id])
-    authorize!(:superadmin, work)
+    authorize!(:admin, work)
     return_path = params[:return_path] || works_url
 
     full_success = true
@@ -307,7 +307,7 @@ class WorksController < ApplicationController
     #(NOTE: User will actually have to be an 'admin' on all works in this batch,
     #       otherwise he/she will not be able to destroy *all* the works)
     #permit "admin"
-    authorize!(:superadmin, Work)
+    authorize!(:admin, Work)
 
     work_ids = params[:work_id]
     return_path = params[:return_path]

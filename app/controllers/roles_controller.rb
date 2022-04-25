@@ -123,7 +123,7 @@ class RolesController < ApplicationController
     elsif params[:person_id]
       @authorizable = Person.find(params[:person_id])
     else
-     # @authorizable = System
+      @authorizable = System
     end
   end
 end

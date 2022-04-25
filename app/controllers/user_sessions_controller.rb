@@ -8,7 +8,7 @@ class UserSessionsController < ApplicationController
   end
 
   def create
-    @user_session = UserSession.new(params[:user_session])
+    @user_session = UserSession.new(user_session_params.to_h)
     @user_session.save do |result|
       if result
         flash[:notice] = t('common.user_sessions.flash_create_successful', :locale => @user_session.record.default_locale)
@@ -46,5 +46,10 @@ class UserSessionsController < ApplicationController
       end
     end
     params[:return_to] || works_url(:locale => user.default_locale)
+  end
+
+  def user_session_params
+    #params.require(:user_session).permit(:login, :password, :remember_me)
+    params.require(:user_session).permit!
   end
 end
