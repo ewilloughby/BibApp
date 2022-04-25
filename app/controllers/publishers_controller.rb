@@ -4,6 +4,9 @@ class PublishersController < ApplicationController
   #Require a user be logged in to create / update / destroy
   before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
 
+  load_and_authorize_resource :except => [:index, :show] 
+  skip_authorization_check :only => [:index, :show] 
+
   make_resourceful do
     build :index, :show, :new, :edit, :create, :update
 
@@ -56,7 +59,7 @@ class PublishersController < ApplicationController
 
     before :new do
       #Anyone with 'editor' role (anywhere) can add publishers
-      permit "editor"
+      #permit "editor"
 
       @publishers = Publisher.authorities.order_by_name
       @publications = Publication.authorities.order_by_name
@@ -64,12 +67,12 @@ class PublishersController < ApplicationController
 
     before :create do
       #Anyone with 'editor' role (anywhere) can add publishers
-      permit "editor"
+      authorize! :create, Publisher, message: "Not authorized to create"
     end
 
     before :edit do
       #Anyone with 'editor' role (anywhere) can update publishers
-      permit "editor"
+      authorize! :update, Publisher, message: "Not authorized to edit"
 
       @publishers = Publisher.order_by_name
       @publications = Publication.authorities.order_by_name
@@ -77,13 +80,13 @@ class PublishersController < ApplicationController
 
     before :update do
       #Anyone with 'editor' role (anywhere) can update publishers
-      permit "editor"
+      authorize! :update, Publisher, message: "Not authorized to update"
     end
   end
 
   def authorities
     #Only group editors can assign authorities
-    permit "editor of Group"
+    #permit "editor of Group"
 
     @a_to_z = Publisher.letters
 

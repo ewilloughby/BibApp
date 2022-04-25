@@ -4,6 +4,10 @@ class PublicationsController < ApplicationController
   #Require a user be logged in to create / update / destroy
   before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
 
+  #cancancan authorization
+  load_and_authorize_resource :except => [:index, :show, :inpress, :autocomplete] 
+  skip_authorization_check :only => [:index, :show, :inpress, :autocomplete] 
+
   make_resourceful do
     build :index, :show, :new, :edit, :create, :update
 
@@ -59,7 +63,7 @@ class PublicationsController < ApplicationController
 
     before :new do
       #Anyone with 'editor' role (anywhere) can add publications
-      permit "editor"
+      authorize! :create, Publication, message: "Not authorized to create"
 
       @publishers = Publisher.authorities.order_by_name
       @publications = Publication.authorities.order_by_name
@@ -67,12 +71,12 @@ class PublicationsController < ApplicationController
 
     before :create do
       #Anyone with 'editor' role (anywhere) can add publications
-      permit "editor"
+      authorize! :create, Publication, message: "Not authorized to create"
     end
 
     before :edit do
       #Anyone with 'editor' role (anywhere) can update publications
-      permit "editor"
+      authorize! :create, Publication, message: "Not authorized to create"
 
       @publishers = Publisher.authorities.order_by_name
       @publications = Publication.order_by_name
@@ -80,14 +84,14 @@ class PublicationsController < ApplicationController
 
     before :update do
       #Anyone with 'editor' role (anywhere) can update publications
-      permit "editor"
+      authorize! :create, Publication, message: "Not authorized to create"
     end
 
   end
 
   def authorities
     #Only group editors can assign authorities
-    permit "editor of Group"
+    #permit "editor of Group"
 
     @a_to_z = Publication.letters
     @page = params[:page] || @a_to_z[0]
@@ -117,7 +121,7 @@ class PublicationsController < ApplicationController
   end
 
   def destroy
-    permit "admin"
+    authorize! :destroy, Publication, message: "Not authorized to remove"
 
     publication = Publication.find(params[:id])
     return_path = params[:return_path] || publications_url

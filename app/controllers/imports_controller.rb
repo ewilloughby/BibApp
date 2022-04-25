@@ -4,6 +4,9 @@ class ImportsController < ApplicationController
   before_action :login_required
   before_action :pen_name_setup, :only => [:create_pen_name, :destroy_pen_name]
 
+  authorize_resource :class => Import 
+  authorize_resource :class => Work
+
   def index
     # List all imports
     params[:user_id] ||= current_user.id
@@ -28,7 +31,8 @@ class ImportsController < ApplicationController
 
   def create
     # Start by creating the Attachment
-    @attachment = ImportFile.new(params[:import])
+    # @attachment = ImportFile.new(params[:import])
+    @attachment = ImportFile.new(import_params)
     @attachment.save
 
     # Init our Import
@@ -125,7 +129,7 @@ class ImportsController < ApplicationController
   end
 
   def create_pen_name
-    permit 'editor of Person'
+    #permit 'editor of Person'
     #look up person and name string and create pen name
     PenName.find_or_create_by_person_id_and_name_string_id(:person_id => @person.id, :name_string_id => @name_string.id)
     #regenerate two checkbox lists and pass back
@@ -137,7 +141,7 @@ class ImportsController < ApplicationController
   end
 
   def destroy_pen_name
-    permit 'editor of :person', :person => @person
+    #permit 'editor of :person', :person => @person
     @pen_name = PenName.find_by_person_id_and_name_string_id(@person.id, @name_string.id)
     @pen_name.destroy if @pen_name
     respond_to do |format|
@@ -159,6 +163,10 @@ class ImportsController < ApplicationController
     @person = Person.find params[:person_id]
     @import = Import.find params[:id]
     @name_string = NameString.find params[:name_string_id]
+  end
+
+  def import_params
+    params.require(:import).permit(:data).to_h
   end
 
 end

@@ -4,7 +4,8 @@ require 'sword_1_3_adapter'
 
 class AdminController < ApplicationController
   #Only System Admins can access this controller's methods
-  permit "admin of System"
+  #permit "admin of System"
+  authorize!(:admin, Person)
 
   def index
     @title = t('admin.tasks')
