@@ -1,5 +1,3 @@
-- include_stylesheet('specific/works/index')
-
 / ### Person / Works ###
 - if params[:person_id] and current_user_role?("editor", Person.find(params[:person_id]))
   = render :partial => "people/admin_actions", :layout => 'layouts/admin_bar'

@@ -29,36 +29,41 @@ class Index
       :pk_i => :id, #store Work ID as pk_i in Solr
       :id => Proc.new { |record| record.solr_id }, #create a unique Solr ID for Work
       :title => :title_primary,
-      :title_secondary => :title_secondary,
-      :title_tertiary => :title_tertiary,
+      :title_secondary => Proc.new { |record| record.title_secondary.blank? ? nil : string_normalize(record.title_secondary) },
+      :title_tertiary => Proc.new { |record| record.title_tertiary.blank? ? nil : string_normalize(record.title_tertiary) },
       :sort_title => :sort_name,
       :issue => :issue,
       :volume => :volume,
       :start_page => :start_page,
-      :abstract => :abstract,
+      :abstract => Proc.new { |record| record.abstract.blank? ? nil : string_normalize(record.abstract) },
       :status => :work_state_id,
-      :issn_isbn => Proc.new { |record| record.publication.nil? ? nil : record.publication.issn_isbn },
+      :issn_isbn => Proc.new { |record| record.publication.blank? ? nil : record.publication.issn_isbn },
 
       # Work Type (index as "Journal article" rather than "JournalArticle")
       :type => Proc.new { |record| record[:type].underscore.humanize },
 
       # NameStrings
-      :name_strings => Proc.new { |record| record.name_strings.collect { |ns| ns.name } },
+      #:name_strings => Proc.new { |record| record.name_strings.collect { |ns| ns.name } },
+      :name_strings => Proc.new { |record| record.name_strings.collect { |ns| string_normalize(ns.name.to_s) } },
       :name_string_id => Proc.new { |record| record.name_strings.collect { |ns| ns.id } },
       :name_strings_data => Proc.new { |record| record.name_strings.collect { |ns| ns.to_solr_data } },
 
       # WorkNameStrings
-      :authors_data => Proc.new { |record| record.authors.collect { |au| "#{au[:name]}||#{au[:id]}" } },
-      :editors_data => Proc.new { |record| record.editors.collect { |ed| "#{ed[:name]}||#{ed[:id]}" } },
+      #:authors_data => Proc.new { |record| record.authors.collect { |au| "#{au[:name]}||#{au[:id]}" } },
+      :authors_data => Proc.new { |record| record.authors.collect { |au| "#{string_normalize(au[:name])}||#{au[:id]}" } },
+      #:editors_data => Proc.new { |record| record.editors.collect { |ed| "#{ed[:name]}||#{ed[:id]}" } },
+      :editors_data => Proc.new { |record| record.editors.collect { |ed| "#{string_normalize(ed[:name])}||#{ed[:id]}" } },
 
       # People
       :people => Proc.new { |record| record.people.collect { |p| p.first_last } },
       :person_id => Proc.new { |record| record.people.collect { |p| p.id } },
       :people_data => Proc.new { |record| record.people.collect { |p| p.to_solr_data } },
-      :research_focus => Proc.new {|record| record.people.collect {|p| p.research_focus.dump}},
+      #:research_focus => Proc.new {|record| record.people.collect {|p| p.research_focus.dump}},
+      :research_focus => Proc.new {|record| record.people.collect {|p| p.research_focus.to_s.dump}},
 
       #Person's active status in separate field for filtering
-      :person_active => Proc.new { |record| record.people.collect { |p| p.person_active } },
+      #:person_active => Proc.new { |record| record.people.collect { |p| p.person_active } },
+      :person_active => Proc.new { |record| record.people.collect { |p| p.person_active.blank? ? false : p.person_active } },
 
       # Groups
       :groups => Proc.new { |record| record.people.collect { |p| p.groups.collect { |g| g.name } }.uniq.flatten },
@@ -66,17 +71,24 @@ class Index
       :groups_data => Proc.new { |record| record.people.collect { |p| p.groups.collect { |g| g.to_solr_data } }.uniq.flatten },
 
       # Publication
-      :publication => Proc.new { |record| record.publication.nil? ? nil : record.publication.name },
-      :publication_id => Proc.new { |record| record.publication.nil? ? nil : record.publication.id },
-      :publication_data => Proc.new { |record| record.publication.nil? ? nil : record.publication.to_solr_data },
+      #:publication => Proc.new { |record| record.publication.nil? ? nil : record.publication.name },,
+      #:publication_id => Proc.new { |record| record.publication.nil? ? nil : record.publication.id },
+      #:publication_data => Proc.new { |record| record.publication.nil? ? nil : record.publication.to_solr_data },
+      :publication => Proc.new { |record| record.publication.blank? ? nil : record.publication.name },
+      :publication_id => Proc.new { |record| record.publication.blank? ? nil : record.publication.id },
+      :publication_data => Proc.new { |record| record.publication.blank? ? nil : record.publication.to_solr_data },
 
       # Publisher
-      :publisher => Proc.new { |record| record.publisher.nil? ? nil : record.publisher.name },
-      :publisher_id => Proc.new { |record| record.publisher.nil? ? nil : record.publisher.id },
-      :publisher_data => Proc.new { |record| record.publisher.nil? ? nil : record.publisher.to_solr_data },
+      #:publisher => Proc.new { |record| record.publisher.nil? ? nil : record.publisher.name },
+      #:publisher_id => Proc.new { |record| record.publisher.nil? ? nil : record.publisher.id },
+      #:publisher_data => Proc.new { |record| record.publisher.nil? ? nil : record.publisher.to_solr_data },
+      :publisher => Proc.new { |record| record.publisher.blank? ? nil : record.publisher.name },
+      :publisher_id => Proc.new { |record| record.publisher.blank? ? nil : record.publisher.id },
+      :publisher_data => Proc.new { |record| record.publisher.blank? ? nil : record.publisher.to_solr_data },
 
       # Keywords
-      :keywords => Proc.new { |record| record.keywords.collect { |k| k.name } },
+      #:keywords => Proc.new { |record| record.keywords.collect { |k| k.name } },
+      :keywords => Proc.new { |record| record.keywords.collect { |k| string_normalize(k.name.to_s) } },
       :keyword_id => Proc.new { |record| record.keywords.collect { |k| k.id } },
 
       # Tags
@@ -99,21 +111,29 @@ class Index
 
 
   # Index all Works which have been flagged for batch indexing
-  def self.batch_index
-    records = Work.to_batch_index
+  #def self.batch_index
+  #  records = Work.to_batch_index
 
     #Batch index 100 records at a time...wait to commit till the end.
-    records.each_slice(100) do |records_slice|
-      batch_update_solr(records_slice, false)
-    end
+  #  records.each_slice(100) do |records_slice|
+  #    batch_update_solr(records_slice, false)
+  #  end
 
     #Mark all these Works as indexed & commit changes to Solr
-    records.each do |r|
-      r.mark_indexed
+  #  records.each do |r|
+  #    r.mark_indexed
+  #  end
+  def self.batch_index(new_work_imports = false)
+    
+    Rails.logger.debug("\n============ NUMBEROFWORKSTOINDEX - #{Work.to_batch_index.length} ======\n")
+
+    Work.to_batch_index.find_in_batches(batch_size: 50) do |records_slice|
+      batch_update_solr(records_slice, new_work_imports) 
+      records_slice.each{|x| x.mark_indexed }
     end
 
-    #SOLRCONN.commit
-    Index.optimize_index
+    # never I think, see solr_config.xml 
+    #Index.optimize_index unless records.empty?
   end
 
   def self.start(page, rows)
@@ -131,19 +151,20 @@ class Index
   def self.index_all
     #Delete all existing records in Solr
     SOLRCONN.delete_by_query('*:*')
-
-    #Reindex all Works again
-    records = Work.all
-
-    #Do a batch update, 100 records at a time...wait to commit till the end.
-    records.each_slice(100) do |records_slice|
-      batch_update_solr(records_slice, false)
+    
+    Work.find_in_batches(batch_size: 50) do |records_slice|
+      batch_update_solr(records_slice, true) 
     end
-
-    SOLRCONN.commit
+    
+    # CANNOT CALL COMMIT like this
+    # WILL GET A waitFlush error as the call to the ruby gem using SOLRCONN uses the property waitFlush
+    # prefer to do these every 
+    #SOLRCONN.commit
+    
     Index.build_spelling_suggestions
   end
-
+  
+# Not using spelling
   def self.build_spelling_suggestions
     SOLRCONN.send(Solr::Request::Spellcheck.new(:command => "rebuild", :query => "physcs"))
   end
@@ -266,10 +287,7 @@ class Index
 
   #Retrieve Spelling Suggestions from Solr, based on query
   def self.get_spelling_suggestions(query)
-    spelling_suggestions = SOLRCONN.send(Solr::Request::Spellcheck.new(:query => query)).suggestions
-    if spelling_suggestions == query
-      spelling_suggestions = nil
-    end
+      spelling_suggestions = ""
 
     return spelling_suggestions
   end

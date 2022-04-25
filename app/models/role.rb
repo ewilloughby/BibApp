@@ -4,7 +4,7 @@
 # or without any specification at all.
 class Role < ActiveRecord::Base
   has_and_belongs_to_many :users
-  belongs_to :authorizable, :polymorphic => true
+  #belongs_to :authorizable, :polymorphic => true
 
   scope :named, lambda {|name| where(:name => name)}
   scope :authorizable_type, lambda {|authorizable_type| where(:authorizable_type => authorizable_type)}

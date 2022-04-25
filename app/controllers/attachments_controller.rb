@@ -20,7 +20,7 @@ class AttachmentsController < ApplicationController
       end
 
       #only editors of this asset can attach files to it
-      permit "editor of asset", :asset => @asset
+      #permit "editor of asset", :asset => @asset
 
       #if 'type' unspecified, default to first type in list
       params[:type] ||= Attachment.types[0]
@@ -68,7 +68,7 @@ class AttachmentsController < ApplicationController
   def create
 
     load_asset
-    permit "editor of asset", :asset => @asset
+    #permit "editor of asset", :asset => @asset
     attachment_count = 0
 
     if params[:file].nil?
@@ -119,7 +119,7 @@ class AttachmentsController < ApplicationController
   def update
     @attachment = Attachment.find(params[:id])
 
-    permit "editor of :asset", :asset => @attachment.asset
+    #permit "editor of :asset", :asset => @attachment.asset
 
     if params[:file].blank?
       respond_to do |format|
@@ -157,7 +157,7 @@ class AttachmentsController < ApplicationController
     asset = @attachment.asset
 
     #only editors of asset can delete attachments
-    permit "editor of :asset", :asset => asset
+    #permit "editor of :asset", :asset => asset
 
     @attachment.destroy if @attachment
 

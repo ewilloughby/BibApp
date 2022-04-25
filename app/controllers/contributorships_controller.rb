@@ -42,7 +42,7 @@ class ContributorshipsController < ApplicationController
     person = @contributorship.person
 
     # only 'editor' of this person can verify contributorship
-    permit "editor of :person", :person => person
+    #permit "editor of :person", :person => person
 
     #Verify & save contributorship
     #(Note: Contributorship callbacks will automatically update scores, etc.)
@@ -63,7 +63,7 @@ class ContributorshipsController < ApplicationController
     @person = @contributorship.person
 
     # only 'editor' of this person can deny contributorship
-    permit "editor of person", :person => @person
+    #permit "editor of person", :person => @person
 
     @contributorship.deny_contributorship
     @contributorship.save

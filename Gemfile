@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 #Rails itself
-gem "rails", "~> 5.2.7"
+gem "rails", "~> 6.0.4"
 
 #Use jquery for javascript - in Rails 3.0 this involves running a generator too
 #once we get to 3.1 all that should be necessary is adding some includes
@@ -17,6 +17,10 @@ gem "haml"
 #backports may be needed by a 1.8 ruby to make make_resourceful work
 #gem 'make_resourceful'
 gem "make_resourceful", github: "hcatlin/make_resourceful", branch: "main"
+
+# For Solr Atomic Updates/Indexing
+gem 'typhoeus', '>= 1.4.0'
+gem 'rest-client', '2.0.2'
 
 #file attachment - to replace attachment_fu
 #TODO Can remove version requirement after 1.9 migration
@@ -96,6 +100,9 @@ gem 'cancancan'
 
 #authentication
 gem 'authlogic'
+
+# Authlogic needs this
+gem "scrypt", "~> 3.0"
 #TODO will require some work to go to 1.0 series
 gem 'omniauth'
 

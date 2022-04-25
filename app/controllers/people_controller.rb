@@ -7,6 +7,8 @@ class PeopleController < ApplicationController
   # Require a user be logged in to create / update / destroy
   before_action :login_required, :only => [:new, :create, :edit, :update, :destroy, :batch_csv_show, :batch_csv_create]
 
+  load_resource
+
   make_resourceful do
     build :index, :new, :create, :show, :edit, :update, :destroy
 
@@ -68,6 +70,7 @@ class PeopleController < ApplicationController
     end
 
     before :new do
+      authorize!(:admin, Person)
       if params[:q]
         begin
           @ldap_results = BibappLdap.instance.search(params[:q])
@@ -108,7 +111,7 @@ class PeopleController < ApplicationController
     end
 
     before :destroy do
-      permit "admin"
+      authorize!(:admin, Person)
       person = Person.find(params[:id])
       @return_path = params[:return_path] || people_url
       person.destroy if person
@@ -220,11 +223,11 @@ class PeopleController < ApplicationController
   end
 
   def batch_csv_show
-    permit "admin"
+    authorize!(:admin, Person)
   end
 
   def batch_csv_create
-    permit "admin"
+    authorize!(:admin, Person)
     @message = ''
     begin
       filename = params[:person][:data].original_filename

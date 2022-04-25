@@ -149,7 +149,8 @@ class ApplicationController < ActionController::Base
 
     # Gather Spelling Suggestions
     if @query.present?
-      @spelling_suggestions = Index.get_spelling_suggestions(@query).reject { |suggestion| suggestion.downcase == @query.downcase }
+      #@spelling_suggestions = Index.get_spelling_suggestions(@query).reject { |suggestion| suggestion.downcase == @query.downcase }
+      @spelling_suggestions = ""
     else
       @spelling_suggestions = ""
     end

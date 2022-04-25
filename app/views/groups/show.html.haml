@@ -1,5 +1,3 @@
-- include_stylesheet('specific/groups/show')
-
 - if current_user_role?("editor", @group)
   = render :layout => 'layouts/admin_bar' do
     %li= link_to t('groups.show.add'), new_group_path
