@@ -3,8 +3,9 @@ class User < ActiveRecord::Base
 
   acts_as_authentic do |c|
     #c.act_like_restful_authentication = true
+    c.crypto_provider = ::Authlogic::CryptoProviders::SCrypt
   end
-
+  
   #cancancan
   ROLES = %i[guest author editor admin superadmin]
 
