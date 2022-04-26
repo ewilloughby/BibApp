@@ -3,7 +3,8 @@
 class RolesController < ApplicationController
 
   #Require a user be logged in
-  before_action :login_required
+  #before_action :login_required
+  before_action :authenticate_user!
 
   make_resourceful do
     build :index, :new, :show

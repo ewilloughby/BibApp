@@ -3,7 +3,8 @@
 class PasswordsController < ApplicationController
 
   # require user is logged in, except for "forgot password" page
-  before_action :login_required, :only => [:edit, :update]
+  #before_action :login_required, :only => [:edit, :update]
+  before_action :authenticate_user!, :only => [:edit, :update]
 
   # POST /passwords
   # Forgot password

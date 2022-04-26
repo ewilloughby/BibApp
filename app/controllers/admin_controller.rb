@@ -5,7 +5,10 @@ require 'sword_1_3_adapter'
 class AdminController < ApplicationController
   #Only System Admins can access this controller's methods
   #permit "admin of System"
-  authorize!(:admin, Person)
+  #authorize!(:admin, Person)
+  before_action :authenticate_user!
+
+  skip_authorization_check :only => [:index]
 
   def index
     @title = t('admin.tasks')
@@ -32,10 +35,7 @@ class AdminController < ApplicationController
     external_system = find_or_create_repository_system
 
     #Save the URI returned from our SWORD deposit to this repository
-    ExternalSystemUri.find_or_create_by_work_id_and_external_system_id_and_uri(
-        :work_id => @work.id,
-        :external_system_id => external_system.id,
-        :uri => @deposit['id'])
+    ExternalSystemUri.find_or_create_by(work_id: @work.id, external_system_id: external_system.id, uri: @deposit['id'])
 
     #@TODO - NOT all repositories return a full URI in the @deposit['id'].
     #  In fact, only DSpace seems to do this.  Whereas Fedora & Eprints return
@@ -92,11 +92,9 @@ class AdminController < ApplicationController
   protected
 
   def find_or_create_repository_system
-    ExternalSystem.find_by_base_url($REPOSITORY_BASE_URL) ||
-        ExternalSystem.find_by_name(t('personalize.repository_name')) ||
-        ExternalSystem.find_or_create_by_name_and_base_url(
-            :name => t('personalize.repository_name'),
-            :base_url => $REPOSITORY_BASE_URL)
+    ExternalSystem.find_by(base_url: $REPOSITORY_BASE_URL) ||
+    ExternalSystem.find_by(name: t('personalize.repository_name')) ||
+    ExternalSystem.find_or_create_by(name: t('personalize.repository_name'), base_url: $REPOSITORY_BASE_URL)
   end
 
   def work_mets(work)

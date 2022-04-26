@@ -1,14 +1,17 @@
 class KeywordsController < ApplicationController
   include GoogleChartsHelper
   #Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  #before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy]
+  
+  skip_authorization_check :only => :timeline
 
   make_resourceful do
     build :all
   end
 
   def timeline
-
+    
     @current_object = Group.find(params[:group_id]) if params[:group_id]
     @current_object = Person.find(params[:person_id]) if params[:person_id]
 
@@ -20,7 +23,17 @@ class KeywordsController < ApplicationController
     @years = Array.new
 
     facet_years = @facets[:years].compact
-    year_array = facet_years.empty? ? [] : Range.new(facet_years.first.name, facet_years.last.name).to_a
+
+    # not sure why some are reversed years in facets which breaks Range to_a
+    #year_array = facet_years.empty? ? [] : Range.new(facet_years.first.name, facet_years.last.name).to_a
+
+    year_array = if facet_years.empty?
+      []
+    elsif facet_years.last.name > facet_years.first.name
+      Range.new(facet_years.first.name, facet_years.last.name).to_a
+    else
+      Range.new(facet_years.last.name, facet_years.first.name).to_a
+    end
 
     year_array.each do |y|
       year_data = KeywordsHelper::YearTag.new(:year => y, :tags => Array.new)
@@ -34,7 +47,10 @@ class KeywordsController < ApplicationController
       @work_counts << work_count
       @years << y
 
-      @chart_urls << google_chart_url(@facets, work_count)
+      #@chart_urls << google_chart_url(@facets, work_count)
+      @chart_urls << google_chart_api(@facets, work_count)
+      logger.debug("\n\n =========== GOOGLE_CHART_DATA ==============\n\n")
+      logger.debug(@chart_urls)
 
       add_tags(year_data, @facets[:keywords], y)
       @year_keywords << year_data unless year_data.tags.blank?

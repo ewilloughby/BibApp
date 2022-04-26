@@ -3,7 +3,12 @@ class GroupsController < ApplicationController
   include KeywordCloudHelper
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy, :hide]
+  #before_action :login_required, :only => [:new, :create, :edit, :update, :destroy, :hide]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :hide]
+  
+  load_and_authorize_resource
+  # since I'm using check_authorization in application_controller
+  skip_authorization_check :only => [:show, :index, :group_dashboard] 
 
   make_resourceful do
     build :all
@@ -69,7 +74,8 @@ class GroupsController < ApplicationController
     @duplicategroup = Group.name_like(params[:group][:name]).first
 
     if @duplicategroup.nil?
-      @group = Group.find_or_create_by_name(params[:group])
+     # @group = Group.find_or_create_by_name(params[:group])
+      @group = Group.new(group_params)
       @group.hide = false
       @group.save
 
@@ -82,6 +88,17 @@ class GroupsController < ApplicationController
         flash[:notice] = t('common.groups.flash_create_duplicate')
         format.html { redirect_to new_group_path }
       end
+    end
+  end
+
+  def update
+
+    authorize! :update, Group, message: "Not authorized to edit Groups"
+    @group.update_attributes(group_params)
+    
+    respond_to do |format|
+      flash[:notice] = t('common.groups.flash_update_success')
+      format.html { redirect_to group_url(@group) }
     end
   end
 
@@ -176,6 +193,12 @@ class GroupsController < ApplicationController
   def child_list(children)
     items = children.collect {|c| "<li>#{c.name}</li>"}
     "<ul>#{items.join('')}</ul>"
+  end
+
+  private
+  
+  def group_params
+    params.require(:group).permit(:name, :url, :description, :parent_id, :hide)
   end
 
 end

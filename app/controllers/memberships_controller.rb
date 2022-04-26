@@ -1,11 +1,14 @@
 class MembershipsController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy]
 
   before_action :find_membership, :only => [:destroy]
   before_action :find_person, :only => [:create, :create_group, :new, :destroy, :sort, :ajax_sort]
   before_action :find_group, :only => [:create, :create_group, :destroy]
+  
+  load_and_authorize_resource
+  skip_authorize_resource :only => [:index, :show, :search_groups]
 
   make_resourceful do
     build :index, :show, :new, :update
@@ -13,6 +16,12 @@ class MembershipsController < ApplicationController
     before :update do
       #'editor' of person or group can update membership details
       #permit "editor of person or group", :person => @person, :group => @group
+      # DOES THIS WORK
+      
+      load_resource :person
+      load_resource :group
+      load_and_authorize_resource :membership, :through => [:person, :group]
+      
     end
 
     before :new do
@@ -80,7 +89,6 @@ class MembershipsController < ApplicationController
 
 
   def create_multiple
-
     person = Person.find(params[:person_id])
     group_ids = params[:group_id]
 
@@ -92,16 +100,30 @@ class MembershipsController < ApplicationController
         group = Group.find(group_id)
 
         #One final check...only an editor on this person or group can create the membership
-        if logged_in? && (current_user.has_role?("editor", person) || current_user.has_role?("editor", group))
+        #if logged_in? && (current_user_has_role?("editor", person) || current_user_has_role?("editor", group))
+        # not nec. is using load_and_authorize_resource
+        if (can?(:editor, person) || can?(:editor, group))
           begin
             person.groups << group
+            
+            # are we reindexing, apparently not MAR 02, 2016
+            mem = Membership.where(person_id: params[:person_id], group_id: group_id).first
+            mem.reindex_after_save if mem.respond_to?(:reindex_after_save)
+            # moving out of loop
+            #person.save
+            
           rescue ActiveRecord::RecordInvalid
             flash[:warning] = t('common.memberships.flash_create_multiple_membership')
+          rescue Exception => e
+            flash[:warning] = e.to_s
           end
         else
           full_success = false
         end
       end
+      
+      # moving from above to here
+      person.save
     end
 
     #Return path for any actions that take place on the memberships page
@@ -124,11 +146,11 @@ class MembershipsController < ApplicationController
     #'editor' of person can create new groups
     #permit "editor of person", :person => @person
 
-    @group = Group.find_or_create_by_name(params[:group][:name])
+    @group = Group.find_or_create_by(name: params[:group][:name])
     @group.hide = false
     @group.save
 
-    @membership = Membership.find_by_person_id_and_group_id(@person.id, @group.id)
+    @membership = Membership.find_by(person_id: @person.id, group_id: @group.id)
     unless @membership
       @person.groups << @group
       respond_to do |format|
@@ -148,8 +170,19 @@ class MembershipsController < ApplicationController
   def destroy
     #'editor' of person or group can destroy a membership
     #permit "editor of Person or editor of Group"
+    
     @membership = Membership.find(params[:id])
-    @membership.destroy if @membership
+    
+    # updating for solr memberships Mar 2, 2016
+    if @membership
+      grp = Group.find(@membership.group_id)
+      perp = Person.find(@membership.person_id) 
+      @membership.destroy
+      perp.save if perp
+      # don't need to have person removed from Group, this would cause all works of group to be re-indexed
+      #grp.reindex_after_save if grp.respond_to?(:reindex_after_save)
+    end
+    
     respond_to do |format|
       format.html do
         if @membership
@@ -214,7 +247,7 @@ class MembershipsController < ApplicationController
   end
 
   def find_membership
-    @membership = Membership.find_by_person_id_and_group_id(params[:person_id], params[:group_id])
+    @membership = Membership.find_by(person_id: params[:person_id], group_id: params[:group_id])
   end
 
 #for the membership update we're having problems when a non-nil date is updated to be

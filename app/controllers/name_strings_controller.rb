@@ -1,7 +1,10 @@
 class NameStringsController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  #before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy]
+  
+  skip_authorization_check :only => [:index, :show, :autocomplete] 
 
   make_resourceful do
     build :all

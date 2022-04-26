@@ -2,8 +2,9 @@ class PublishersController < ApplicationController
   include PubCommonHelper
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
-
+  #before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy]
+  
   load_and_authorize_resource :except => [:index, :show] 
   skip_authorization_check :only => [:index, :show] 
 
@@ -122,6 +123,9 @@ class PublishersController < ApplicationController
   end
 
   private
+  def publisher_params
+    params.require(:publisher).permit(:name, :url, :sherpa_id, :publisher_source_id, :authority_id, :romeo_color)
+  end
 
   def current_objects
     if params[:q]

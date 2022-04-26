@@ -1,5 +1,8 @@
 class SearchController < ApplicationController
 
+  skip_authorize_resource
+  skip_authorization_check
+
   def index
     # Default BibApp search method - ApplicationController
     search(params)
