@@ -28,7 +28,7 @@ class Person < ActiveRecord::Base
   has_many :contributorships, :dependent => :destroy
 
   has_one :image, :as => :asset, :dependent => :destroy
-  belongs_to :user
+  # belongs_to :user
 
   #### Validators ####
 

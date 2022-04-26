@@ -1,11 +1,13 @@
 require 'digest/sha1'
 class User < ActiveRecord::Base
-
-  acts_as_authentic do |c|
-    #c.act_like_restful_authentication = true
-    c.crypto_provider = ::Authlogic::CryptoProviders::SCrypt
-  end
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  #devise :database_authenticatable, :registerable,
+  #       :recoverable, :rememberable, :validatable
   
+  devise :database_authenticatable, :trackable, :validatable, :lockable, :timeoutable, :authentication_keys => [:login]
+
+  validates :login, :uniqueness => { :case_sensitive => false} #, :format => { ... } # etc.
   #cancancan
   ROLES = %i[guest author editor admin superadmin]
 
@@ -13,14 +15,14 @@ class User < ActiveRecord::Base
  # acts_as_authorized_user
  # acts_as_authorizable
 
-  validates_presence_of :email
-  validates_presence_of :password, :if => :require_password?
-  validates_presence_of :password_confirmation, :if => :require_password?
-  validates_length_of :password, :within => 4..40, :if => :require_password?
-  validates_confirmation_of :password, :if => :require_password?
-  validates_length_of :email, :within => 3..100
-  validates_uniqueness_of :email, :case_sensitive => false
-  validates_inclusion_of :default_locale, :in => I18n.available_locales
+  #validates_presence_of :email
+  #validates_presence_of :password, :if => :require_password?
+  #validates_presence_of :password_confirmation, :if => :require_password?
+  #validates_length_of :password, :within => 4..40, :if => :require_password?
+  #validates_confirmation_of :password, :if => :require_password?
+  #validates_length_of :email, :within => 3..100
+  #validates_uniqueness_of :email, :case_sensitive => false
+  #validates_inclusion_of :default_locale, :in => I18n.available_locales
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
@@ -30,15 +32,15 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :roles
   #has_many :imports, :order => "created_at DESC"
   has_many :imports, -> { order('created_at DESC') }
-  has_many :taggings, :dependent => :destroy
-  has_many :tags, :through => :taggings
-  has_many :users, :through => :taggings
-  has_one :person
+  #has_many :taggings, :dependent => :destroy
+  #has_many :tags, :through => :taggings
+  #has_many :users, :through => :taggings
+  #has_one :person
   has_many :authentications, :dependent => :destroy
 
-  before_create :make_activation_code
+  #before_create :make_activation_code
   before_validation :ensure_default_locale
-
+=begin
   # Activates the user in the database.
   def activate
     @activated = true
@@ -56,7 +58,7 @@ class User < ActiveRecord::Base
   def recently_activated?
     @activated
   end
-
+=end
   def email_update_code(new_email)
     Digest::SHA1.digest(self.salt + ':' + new_email)
   end
@@ -101,6 +103,20 @@ class User < ActiveRecord::Base
     self.default_locale ||= (I18n.locale || I18n.default_locale)
     self.default_locale = self.default_locale.to_sym
   end
+
+    #overriding authorization gem for find syntax change
+    def user_authorization_has_role(role_name, authorizable_obj = nil )
+      if authorizable_obj.nil?
+        case role_name
+          when String then self.roles.detect { |role| role.name == role_name } ? true : false
+          when Array then role_name.inject(false) { |memo,role| memo ? memo : has_role?(role) }
+          else false
+        end
+      else
+        role = authorization_get_role( role_name, authorizable_obj )
+        role ? self.roles.exists?( role.id ) : false
+      end
+   end
 
   # return the first letter of each email, ordered alphabetically
   def self.letters
