@@ -310,18 +310,30 @@ ActiveRecord::Schema.define(version: 2022_04_24_023439) do
   end
 
   create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "login"
     t.string "email"
-    t.string "crypted_password"
-    t.string "salt"
+    t.string "encrypted_password"
+    t.string "salt", limit: 40
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "remember_token"
     t.datetime "remember_token_expires_at"
-    t.string "activation_code"
+    t.string "activation_code", limit: 40
     t.datetime "activated_at"
-    t.string "persistence_token", default: "", null: false
     t.string "default_locale"
+    t.integer "failed_login_count"
+    t.integer "sign_in_count"
+    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at"
+    t.datetime "last_request_at"
+    t.string "last_sign_in_ip"
+    t.string "current_sign_in_ip"
+    t.string "password_salt"
+    t.string "persistence_token", default: "", null: false
+    t.integer "failed_attempts", default: 0, null: false
+    t.datetime "locked_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["last_request_at"], name: "index_users_on_last_request_at"
   end
 
   create_table "work_name_strings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
