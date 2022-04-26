@@ -1,6 +1,8 @@
 Bibapp::Application.routes.draw do
 
 
+  devise_for :users
+  #devise_for :users
   def make_routes
     resources :works do
       collection do
