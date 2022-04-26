@@ -1,3 +1,4 @@
+=begin
 class UserSessionsController < ApplicationController
 
   before_action :require_no_user, :only => [:new, :create]
@@ -53,3 +54,4 @@ class UserSessionsController < ApplicationController
     params.require(:user_session).permit!
   end
 end
+=end
