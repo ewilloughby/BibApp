@@ -1,12 +1,12 @@
 / ### Person / Works ###
-- if params[:person_id] and current_user_role?("editor", Person.find(params[:person_id]))
+- if params[:person_id] && can?(:edit, Person.find(params[:person_id]))
   = render :partial => "people/admin_actions", :layout => 'layouts/admin_bar'
 
-- elsif current_user_any_role?("editor", Group) or current_user_role?('admin', Work)
+- elsif can?(:edit, Group) || can?(:manage, Work)
   = render :layout => 'layouts/admin_bar' do
-    - if current_user.has_any_role?("editor", Group)
+    - if can?(:edit, Group)
       %li #{link_to t('works.index.add'), new_user_import_path(current_user)}
-    - if current_user.has_role?('admin', Work)
+    - if can?(:manage, Work)
       %li #{link_to(t('works.index.view_orphans'), orphans_works_url)}
 
 = render :layout => 'layouts/main_body_no_h2' do

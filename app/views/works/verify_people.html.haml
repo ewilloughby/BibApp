@@ -1,0 +1,42 @@
+-# encoding: UTF-8
+-#= javascript_include_tag 'locale'
+- if logged_in?
+  - content_for :admin_bar do
+    / #### Admin Actions ###
+    %div.span-24#admin-actions
+      - if current_user_has_role?("editor", @work)
+        %ul#edit-actions
+          %li= link_to "Add a work", new_work_path
+          %li= link_to "Edit this work", edit_work_path
+          %li= link_to "Verify Authors", verify_work_authors_path(@work)
+          -#%li= link_to "Edit Tags", {:controller => "works", :action => "edit_tags", :id => @work.id}
+          - if !@work.archived?
+            %li= link_to "Archive Research", new_work_attachment_path(@work)
+          -#If SWORD is configured, and Work is "Ready for Archiving"
+          -if Sword_1_3_Adapter.configured? and @work.ready_to_archive?
+            %li= link_to "Deposit Attachments", :controller => "admin", :action => "deposit_via_sword", :work_id => @work
+      - elsif logged_in?
+        %ul#edit-actions
+          %li= link_to "Add a work", new_work_path
+          %li= link_to "Edit Tags", {:controller => "works", :action => "edit_tags", :id => @work.id}
+
+%div.span-24
+  %div.span-22.prepend-1
+    %h2
+      = link_to @work.title_primary.force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8), work_path
+      
+    %div#work-details.span-14
+      %div{:class => "span_count"}
+        %ul.actions
+          %li= "&#x2713; Verified (#{@counts[2]}) ".html_safe
+          |
+          %li= "&#x2718; Denied (#{@counts[3]}) ".html_safe
+          |
+          %li= "Unverified (#{@counts[1]})"
+          |
+          %li= "Unknown (#{@counts[nil]})"
+          ;
+          %li= "Total (#{@authors.count})"
+      
+      / authors
+      = render :partial => "author_list"

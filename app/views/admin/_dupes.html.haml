@@ -1,10 +1,12 @@
 -#
 -# Render List of Duplicate Works with paging & sorting options
--#
 #works.span-17.last
   - if @q
     %div
-      %h3= t('admin.duplicates.results', :count => @q.total_hits)
+      -#%h3= t('admin.duplicates.results', :count => @q.total_hits)
+      - if current_user_has_role?(:admin, @work) && @works_missing.length > 0
+        -#%h4="Index mismatch! Found #{@works_missing.length} works in SOLR that aren't in the DB: #{@works_missing.join(', ')}"
+        %h4="Found #{pluralize(@works_missing.length, 'work')} in SOLR not in the DB which should clear within a few minutes."
 
     / Sort Form
     .span-15.append-1.last
@@ -31,7 +33,6 @@
 
         %ol#work-list.span-17.clear-both.no-padding-or-margin
           - @works.each do |work|
-            = render "shared/work", :work => work, :allow_select => true, :show_status => true,
-              :show_dupes => true, :links_array => [:edit]
+            = render "shared/work", :work => ensure_encoding_utf(work), :allow_select => true, :show_status => true, :show_dupes => true, :links_array => [:edit]
 
         %div= will_paginate WillPaginate::Collection.new((params[:page]||1), @rows, @q.total_hits)
