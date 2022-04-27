@@ -3,7 +3,7 @@ require 'stop_word_name_sorter'
 require 'solr_helper_methods'
 require 'solr_updater'
 
-class Group < ApplicationRecord
+class Group < ActiveRecord::Base
   include MachineNameUpdater
   include SolrHelperMethods
   include SolrUpdater
