@@ -256,7 +256,6 @@ class PeopleController < ApplicationController
   end
 
   def person_params
-    # if I keep :uid out of permit then any change of the UID will be ignored, SHOULD I GIVE USERS THAT OPTION, probably not
     params.require(:person).permit(:uid, :first_name, :middle_name, :last_name, :suffix, :display_name, :start_date, :end_date, :email, :orcid_id, :scopus_id, :phone, :staff_note, :research_focus)
   end
 

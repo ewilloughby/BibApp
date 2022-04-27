@@ -251,16 +251,6 @@ end
     end
     
     def after_sign_in_path_for(resource_or_scope)
-      
-      # could direct a user, 
-      #if resource_or_scope.is_a?(User)
-        #  role = resource_or_scope.bibapp_staff.role
-        #  first_name = resource_or_scope.synapse_staff.first_name.capitalize
-        # or even, next where anything other than guest, though any login will be guest or higher 
-        #   so NOT A GOOD TEST unless using :admin, :editor or higher
-        #  resource_or_scope.role?(:editor) # or admin 
-      #end
-      
       default_home_path
     end
 
