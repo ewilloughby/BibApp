@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_24_023439) do
+ActiveRecord::Schema.define(version: 2022_04_27_023936) do
 
   create_table "attachments", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "asset_id"
@@ -32,6 +32,16 @@ ActiveRecord::Schema.define(version: 2022_04_24_023439) do
     t.datetime "updated_at"
     t.index ["uid"], name: "index_authentications_on_uid"
     t.index ["user_id"], name: "index_authentications_on_user_id"
+  end
+
+  create_table "bibapp_staff", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "login", limit: 12
+    t.string "role", limit: 10
+    t.string "first_name", limit: 15
+    t.boolean "enabled", default: false
+    t.bigint "user_id"
+    t.index ["login"], name: "index_bibapp_staff_on_login", unique: true
+    t.index ["user_id"], name: "index_bibapp_staff_on_user_id"
   end
 
   create_table "contributorship_states", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
