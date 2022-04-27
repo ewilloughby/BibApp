@@ -36,10 +36,57 @@ class User < ActiveRecord::Base
   #has_many :tags, :through => :taggings
   #has_many :users, :through => :taggings
   #has_one :person
+  has_one :bibapp_staff, -> { where enabled: true }
   has_many :authentications, :dependent => :destroy
 
   #before_create :make_activation_code
   before_validation :ensure_default_locale
+
+  def is_libstaff?
+    id.nil? ? false : BibappStaff.where(user_id: id, enabled: true).exists?
+  end
+
+  # BibappStaff Roles
+  def has_explicit_role?(role_name, authorizable_obj = nil)
+    if authorizable_obj.class == Class
+      self.roles.named(role_name).where(:authorizable_type => authorizable_obj.to_s,
+                                        :authorizable_id => nil).exists?
+    else
+      self.roles.named(role_name).where(:authorizable_type => authorizable_obj.class.to_s,
+                                        :authorizable_id => authorizable_obj.id).exists?
+    end
+  end
+  def has_role?(role, person)
+  end
+  
+  # if using Role Inheritance as described at https://github.com/CanCanCommunity/cancancan/wiki/Role-Based-Authorization
+  # but would only work with Abilities class set up as in documentation at link above
+  def role?(base_role)
+    #User::ROLES.index(base_role.to_sym) <= User::ROLES.index(role.to_sym)
+    User::ROLES.index(base_role.to_sym) <= User::ROLES.index(self.bibapp_staff.role.to_sym)
+  end
+  
+  def superadmin?
+    return false unless is_libstaff?
+    self.bibapp_staff.role == 'superadmin'
+  end
+  def admin?
+    return false unless is_libstaff?
+    self.bibapp_staff.role == 'admin'
+  end
+  def editor?
+    return false unless is_libstaff?
+    self.bibapp_staff.role == 'editor'
+  end
+  def author?
+    return false unless is_libstaff?
+    self.bibapp_staff.role == 'author'
+  end
+  def guest?
+    return true if self.id.nil?
+    self.bibapp_staff.role.nil? ? true : self.bibapp_staff.role == 'guest'  
+  end
+
 =begin
   # Activates the user in the database.
   def activate

@@ -3,7 +3,7 @@
   %head
     %meta{'http-equiv' => 'Content-Type', :content => 'text/html;charset=utf-8'}
     -#%meta{:name => 'requested-locale', :content => (I18n.locale || I18n.default_locale).to_s}
-    = csrf_meta_tag
+    = csrf_meta_tags
     = stylesheet_link_tag "vendor", :media => "screen"
     = stylesheet_link_tag "application",  :media => "screen"
     = stylesheet_link_tag "vendor-print",  :media => "print"

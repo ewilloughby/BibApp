@@ -1,9 +1,12 @@
+#=begin
 module RolesHelper
 
   def index_header(authorizable)
-    if authorizable == System
-      t('common.roles.index_header_system_html', :app_name => t('personalize.application_name'))
-    elsif authorizable.kind_of?(Group)
+    # No longer using System
+    #if authorizable == System
+    #  t('common.roles.index_header_system_html', :app_name => t('personalize.application_name'))
+    #elsif authorizable.kind_of?(Group)
+    if authorizable.kind_of?(Group)
       t('common.roles.index_header_group_html', :group => group_link(authorizable))
     elsif @authorizable.kind_of?(Person)
       t('common.roles.index_header_person_html', :person => person_link(authorizable))
@@ -12,7 +15,8 @@ module RolesHelper
 
   def form_header(authorizable, role_name)
     translated_role = t_bibapp_role_name(role_name)
-    if authorizable.is_a? Class and authorizable == System
+    #if authorizable.is_a? Class and authorizable == System
+    if authorizable.is_a? Class #and authorizable == System
       t('common.roles.form_header_system_html', :role => translated_role, :app_name => t('personalize.application_name'))
     elsif authorizable.kind_of?(Group)
       t('common.roles.form_header_group_html', :role => translated_role, :group => group_link(authorizable))
@@ -29,9 +33,13 @@ module RolesHelper
     link_to h(person.name), person_path(person)
   end
 
+  # fails for authorizable_type and authorizable_id, undefined method for <CLASS>
+  # it's not an specific class
   def url_opts(user, role_name, authorizable)
-    {:name => role_name, :user_id => user.id, :authorizable_type => authorizable_type(authorizable),
-     :authorizable_id => authorizable_id(authorizable)}
+    #{:name => role_name, :user_id => user.id, :authorizable_type => authorizable_type(authorizable),
+    # :authorizable_id => authorizable_id(authorizable)}
+    {:name => role_name, :user_id => user.id, :authorizable_id => authorizable.id, :authorizable_type => authorizable.class}
   end
 
 end
+#=end
