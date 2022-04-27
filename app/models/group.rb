@@ -3,20 +3,24 @@ require 'stop_word_name_sorter'
 require 'solr_helper_methods'
 require 'solr_updater'
 
-class Group < ActiveRecord::Base
+class Group < ApplicationRecord
   include MachineNameUpdater
   include SolrHelperMethods
   include SolrUpdater
   include StopWordNameSorter
 
-  acts_as_tree order: "name"
+  acts_as_tree :order => "name"
   #acts_as_authorizable #some actions on groups require authorization
 
   #### Associations ####
 
-  #has_many :people, :through => :memberships,:order => "last_name, first_name"
-  has_many :people, -> {order("last_name, first_name")}, through: :memberships
+  #has_many :people, :through => :memberships, :order => "last_name, first_name"
+  # reversing
+  #has_many :people, -> {order("last_name, first_name")}, through: :memberships
+  #has_many :memberships
   has_many :memberships
+  has_many :people, -> {order("last_name, first_name")}, through: :memberships
+  
 
   scope :hidden, -> {where hide: true}
   scope :unhidden, -> {where hide: false}
@@ -59,7 +63,7 @@ class Group < ActiveRecord::Base
 
   # Convert object into semi-structured data to be stored in Solr
   def to_solr_data
-    "#{name}||#{id}"
+    "#{name}||#{id}".force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8)
   end
 
   def solr_filter
