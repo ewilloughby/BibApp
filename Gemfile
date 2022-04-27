@@ -51,6 +51,10 @@ gem 'will_paginate'
 gem 'activerecord-session_store'
 gem 'rails-observers'
 
+# Need Zip Capability
+gem 'rubyzip'
+gem 'zip'
+
 #CMess - Assists with handling parsing citations from a non-Unicode text file
 #  See: http://prometheus.rubyforge.org/cmess/
 gem 'cmess'

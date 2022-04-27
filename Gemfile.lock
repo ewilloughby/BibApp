@@ -339,6 +339,7 @@ GEM
       rails (>= 3.0)
       rake (>= 0.8.7)
     zeitwerk (2.5.4)
+    zip (2.0.2)
 
 PLATFORMS
   ruby
@@ -393,6 +394,7 @@ DEPENDENCIES
   typhoeus (>= 1.4.0)
   will_paginate
   yaml_db
+  zip
 
 BUNDLED WITH
    2.3.12
