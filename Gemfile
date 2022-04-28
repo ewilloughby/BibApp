@@ -24,8 +24,9 @@ gem 'rest-client', '2.0.2'
 
 #file attachment - to replace attachment_fu
 #TODO Can remove version requirement after 1.9 migration
-gem 'paperclip'
-
+#gem 'kt-paperclip'
+#gem "kt-paperclip", "~> 6.4", ">= 6.4.1"
+gem "kt-paperclip"
 gem "htmlentities"
 
 #Namecase - converts strings to be properly cased
