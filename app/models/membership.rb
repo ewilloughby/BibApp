@@ -1,5 +1,5 @@
 require 'solr_updater'
-class Membership < ActiveRecord::Base
+class Membership < ApplicationRecord
   include SolrUpdater
   belongs_to :person
   belongs_to :group
@@ -11,6 +11,7 @@ class Membership < ActiveRecord::Base
 
   acts_as_list  :scope => :person
 
+  default_scope { order(position: :asc) } # in 4.2 which causes error in persons.verified_publications
   scope :active, -> { where("end_date is ?", nil) }
 
   def get_associated_works

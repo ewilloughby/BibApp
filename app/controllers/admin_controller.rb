@@ -71,6 +71,8 @@ class AdminController < ApplicationController
     @export = params[:export] || ""
 
     @q, @works, @facets = Index.fetch(@query, @filter, @sort, @order, @page, @facet_count, @rows)
+    @works_missing = Array.new
+    @works.each {|doc| @works_missing << doc['pk_i'] unless Work.exists?(doc['pk_i']) }.compact
     true
   end
 

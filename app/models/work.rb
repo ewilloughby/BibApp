@@ -26,10 +26,9 @@ class Work < ActiveRecord::Base
 
   #has_many :work_name_strings, :order => "position", :dependent => :destroy
 
-# Replaced above syntax for :order with below  
-  has_many :name_strings, -> { order("position ASC") }, through: :work_name_strings
-
+# Replaced above syntax for :order with below, reversed order 
   has_many :work_name_strings, -> { order("position ASC") }, dependent: :destroy
+  has_many :name_strings, -> { order("position ASC") }, through: :work_name_strings
 
 
  # has_many :people, :through => :contributorships,
@@ -38,8 +37,8 @@ class Work < ActiveRecord::Base
 
   has_many :contributorships, :dependent => :destroy
 
-  has_many :keywords, :through => :keywordings
-  has_many :keywordings, :dependent => :destroy
+  has_many :keywordings, dependent: :destroy
+  has_many :keywords, through: :keywordings
 
   has_many :taggings, :as => :taggable, :dependent => :destroy
   has_many :tags, :through => :taggings

@@ -4,13 +4,14 @@ class Import < ActiveRecord::Base
   @@per_page = 10
 
   # ActiveRecord Attributes
-  attr_protected :state
+  # attr_protected :state
   serialize :works_added
   serialize :import_errors
 
   # ActiveRecord Associations
   belongs_to :user
-  belongs_to :person
+  # Do imports belong to person? Taking this out for now
+  #belongs_to :person
 
   has_one :import_file, :as => :asset, :dependent => :destroy
 

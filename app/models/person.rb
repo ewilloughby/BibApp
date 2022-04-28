@@ -14,18 +14,16 @@ class Person < ActiveRecord::Base
 
   #### Associations ####
 
-  has_many :pen_names, :dependent => :destroy
-  has_many :name_strings, :through => :pen_names
+  has_many :pen_names, dependent: :destroy
+  has_many :name_strings, through: :pen_names
 
-  has_many :memberships, :dependent => :destroy
-  #has_many :groups, :through => :memberships, :conditions => ["groups.hide = ?", false], :order => 'position'
+  has_many :memberships, dependent: :destroy
   has_many :groups, -> { where("groups.hide = ?", false)}, through: :memberships
 
   #has_many :works, :through => :contributorships,
   #         :conditions => ["contributorships.contributorship_state_id = ?", Contributorship::STATE_VERIFIED]
+  has_many :contributorships, dependent: :destroy
   has_many :works, -> (contributorships) { where("contributorships.contributorship_state_id = ?", Contributorship::STATE_VERIFIED) }, through: :contributorships
-
-  has_many :contributorships, :dependent => :destroy
 
   has_one :image, :as => :asset, :dependent => :destroy
   # belongs_to :user

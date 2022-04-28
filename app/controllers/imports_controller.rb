@@ -20,7 +20,6 @@ class ImportsController < ApplicationController
       flash[:error] = t('common.imports.unauthorized')
       @authorized = false
     end
-    end
   end
 
   def new
