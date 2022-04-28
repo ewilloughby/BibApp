@@ -237,7 +237,6 @@ class Index
                 :group_facet,
                 :group_facet_data,
                 :keyword_facet,
-                :tag_facet,
                 :name_string_facet,
                 :name_string_facet_data,
                 :authors_data,
@@ -418,7 +417,6 @@ class Index
         :publishers => query_response.field_facets("publisher_facet"),
         :publishers_data => query_response.field_facets("publisher_facet_data"),
         :keywords => query_response.field_facets("keyword_facet"),
-        :tags => query_response.field_facets("tag_facet"),
         :types => query_response.field_facets("type_facet"),
         :years => query_response.field_facets("year_facet")
     }
