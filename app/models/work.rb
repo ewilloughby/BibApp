@@ -33,9 +33,8 @@ class Work < ActiveRecord::Base
 
  # has_many :people, :through => :contributorships,
  #          :conditions => ["contributorship_state_id = ?", Contributorship::STATE_VERIFIED]
+ has_many :contributorships, dependent: :destroy
  has_many :people, -> { where("contributorship_state_id = ?", Contributorship::STATE_VERIFIED) }, through: :contributorships
-
-  has_many :contributorships, :dependent => :destroy
 
   has_many :keywordings, dependent: :destroy
   has_many :keywords, through: :keywordings
@@ -47,7 +46,7 @@ class Work < ActiveRecord::Base
   has_many :external_system_uris
 
   has_many :attachments, :as => :asset
-  belongs_to :work_archive_state
+  #belongs_to :work_archive_state
 
   validates_presence_of :title_primary
   validates_numericality_of :publication_date_year, :allow_nil => true, :greater_than => 0
@@ -202,6 +201,15 @@ class Work < ActiveRecord::Base
 
 
   ##### Work Archival State Methods #####
+  # setting following to true and false will show the "Archive Research" link with the ability
+  # on production to create an attachment of the uploaded file to the work
+  def ready_to_archive?
+    false
+  end
+  def archived?
+    true
+  end
+=begin
   def init_archive_status
     self.work_archive_state_id = ARCHIVE_STATE_INITIAL
   end
@@ -225,6 +233,7 @@ class Work < ActiveRecord::Base
   def is_archived
     self.work_archive_state_id = ARCHIVE_STATE_ARCHIVED
   end
+=end
 
   #batch indexing related
   def mark_indexed
@@ -472,44 +481,78 @@ class Work < ActiveRecord::Base
   # and saves them to the current Work
   # Arguments:
   #  * hash {:name => "Donohue, T.", :role => "Author | Editor" }
+  # this is called from line 452 self.set_work_name_strings(work_name_strings)
   def set_work_name_strings(work_name_string_hash)
     if self.new_record?
       @work_name_strings_cache = work_name_string_hash
     else
-      self.update_work_name_strings(work_name_string_hash)
+      # Discovered bug, if a name_string is edited then contributorship association is lost
+      # this is the only call into this method so need to update contributorship
+      #self.update_work_name_strings(work_name_string_hash)
+      
+      self.update_from_existing_work_name_strings(work_name_string_hash, self.work_name_strings)
+      
     end
   end
 
   def set_publisher_from_name(publisher_name = nil)
     publisher_name = "Unknown" if publisher_name.blank?
-    set_publisher = Publisher.find_or_create_by_name(:name => publisher_name, :romeo_color => 'unknown')
+    # changed; could be self or perform a re-link to record with same authority_id
+    set_publisher = Publisher.find_or_create_by(name: publisher_name, romeo_color: 'unknown')
+    if Publisher.where(name: set_publisher.name, id: set_publisher.authority_id, romeo_color: set_publisher.romeo_color).exists?
+      set_publisher = Publisher.where(name: set_publisher.name, id: set_publisher.authority_id, romeo_color: set_publisher.romeo_color).first
+    end
     self.set_initial_publisher(set_publisher)
+
+    unless self.new_record?
+      unless self.publisher == set_publisher
+        set_publisher.authority_id = set_publisher.id if set_publisher.authority_id.blank?
+        self.publisher_id = set_publisher.authority_id
+        self.update_column(:publisher_id, set_publisher.authority_id) 
+      end
+    end
+    
     return set_publisher
   end
 
   def set_publication_from_name(name, issn_isbn, set_publisher)
     return unless name
+    
+    # worst kind of if then 
     if issn_isbn.present?
-      publication = Publication.find_or_create_by_name_and_issn_isbn_and_initial_publisher_id(:name => name,
-                                                                                              :issn_isbn => issn_isbn.to_s, :initial_publisher_id => set_publisher.id)
+
+      publication = Publication.find_or_create_by(name: name, issn_isbn: issn_isbn.to_s, initial_publisher_id: set_publisher.id)
+
     elsif set_publisher
+      
       if set_publisher.name == 'Unknown'
         #try to look up a publisher from the publication name - if that doesn't work go ahead
         #and use the set_publisher
-        publication = Publication.find_or_create_by_name(:name => name)
-        if publisher = publication.publisher
+        publication = Publication.find_or_create_by(name: name)
+        # CHECK THIS, IS publisher in scope ??, original didnt compare, 
+        # it assigned (if publisher = publication.publisher)
+        if publisher == publication.publisher 
           self.set_initial_publisher(publisher)
         else
           publication.publisher = set_publisher
         end
       else
-        publication = Publication.find_or_create_by_name_and_initial_publisher_id(:name => name, :initial_publisher_id => set_publisher.id)
+        publication = Publication.find_or_create_by(name: name, initial_publisher_id: set_publisher.id)
       end
     else
-      publication = Publication.find_or_create_by_name(:name => name)
+      publication = Publication.find_or_create_by(name: name)
     end
-    publication.save!
-    set_initial_publication(publication)
+    
+    unless publication.authority_id.blank?
+      unless Publication.exists?(publication.authority_id)
+        publication.authority_id = publication.id
+      end
+    else
+      publication.authority_id = set_publisher.authority_id
+    end
+    
+    publication.save! if publication.has_changes_to_save?
+    set_initial_publication(publication) # really; change initial_publication ?? Why and does setting do anything?
   end
 
 
@@ -532,7 +575,7 @@ class Work < ActiveRecord::Base
   # All Works begin unverified
   def set_initial_states
     self.is_in_process
-    self.init_archive_status
+    #self.init_archive_status
   end
 
   #Build a unique ID for this Work in Solr
@@ -543,11 +586,29 @@ class Work < ActiveRecord::Base
   # Generate a key based on title information
   # which can be used to determine if a Work is a duplicate
   def title_dupe_key
-    # Title Dupe Key Format:
-    # [Work.machine_name]||[Work.year]||[Publication.machine_name]
-    if self.publication and self.publication.authority
-      self.machine_name.to_s + "||" + self.year.to_s + "||" + self.publication.authority.machine_name.to_s
+    pub_authority = ""
+    unless self.publication.nil? or self.publication.authority.nil?
+      pub_authority = self.publication.authority.machine_name.to_s.force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8)
     end
+    
+    # not sure if this a problem any longer EM March 28,2014
+    volume = get_attribute_dupe_info('volume')
+    
+    start_page = get_start_page(self.start_page)
+    #vol_stpage = self.volume.nil? ? "||#{start_page}" : "#{self.volume.to_s}||#{start_page}"
+    vol_stpage = "#{volume}||#{start_page}"
+    
+    #if self.publication and self.publication.authority
+    #  self.machine_name.to_s + "||" + self.year.to_s + "||" + self.publication.authority.machine_name.to_s + "||" + vol_stpage
+    #end
+    
+    year = get_attribute_dupe_info('year')
+    
+    logger.debug("\n\n =========== TITLE_DUPE_KEY ======\n")
+    logger.debug(self.machine_name.to_s + "||" + year + "||" + pub_authority + "||" + vol_stpage)
+    
+    #self.machine_name.to_s + "||" + self.year.to_s + "||" + pub_authority + "||" + vol_stpage
+    self.machine_name.to_s + "||" + year + "||" + pub_authority + "||" + vol_stpage
   end
 
   # Generate a key based on Author/Editor information
@@ -556,23 +617,57 @@ class Work < ActiveRecord::Base
     # NameString Dupe Key Format:
     # [First NameString.machine_name]||[Work.year]||[Work.type]||[Work.machine_name]
     if self.name_strings.present?
-      self.name_strings[0].machine_name.to_s + "||" + self.year.to_s + "||" + self.type.to_s + "||" + self.machine_name.to_s
+      start_page = get_start_page(self.start_page)
+      #vol_stpage = self.volume.nil? ? "||#{start_page}" : "#{self.volume.to_s}||#{start_page}"
+      volume = get_attribute_dupe_info('volume')
+      vol_stpage = "#{volume}||#{start_page}"
+      
+      year = get_attribute_dupe_info('year')
+      
+      nstring = self.name_strings[0].machine_name.to_s.split(/\s/)
+      fauthor = nstring[0]
+      nstring[1..nstring.length].each { |n| fauthor << " ".concat(n[0,1]) }
+      
+      logger.debug("\n\n ========= NAME_STRING_DUPE_KEY ============= \n")
+      logger.debug(fauthor + "||" + year + "||" + self.type.to_s + "||" + self.machine_name.to_s + "||" + vol_stpage)
+      
+      fauthor + "||" + year + "||" + self.type.to_s + "||" + self.machine_name.to_s + "||" + vol_stpage
+      # if do not want type
+      #fauthor + "||" + year + "||" + self.machine_name.to_s + "||" + vol_stpage
     end
   end
 
   # If the Work is accepted ensures Contributorships are set for each WorkNameString claim
   # associated with the Work.
   def create_contributorships
-    if self.accepted?
+    
+    logger.info "\n\n===== CREATE_CONTRIBUTORSHIPS =====\n\n"
+    logger.info "WORKING ON #{self.title_primary}"
+    
+    logger.debug "WorkNameString count: #{self.work_name_strings.size}"
+    logger.info "Is Accepted: #{self.accepted?}"
+    logger.info("Include original_data: #{self.saved_change_to_attribute?(:original_data)}") 
+    
+    # original_data check ensure contribs for manually added works are created
+    if self.accepted? || self.saved_change_to_attribute?(:original_data).present? == false
       self.work_name_strings.each do |cns|
+        # msk since with addition of update_from_existing_work_name_strings method
+        # otherwise would re-create the contributor
+        next if cns.destroyed? 
+        
         # Find all People with a matching PenName claim
         claims = PenName.for_name_string(cns.name_string_id)
-        # Find or create a Contributorship for each claim
-        claims.each do |claim|
-          Contributorship.find_or_create_by_work_id_and_person_id_and_pen_name_id_and_role(
-              :work_id => self.id, :person_id => claim.person.id, :pen_name_id => claim.id, :role => cns.role)
+        
+        claims.each do |claim|          
+          next if claim.person.nil? # MSK in case a person is deleted, which may exist if index out-of-sync
+          logger.debug("\n\n ===== FIND-OR-CREATE for: #{claim.inspect} =========\n\n")
+          
+          # find or create a Contributorship for each claim
+          Contributorship.find_or_create_by(work_id: self.id, person_id: claim.person.id, pen_name_id: claim.id, role: cns.role)
         end
       end
+    else
+      logger.info "\n\n===== NOTHING TO DO - CREATE CONTRIBUTORSHIPS =====\n\n"
     end
   end
 
@@ -604,6 +699,10 @@ class Work < ActiveRecord::Base
 
   def update_authorities
     if self.publication
+      # self.publication could be nil
+      logger.debug("\n\n ================== IN WORK_UPDATE_AUTHORITIES on ID: #{self.id} ==============\n")
+      logger.debug("self.publication.authority_id: #{self.publication.authority_id} ==============\n")
+      logger.debug("self.publication.authority.publisher_id: #{self.publication.authority.publisher_id} ==============\n")
       self.publication_id = self.publication.authority_id
       self.publisher_id = self.publication.authority.publisher_id
     end
@@ -807,6 +906,7 @@ class Work < ActiveRecord::Base
   end
 
   def reindex_before_destroy
+    logger.debug("\n\n ==== CALLING WORKS.reindex_before_destroy TO_DELETE_SOLR_RECORD ++ work id #{self.id}  ====\n\n")
     Index.remove_from_solr(self)
   end
 
@@ -855,23 +955,353 @@ class Work < ActiveRecord::Base
   # Arguments:
   #  * Work object
   #  * Array of hashes {:name => "Donohue, Tim", :role=> "Author | Editor" }
-  def update_work_name_strings(name_strings_hash)
-    return unless name_strings_hash
-    #Remove *ALL* existing name_string(s).  We want to add them
-    #all again from scratch, since the order of Authors/Editors *matters*
-    self.work_name_strings.clear
+  def update_from_existing_work_name_strings(new_name_strings_hash, original_work_name_strings)
+    logger.debug("\n\n============ ENTERING_METHOD::update_from_existing_work_name_strings ============\n\n")
+    
+    return unless new_name_strings_hash
+    
+    # this is work_name_strings.id and name_string.name mashup
+    # adding encoding call to ensure matches
+    #names_arr = original_work_name_strings.collect{|t| [NameString.find(t.name_string_id).name, t.id, 'P']}
+    names_arr = original_work_name_strings.collect{|t| 
+      [NameString.find(t.name_string_id).name.force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8), t.id, 'P']
+    }
+    
+    new_name_strings_hash.each_with_index do |h,pos|
+      name = h[:name]
+      0.upto(names_arr.length-1) {|loc| 
+        if (names_arr[loc][0] <=> name) == 0 && names_arr[loc][2] == 'P'
+         new_name_strings_hash[pos][:wns_id] = names_arr[loc][1]
+         # in case of duplicate names, need to remove from potential list
+         # not sure about ordering differences between passed in and original and if it will cause a problem
+         names_arr[loc][2] = 'F'  
+         break
+        end
+      }
+    end
+    
+    logger.debug("\n\n========ORIGINAL_WORK_NAME_STRINGS ===============\n")
+    logger.debug(original_work_name_strings.inspect)
+    
+    logger.debug("\n\n=========NAME_STRING_ARR ==================\n")
+    logger.debug(names_arr.inspect)
+    
+    logger.debug("\n\n=======NEW_NAME_STRINGS_HASH_WITH_ADDED_WNS_ID ================\n")
+    logger.debug(new_name_strings_hash.inspect)
+    
+    names_to_skip = Array.new
+    
+    # changing to <= for check in cases where changing only an existing name
+    # from one that was a contrib to one that is not, Michelle found bug NOV 16 2015
+    #if new_name_strings_hash.length <= original_work_name_strings.length
+      
+    logger.debug("\n\n =========INITIAL-CHECK-ON-CONTRIBUTORSHIP CHANGE =========== \n")
+    
+    narr = new_name_strings_hash.collect{|x| x[:wns_id]}
+    oarr = original_work_name_strings.collect{|x| x.id}
+    
+    logger.debug("new names: #{narr.inspect}")
+    logger.debug("original: #{oarr.inspect}")
+    
+    names_to_skip = pen_names_submit_diff(narr, oarr).collect{|x| x }.compact
+    
+    logger.debug("\n\n ========== SOME-NAMES-EXIST-TO-DELETE ============\n")
+    logger.debug("#{names_to_skip.inspect}")
+    
+    names_to_skip.each do |wid|
+      logger.debug("FINDING_WNS_WITH_ID: #{wid}")
+      
+      twns = WorkNameString.find(wid)
+      
+      pids = PenName.where(:name_string_id => twns.name_string_id) # may be more than one
+      pids.each do |pid|
+        cx = Contributorship.find_by_work_id_and_pen_name_id_and_role(twns.work_id, pid.id, twns.role)
+        if cx
+          logger.debug("\n\n === DELETING_CONTRIBUTOR: #{cx.inspect}")
+          Contributorship.delete(cx.id)
+        end
+      end
+      
+      # and remove work_name_string
+      self.work_name_strings.each do |sw| 
+        if sw.id == twns.id
+          logger.debug("DELETING WNS: #{twns.inspect}")
+          sw.delete 
+        end
+      end
+      
+      # revise original hash to reflect deletions
+      # as this is ActiveRecord:Relation no longer supports delete_if, turn into an array 
+      # original_work_name_strings.delete_if{|owns| owns.id == twns.id}
+      original_work_name_strings.to_a.delete_if{|owns| owns.id == twns.id}
+    end
+        
+    existing_wns = original_work_name_strings.dup # don't think we really need the dup
+    counter = 0
+    new_name_strings_hash.flatten.each_with_index do |ns_hash, position|
+      
+      break if existing_wns[position].nil?
+      
+      # increment, is there a better way since only used to see about any remaining
+      counter += 1
+       
+      # need name from existing work_name_strings
+      wns = existing_wns[position]
+      wns_name = wns.name_string.name
+      
+      # are they the same person or have the same role, if not
+      unless ns_hash[:name] == wns_name && ns_hash[:role] == wns[:role]
 
-    #Re-add all name string(s) to list
+        machine_name = make_machine_name(ns_hash[:name])
+        name = ns_hash[:name].strip
+        
+        ## if not using varbinary in name field need to do the following
+        # using binary on column may cause problems with index
+        #if NameString.where(machine_name: machine_name, name: name).exists?
+        #  exists= NameString.where(machine_name: machine_name, name: name).first
+        #  unless (exists.name <=> name) == 0
+        #    exists.name = name
+        #    exists.save
+        #  end
+        #end
+        
+        ns = NameString.find_or_create_by(machine_name: machine_name, name: name)
+        
+        # ABOVE HAS POTENTIAL hyphen issue as of June 20, 2014 -- see file aa_hyphenated ......
+        # MAY NEED TO DO THE FOLLOWING, BUT WOULD NEED TO remove the unique index just on machine_name
+        # AND make the unique index a combination of both fields
+        # ns = NameString.where(machine_name: machine_name, name: name).first_or_create
+
+        # already know that this name is not in current work_name_string record
+        # so find original wns record to update
+        
+        arr = [wns.work_id, wns.name_string_id, wns.role, wns.position]
+        origwns = WorkNameString.find_by_work_id_and_name_string_id_and_role_and_position(*arr)
+        logger.debug("\n\n====== FOUND_ORIG WNS =============\n")
+        logger.debug(origwns.inspect)
+        
+        origwns.name_string_id = ns.id # assigning changed name
+        
+        # bypass validation and callback checks, which might otherwise occur
+        # if editing a PenName to a wns with same penname
+        # laurie c from laurie c a (when a lauri c already exists)
+        
+        origwns.update_column(:role, ns_hash[:role]) if ns_hash[:role] != wns[:role]
+        origwns.update_column(:name_string_id, ns.id) 
+        logger.debug("\n\n SAVED new name_string_id: #{ns.id} for work_name_string with id: #{origwns.id}\n")
+
+        # do I add the work_name_strings.id to the hash for ordering if sequence of names has changed?
+        new_name_strings_hash[position][:wns_id] = origwns.id
+        
+        # also need to update contributorships, if exist in original record
+        # and if this is the same person, need to believe this new name_string is being associated as well
+        contribs = self.contributorships.select {|cc| cc.pen_name.name_string_id == wns.name_string_id && cc.work_id == self.id}
+        if contribs.blank? == false
+          logger.debug("\n\n ========== FOUND #{contribs.length} FOR THIS WORK ===========\n")
+          
+          contribs.each do |cc| 
+            logger.debug(" CONTRIBUTORSHIP-WORK, finding PenName match on this name_string \n")
+            logger.debug(cc.inspect)
+            
+            # BUT SHOULD I ALSO DELETE THE original contrib for this person and this work????
+            if PenName.where(name_string_id: ns.id, person_id: cc.person_id).exists?
+              logger.debug("\n\n ====NAME-STRING-FOR-PERSON exists: #{cc.person_id} with name_string_id: #{ns.id} ===\n")
+              #npn = PenName.find_or_create_by_name_string_id_and_person_id(ns.id, cc.person_id)
+              npn = PenName.find_or_create_by(name_string_id: ns.id, person_id: cc.person_id)
+
+              logger.debug("\n ====AM-UPDATING CONTRIB #{cc.id} WITH PEN_NAME_ID CHANGE TO: #{npn.id} from #{cc.pen_name_id}====\n")
+              cc.pen_name_id = npn.id
+              cc.role = ns_hash[:role] # wns.role
+              cc.save
+            end
+            
+          end
+          
+        else
+          logger.debug("\n\n ==== NO-EXISTING-CONTRIB: BUT COULD-HAVE AN ASSOCIATION-CREATED======\n")
+        end
+        
+        # but if not found as an existing contrib
+        # need to see if this name_string exists as a PenName
+        # and if so, create a basic contrib record which will give a checkbox to the new name
+        #
+        # this may find nothing, which is okay
+        
+        logger.debug("n ==== SEARCHING-PENNAMES-FOR-NAME_STRING_MATCH ======\n")
+        pnames = PenName.where(name_string_id: ns.id)
+        pnames.each do |pns|
+          # find the contributor, IF they exist for the: pen_name and work
+          # and give them an initial linking
+          
+          
+          logger.debug("\n===== pen_name_id: #{pns.id} for person: #{pns.person_id}  ON WORK: #{self.id} ====\n")
+          
+          contr = Contributorship.new
+          contr.pen_name_id = pns.id
+          contr.person_id = pns.person_id
+          contr.work_id = self.id
+          contr.role = 'Author' # defaulting
+          contr.contributorship_state_id = 1
+          contr.save
+          logger.debug("\n ===== CREATING-NEW-CONTRIB ====\n")
+          logger.debug(contr.inspect)
+        end
+
+      end
+    end
+    
+    # then would need to delete any remaining work_name_strings from the existing work
+    logger.debug("ANY REMAINING EXISTING WORK_NAME_STRINGS")
+    logger.debug( self.work_name_strings.to_a.slice(counter, self.work_name_strings.length).inspect )
+    
+    # next should be one or the other, eg. either remaining_wns is not empty? or new names is bigger
+    remaining_wns = self.work_name_strings.to_a.slice(counter, self.work_name_strings.length).nil? ? [] :
+      self.work_name_strings.to_a.slice(counter, self.work_name_strings.length)
+          
+    if remaining_wns.empty?
+      # any additional names added to this work, take advantage of existing code in a new method
+      if counter < new_name_strings_hash.length
+        add_new_name_strings_submission( new_name_strings_hash.slice(counter, new_name_strings_hash.length), counter )
+      end
+    
+    else
+      
+      if names_to_skip.empty?
+        # if there is a contributor, need to delete them as well
+        remaining_wns.each do |rm_wns| 
+          pids = PenName.where(:name_string_id => rm_wns.name_string_id) # may be more than one
+          pids.each do |pid|
+            cx = Contributorship.find_by_work_id_and_pen_name_id_and_role(rm_wns.work_id, pid.id, rm_wns.role)
+            if cx
+              logger.debug("\n\n === DELETING_CONTRIBUTOR: #{cx.inspect}")
+              Contributorship.delete(cx.id)
+            end
+          end
+        end
+      
+        # remove all the extra prior saved work_name_strings
+        counter.upto(self.work_name_strings.length-1) do |x|
+          logger.debug("DELETING WNS: #{self.work_name_strings[x].inspect}")
+          self.work_name_strings[x].delete # also sets destroyed? flag 
+        end
+      end
+      
+    end
+    
+    # RE-ORDER IF NEC
+    #sarr = new_name_strings_hash.collect{|item| item.to_a.flatten[5]}
+    sarr = new_name_strings_hash.collect{|item| item[:wns_id] }
+    
+    logger.debug("\n\n=============LOOKING-AT-REORDER OF WNS ============\n")
+    logger.debug(sarr.inspect)
+    
+    cnt=0
+    unless [true] == sarr.collect{|it| cnt+=1; cnt == self.work_name_strings.find(it).position}.uniq 
+      
+      if new_name_strings_hash.collect{|x| x[:wns_id]}.compact.length == new_name_strings_hash.length
+        logger.debug("\n\n ======== RE-ORDER-WORK_NAME_STRINGS ============ \n")
+        new_name_strings_hash.each_with_index do |item, iteration|
+          w = self.work_name_strings.find(item[:wns_id])
+          unless w.position == iteration + 1
+            w.update_column(:position, iteration + 1) 
+            logger.debug("SAVING WID: #{w.id} => #{item[:wns_id]} to position: #{iteration + 1}")
+          end
+        end
+        
+      else
+        logger.debug("\n\n======== WNS-NEEDS-REORDERING-BUT hash[:wns_id] is missing somewhere =======\n\n")
+        logger.debug(new_name_strings_hash.inspect)
+      end
+      
+    else
+      logger.debug("\n\n ======== NOT NECESSARY TO RE-ORDER-WORK_NAME_STRINGS ============ \n")
+    end
+    
+  end
+
+
+
+  # This is new, but essentially the same as original/modified update_work_name_strings
+  def add_new_name_strings_submission(name_strings_hash, counter)
+    return unless name_strings_hash
+    
+    position = counter
     name_strings_hash.flatten.each do |cns|
       machine_name = make_machine_name(cns[:name])
       name = cns[:name].strip
-      name_string = NameString.find_or_create_by_machine_name(:machine_name => machine_name, :name => name)
-      unless name_string.name == name
-        name_string.name = name
-        name_string.save!
+      logger.debug("ADD_NEW_NAME_STRING_SUBMISSION: #{name}")
+      position += 1
+      
+      ## new idea, when change is only in Case, Parry C. from Parry c.
+      ## using varbinary on column may cause problems with index
+      #if NameString.where(machine_name: machine_name, name: name).exists?
+      #  exists= NameString.where(machine_name: machine_name, name: name).first
+      #  unless (exists.name <=> name) == 0
+      #    exists.name = name
+      #    exists.save
+      #  end
+      #end
+      
+      name_string = NameString.find_or_create_by(machine_name: machine_name, name: name)
+      
+      ## March 08, 2016
+      ## REMOVING FIND OR CREATE AS THERE MAY BE MORE THAN ONE WITH THE SAME NAME
+      ## BUT IT COULD BE THAT A PERSON IS BOTH AN AUTHOR AND EDITOR
+      ## SO I MAY NEED TO ADD NEW FUNCTIONALITY ONLY in the ELSE BELOW where it says "REQUIRED_PEN_NAME DOES NOT EXIST "
+      ## new functionality required adding position to the unique validation in WorkNameString model
+      
+      logger.debug("\n\n CHECKING EXISTANCE OF CONTRIBUTOR FOR A WORK for work: #{self.id} ===============\n")
+      if WorkNameString.where(name_string_id: name_string.id, role: cns[:role], work_id: self.id).exists?
+        logger.debug(" ============= ADDING_ADDITIONAL_CONTRIBUTOR TO WORKNAME_STRING FOR THIS WORK =====\n\n")
+        # IF THIS CALL FAILS it's because position being requested is already taken. the UNIQUE key requires distinct all of the following
+        nwns = self.work_name_strings.create(name_string_id: name_string.id, role: cns[:role], position: position)
+      else
+        nwns = self.work_name_strings.find_or_create_by(name_string_id: name_string.id, role: cns[:role], position: position)
       end
-      self.work_name_strings.create(:name_string_id => name_string.id, :role => cns[:role])
+      
+      cns[:wns_id] = nwns.id
+      
+      # find the pen_name record for the new or existing name_string
+      # an edit with a known pen name will make the association and the contrib get added
+      pns = PenName.find_by_name_string_id(name_string.id) 
+      if pns.blank? == false
+
+        # find the contributor, if they exist for this person, work, and role
+        con = Contributorship.find_by_person_id_and_work_id_and_role(pns.person_id, self.id, cns[:role])
+        unless con.blank?
+          logger.debug("== IN WORKS_MODEL_FOUND_CONTRIBUTOR ==")
+          unless con.pen_name_id.eql?(pns.id)
+            logger.debug("AM UPDATING ATTRIBUTES OF THIS CONTRIBUTOR")
+            logger.debug(con.inspect)
+            logger.debug("ASSIGNING_NEW_PEN_NAME_ID = #{pns.id} to #{con.id}")
+            # update contributorship so that mapping to pen_name is updated and verify author works
+            con.update_attributes(:pen_name_id => pns.id)
+          end
+        else
+          # this would make the association programatically, bad idea, staff need to do it manually
+          # and they can since work_name_string has been created
+          #logger.debug("\n\n== CREATING NEW CONTRIBUTORSHIP IN WORKS_MODEL ==")
+          #Contributorship.find_or_create_by_person_id_and_work_id_and_role_and_pen_name_id(pns.person_id, self.id, cns[:role], pns.id)
+          logger.debug("\n\n ========= DO I ADD A POSSIBLE-CONTRIBUTORSHIP SINCE THIS PEN_NAME EXISTS")
+          logger.debug("PenName found was: #{pns.inspect}")
+          
+          #contr = Contributorship.new
+          #contr.pen_name_id = pns.id
+          #contr.person_id = pns.person_id
+          #contr.work_id = self.id
+          #contr.role = 'Author' # defaulting
+          #contr.contributorship_state_id = 1
+          #contr.save
+          
+        end
+        
+      else
+        logger.debug("\n\n ============= REQUIRED_PEN_NAME DOES NOT EXIST ==============\n\n")
+        logger.debug("== I THINK STAFF HAVE TO CREATE THE PERSON FIRST, AND MAKE SURE THE PEN NAME EXISTS == \n\n")
+      end
+      
     end
+    
   end
 
 # Create WorkNameStrings, after a Work is created successfully
@@ -889,6 +1319,35 @@ class Work < ActiveRecord::Base
   def set_initial_publication(publication)
     self.publication = publication.authority
     self.initial_publication_id = publication.id
+  end
+
+  def get_start_page(value)
+    #return "" if value.nil? || value.empty?
+    #start_page = value.to_s
+    start_page = get_attribute_dupe_info('start_page') 
+      
+    # some lousy ris formatted data aren't correctly parsed (in one case, synapse python-based original)
+    start_page = start_page.split('-')[0].to_s.strip if start_page.include?('-') 
+    return start_page
+  end
+  
+  # found this to be the case when a dupe key is created before the attributes are saved
+  # in what is a very convuluted process 
+  def get_attribute_dupe_info(attr_name)
+    attrib = case self.send(attr_name).nil?
+    when true 
+      self.attributes[attr_name].to_s ||= ''
+    else
+      self.send(attr_name).to_s
+    end
+  end
+
+  # Adding
+  def pen_names_submit_diff(x,y)
+    o = x
+    x = x.reject{|a| if y.include?(a); a end }
+    y = y.reject{|a| if o.include?(a); a end }
+    x | y
   end
 
 end
