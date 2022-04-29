@@ -37,7 +37,11 @@ class ImportsController < ApplicationController
   def create
     # Start by creating the Attachment
     # @attachment = ImportFile.new(params[:import])
+    #byebug
+    #p import_params.inspect
     @attachment = ImportFile.new(import_params)
+    #p @attachment.valid?
+    # Attachment was not being saved, added for Loyola
     @attachment.save
 
     # Init our Import
@@ -47,6 +51,7 @@ class ImportsController < ApplicationController
 
     # Associate Attachment to Import
     @import.import_file = @attachment
+    @import.import_file.save
 
     if @import.import_file.id.blank?
       @import.destroy
@@ -136,7 +141,7 @@ class ImportsController < ApplicationController
       # Error!
       flash[:error] = t('common.imports.flash_update_error')
       respond_to do |format|
-        format.html { redirect_to :back }
+        format.html { redirect_back(fallback_location: default_home_path) }
       end
     end
   end
@@ -181,7 +186,7 @@ class ImportsController < ApplicationController
   end
 
   def import_params
-    params.require(:import).permit(:data).to_h
+    params.require(:import).permit(:data, :user_id).to_h
   end
 
 end

@@ -529,6 +529,20 @@ class WorksController < ApplicationController
     authorize!(:admin, work)
   end
 
+  def update_staff_notes(snote, wid)
+    if StaffWorkNote.where(work_id: wid).exists?   
+      swn = StaffWorkNote.where(work_id: wid).first
+      if swn.note != snote
+        swn.note = snote
+        swn.save
+      end
+    else    
+      StaffWorkNote.find_or_create_by(work_id: wid) do |swn|
+        swn.note = snote
+      end
+    end
+  end
+
   def work_params
     params.require(:work).permit(:type,:title_primary,:title_secondary,:title_tertiary,:volume,:issue,:start_page,:end_page,:abstract,:notes,:links,:publication_id,:publisher_id,:language,:copyright_holder,:publication_place,:sponsor,:date_range,:identifier,:location,:publication_date)
   end
