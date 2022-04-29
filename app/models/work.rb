@@ -21,6 +21,7 @@ class Work < ActiveRecord::Base
   #### Associations ####
   belongs_to :publication
   belongs_to :publisher
+  has_one :staff_work_note, dependent: :destroy
 
   #has_many :name_strings, :through => :work_name_strings, :order => "position"
 
@@ -312,7 +313,8 @@ class Work < ActiveRecord::Base
   end
 
   def delete_non_work_data(h)
-    [:klass, :work_name_strings, :publisher, :publication, :issn_isbn, :keywords, :source, :external_id].each do |key|
+    [:klass,:work_name_strings,:publisher,:publication,:issn_isbn,:keywords,:source,
+      :external_id,:staff_work_note,:identifier_strings].each do |key|
       h.delete(key)
     end
     h
