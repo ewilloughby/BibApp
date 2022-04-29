@@ -1,3 +1,6 @@
+-# encoding: UTF-8
+-# Page shows up on Work edit form
+-#
 -# Used by Auto-Complete functionality
 -# Add a single list item to a list, with a link to remove it
 -#
@@ -14,4 +17,4 @@
 %li.list_item{:id => "author_#{ns_id}", :class => "movable"}
   = hidden_field_tag "author_roles[]", "#{ns_role}"
   = text_field_tag "authors[]", ns_name, {:class=>'text'}
-  = link_to_function t('works.forms.fields.author_list_item.remove'), 'remove_enclosing_list_item(this);'
+  = link_to t('works.forms.fields.author_list_item.remove'), '', class: 'remove_enclosing_list_item'
