@@ -55,7 +55,7 @@ class PeopleIndex
 
   }
 
-  # to delete a single person, this worked when I created a person for testing
+  # to delete a single person
   # the id is the record to be deleted which can be retrieved by using a query_param and filter such as
   # to find the ID
   # query_params = { query: ["last_name:Some", "first_name:First"], filter_queries: [], field_list: ['*'], rows: 15}
@@ -197,7 +197,7 @@ class PeopleIndex
         :query => query_string,
         :filter_queries => filter,
         #:query_type => 'alphapaging', # doesn't work, gem doesnt allow query_type in standard request
-        :field_list => ['display_name','people_data','active','verified_works_count','group_id'],
+        :field_list => ['display_name','people_data','active','verified_works_count','group_id','orcid_id'],
         #:start => self.start(page, rows),
         #:sort => [{sort.to_s => order.to_sym}], 
         :rows => rows 
