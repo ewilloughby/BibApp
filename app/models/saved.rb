@@ -20,5 +20,9 @@ class Saved
       Work.find_by_id(id)
     end.compact
   end
+  
+  def all_work_ids
+    @items
+  end
 
 end

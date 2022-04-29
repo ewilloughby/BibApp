@@ -6,9 +6,12 @@ class Attachment < ActiveRecord::Base
 
   #If we later want to revert to the default paperclip 3 style, change :id to :id_partition and move
   #the assets from abcdefghi to abc/def/ghi under data.
-  has_attached_file :data, :url => '/system/data/:id/:style/:basename.:extension'
+  has_attached_file :data, :url => '/system/data/:id/:style/:basename.:extension', validate_media_type: false
   validates_attachment_size :data, :in => 1.byte...100.megabytes
   validates_attachment_presence :data
+
+  #Adding required validation as of Paperclip 4
+  
 
   # List of all currently enabled Attachment types
   def self.types

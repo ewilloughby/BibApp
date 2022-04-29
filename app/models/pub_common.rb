@@ -6,7 +6,7 @@ require 'stop_word_name_sorter'
 require 'solr_helper_methods'
 require 'solr_updater'
 
-class PubCommon < ActiveRecord::Base
+class PubCommon < ApplicationRecord
   self.abstract_class = true
 
   include MachineNameUpdater
@@ -18,10 +18,11 @@ class PubCommon < ActiveRecord::Base
 
   # Convert object into semi-structured data to be stored in Solr
   def to_solr_data
-    "#{name}||#{id}"
+    "#{name}||#{id}".force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8)
   end
 
   def authority_for
+    logger.debug("\n\n ============= CALLING_PUB_COMMON_AUTHORITY_FOR with #{self.id} and #{self.class.to_s} ====\n")
     self.class.for_authority(self.id)
   end
 
@@ -29,6 +30,7 @@ class PubCommon < ActiveRecord::Base
     %Q(#{self.class.to_s.downcase}_id:"#{self.id}")
   end
 
+  # SEE NOTE BELOW, what would be indexed here
   def reindex_callback
     Index.batch_index
   end
@@ -40,6 +42,15 @@ class PubCommon < ActiveRecord::Base
     return letters
   end
 
+
+  # TODO with SOLR 6.2
+  # CAN I simplify the SOLR update, and not update the entire work 
+  # NEED TO ALSO DETERMINE HOW THIS CALL IS DIFFERENT FROM UPDATING A BATCH OF NEW WORKS
+  # (unless I can determine that only fields relating to Pen Name will be updated)
+  #  if only the person related things have changed I can do add and set for partial updates directly
+  # also see same logic in models/pen_name.rb
+
+  # being called from publication and publisher controllers
   def self.update_multiple(pub_ids, auth_id)
     pub_ids.each do |pub|
       update = self.find_by_id(pub)
@@ -47,6 +58,8 @@ class PubCommon < ActiveRecord::Base
       update.do_reindex = false
       update.save
     end
+    
+    # what would be indexed cause the work may not have changed?? haven't tested
     Index.batch_index
   end
 

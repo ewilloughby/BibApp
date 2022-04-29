@@ -53,6 +53,8 @@ class Import < ActiveRecord::Base
   end
 
   def accept_import
+    #byebug
+    #p self.inspect
     self.delay.process_accepted_import
   end
 
