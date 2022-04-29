@@ -1,5 +1,5 @@
 # Index Observer:
-#   Performs Solr re-indexing for BibApp using Index model and PeopleIndex as of 2015
+#   Performs Solr re-indexing for BibApp using Index model and PeopleIndex
 class IndexObserver < ActiveRecord::Observer
 
   cattr_accessor :skip

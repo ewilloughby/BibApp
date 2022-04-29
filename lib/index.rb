@@ -29,7 +29,7 @@ class Index
   
   # NEW FIELDLIST with SOLR 6.3
   # using this in Typhoeus updates but may not be necessary now
-  SOLR_FIELDLIST = %w{pk_i id _version_ orcid_id title title_secondary title_tertiary abstract sort_title issue volume type start_page status 
+  SOLR_FIELDLIST = %w{pk_i id _version_ title title_secondary title_tertiary abstract sort_title issue volume type start_page status 
     issn_isbn publication publication_id publication_data publisher publisher_id publisher_data year name_strings name_string_id authors authors_data editors_data people people_data first_author_editor_sortkey 
      groups groups_data keywords type_facet year_facet name_string_facet person_facet title_lcsort title_dupe_key person_id research_focus  
     group_facet publication_facet publisher_facet keyword_facet name_string_dupe_key keyword_id name_strings_data group_id person_active yearmonth_range}
@@ -40,7 +40,6 @@ class Index
       # Work
       :pk_i => :id, #store Work ID as pk_i in Solr
       :id => Proc.new { |record| record.solr_id }, #create a unique Solr ID for Work
-      :orcid_id => :orcid_id,
       :title => :title_primary,
       :title_secondary => Proc.new { |record| record.title_secondary.blank? ? nil : string_normalize(record.title_secondary) },
       :title_tertiary => Proc.new { |record| record.title_tertiary.blank? ? nil : string_normalize(record.title_tertiary) },

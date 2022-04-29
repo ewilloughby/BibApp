@@ -27,7 +27,6 @@ class PeopleIndex
   SOLR_PEOPLEMAPPING = {
     
       :id => :id, # is persons id
-      :orcid_id => :orcid_id,
       :first_name => :first_name,
       :middle_name => :middle_name,
       :last_name => :last_name,
@@ -197,7 +196,7 @@ class PeopleIndex
         :query => query_string,
         :filter_queries => filter,
         #:query_type => 'alphapaging', # doesn't work, gem doesnt allow query_type in standard request
-        :field_list => ['display_name','people_data','active','verified_works_count','group_id','orcid_id'],
+        :field_list => ['display_name','people_data','active','verified_works_count','group_id'],
         #:start => self.start(page, rows),
         #:sort => [{sort.to_s => order.to_sym}], 
         :rows => rows 

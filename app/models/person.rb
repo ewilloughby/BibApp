@@ -108,6 +108,13 @@ class Person < ActiveRecord::Base
     end
   end
 
+  # unique index duplicate key issue
+  def orcid_id=(value)
+    unless value.empty?
+      write_attribute(:orcid_id, value) # same as self[:attribute_name] = value
+    end
+  end
+
   def name
     first_last
   end
