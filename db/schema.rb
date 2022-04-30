@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_29_032619) do
+ActiveRecord::Schema.define(version: 2022_04_30_002026) do
 
   create_table "attachments", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "asset_id"
@@ -77,6 +77,10 @@ ActiveRecord::Schema.define(version: 2022_04_29_032619) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "queue"
+    t.integer "delayed_reference_id"
+    t.string "delayed_reference_type"
+    t.index ["delayed_reference_id"], name: "delayed_jobs_delayed_reference_id"
+    t.index ["delayed_reference_type"], name: "delayed_jobs_delayed_reference_type"
   end
 
   create_table "external_system_uris", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -407,6 +411,7 @@ ActiveRecord::Schema.define(version: 2022_04_29_032619) do
     t.integer "publication_date_month"
     t.integer "publication_date_day"
     t.string "sort_name"
+    t.integer "import_job_id"
     t.index ["batch_index"], name: "batch_index"
     t.index ["machine_name"], name: "work_machine_name"
     t.index ["publication_id"], name: "fk_work_publication_id"
