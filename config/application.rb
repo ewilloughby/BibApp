@@ -80,3 +80,6 @@ end
 require File.join(Rails.root, 'config', 'personalize.rb')
 require 'error_handler'
 require 'index'
+require 'index_atomic_updates'
+require 'bibapp_solr_data_update'
+require 'bibapp_solr_person_update'

@@ -12,8 +12,8 @@ class BibappSolrDataUpdate
   
   # SOLR FIELDS from index.rb via SOLR_MAPPING and any others in SOLR 7.1 schema
   ALL_FIELDLIST = [:pk_i, :id, :title, :title_secondary, :sort_title, :volume, :start_page, :abstract, :status, :issn_isbn, 
-    :type, :first_author_editor_sortkey, :publication, :publication_data, :publisher_data, :publisher, :publisher_id, :publication_id, 
-    :title_dupe_key, :name_string_dupe_key, :year, :year_facet, :source_facet, :orcid_id, :title_tertiary, :issue, :name_strings, 
+    :type, :publication, :publication_data, :publisher_data, :publisher, :publisher_id, :publication_id, 
+    :title_dupe_key, :name_string_dupe_key, :year, :year_facet, :source_facet, :title_tertiary, :issue, :name_strings, 
     :name_strings_data, :authors_data, :editors_data, :keywords, :people, :people_data, :research_focus, :person_active, 
     :groups, :groups_data, :keyword_id, :person_id, :name_string_id, :group_id, :created_at, :updated_at, :_version_, :publisher_facet, 
     :name_string_facet, :person_facet, :type_facet, :publication_facet, :group_facet, :keyword_facet, :authors, :updated_at_sort, 

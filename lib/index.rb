@@ -30,7 +30,7 @@ class Index
   # NEW FIELDLIST with SOLR 6.3
   # using this in Typhoeus updates but may not be necessary now
   SOLR_FIELDLIST = %w{pk_i id _version_ title title_secondary title_tertiary abstract sort_title issue volume type start_page status 
-    issn_isbn publication publication_id publication_data publisher publisher_id publisher_data year name_strings name_string_id authors authors_data editors_data people people_data first_author_editor_sortkey 
+    issn_isbn publication publication_id publication_data publisher publisher_id publisher_data year name_strings name_string_id authors authors_data editors_data people people_data 
      groups groups_data keywords type_facet year_facet name_string_facet person_facet title_lcsort title_dupe_key person_id research_focus  
     group_facet publication_facet publisher_facet keyword_facet name_string_dupe_key keyword_id name_strings_data group_id person_active yearmonth_range}
   
@@ -60,10 +60,10 @@ class Index
       :name_string_id => Proc.new { |record| record.name_strings.collect { |ns| ns.id } },
       :name_strings_data => Proc.new { |record| record.name_strings.collect { |ns| ns.to_solr_data } },
 
-      # MSK
+      # MSK uses first_author, source_facet
       # moving first_author into a string field with docValues for SOLR 6.2 and keeping diacritic chars for sorting
-      :first_author_editor_sortkey => Proc.new{|record| record.first_author_editor_sortkey},
-      :source_facet => Proc.new{|record| record.source_facetkey},
+      #:first_author_editor_sortkey => Proc.new{|record| record.first_author_editor_sortkey},
+      #:source_facet => Proc.new{|record| record.source_facetkey},
       # also a title_lcsort => :title_primary in solr via copyField on title
       # changing this for SOLR 6.2, now a string field with docValues = true 
       #:title_lcsort => Proc.new{|record| record.title_lc_sort},
