@@ -373,6 +373,7 @@ DEPENDENCIES
   mysql2 (= 0.5.3)
   namecase
   net-ldap
+  nokogiri (>= 1.13.4)
   omniauth
   puma
   rails (~> 6.0.4)
