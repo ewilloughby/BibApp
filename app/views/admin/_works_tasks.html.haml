@@ -1,5 +1,5 @@
 
-%li=link_to t('common.works.new'), can?(:manage, Import) ? user_import_path(current_user) : new_work_path
+%li=link_to t('common.works.new'), can?(:manage, Import) ? new_user_import_path(current_user) : new_work_path
 - if can?(:manage, :all)
   %li=link_to t('common.contributorships.verify'), admin_contributorships_path
   %li=link_to t('common.works.duplicate'), admin_duplicates_url
