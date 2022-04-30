@@ -5,9 +5,11 @@ class PeopleController < ApplicationController
   include KeywordCloudHelper
 
   # Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy, :batch_csv_show, :batch_csv_create]
+  #before_action :login_required, :only => [:new, :create, :edit, :update, :destroy, :batch_csv_show, :batch_csv_create]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :batch_csv_show, :batch_csv_create]
 
   load_resource
+  skip_authorization_check :only => [:index, :show, :find_person]
 
   make_resourceful do
     build :index, :new, :create, :show, :edit, :update, :destroy
@@ -136,7 +138,7 @@ class PeopleController < ApplicationController
 
     else #Only perform create if 'save' button was pressed
 
-      @person = Person.new(params[:person])
+      @person = Person.new(person_params)
       @dupeperson = Person.find_by_uid(@person.uid)
 
       if @dupeperson.nil?
@@ -251,6 +253,10 @@ class PeopleController < ApplicationController
     end
 
     render 'batch_csv_show'
+  end
+
+  def person_params
+    params.require(:person).permit(:uid, :first_name, :middle_name, :last_name, :suffix, :display_name, :start_date, :end_date, :email, :phone, :staff_note, :research_focus)
   end
 
 

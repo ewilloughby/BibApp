@@ -15,7 +15,7 @@ class PenNamesController < ApplicationController
 
     before :new do
       #only 'editor' of person can assign a pen name
-      permit "editor of Person"
+      #permit "editor of Person"
 
       @suggestions = NameString.name_like(@person.last_name).order_by_name
       @title = "#{@person.display_name}: #{PenName.model_name.human_pl}"
@@ -24,14 +24,14 @@ class PenNamesController < ApplicationController
 
     before :update do
       #only 'editor' of person can assign a pen name
-      permit "editor of Person"
+      #permit "editor of Person"
     end
   end
 
 
   def create
     #only 'editor' of person can assign a pen name
-    permit "editor of Person"
+    #permit "editor of Person"
 
     if params[:reload]
       @reload = true
@@ -45,7 +45,7 @@ class PenNamesController < ApplicationController
 
   def create_name_string
     #only 'editor' of person can assign a pen name
-    permit "editor of Person"
+    #permit "editor of Person"
 
     name = params[:name_string][:name]
     machine_name = name.gsub(/[\W]+/, " ").strip.downcase
@@ -68,7 +68,7 @@ class PenNamesController < ApplicationController
 
   def destroy
     #only 'editor' of person can destroy a pen name
-    permit "editor of :person", :person => @pen_name.person
+    #permit "editor of :person", :person => @pen_name.person
 
     if params[:reload]
       @reload = true
@@ -119,7 +119,7 @@ class PenNamesController < ApplicationController
   def ajax_setup
     @person = Person.find params[:person_id]
     @name_string = NameString.find params[:name_string_id].split('_').last
-    permit 'editor of :person', :person => @person
+    #permit 'editor of :person', :person => @person
   end
 
   def find_person

@@ -2,7 +2,8 @@ class PublicationsController < ApplicationController
   include PubCommonHelper
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  #before_action :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy]
 
   #cancancan authorization
   load_and_authorize_resource :except => [:index, :show, :inpress, :autocomplete] 
@@ -160,6 +161,22 @@ class PublicationsController < ApplicationController
   end
 
   private
+  def publication_params
+    # didnt work
+    #params.require(:publication).permit(:name, :url, :issn_isbn, :sherpa_id, :publisher_id, :authority_id, :initial_publisher_id)
+    #params.require(:publication).permit(:name, :url, :issn_isbn, publisher: [:publisher_name], authority: [:authority_id])
+    
+    # this either
+    #params.require(:publication).permit(:name, :url, :issn_isbn, :authority_id, publisher: [:publisher_name, :authority_id], 
+    #authority: [:authority_id])
+    
+    # cannot do this, since publisher is not in params
+    #params.require(:publisher).permit(:authority_id, :name, publication: [:name, :publisher_name, :url, :issn_isbn, :authority_id])
+    
+    # not tried
+    #params.require(:publication).permit(:name, :url, :issn_isbn, publisher: [:name, :authority_id])
+    
+  end
 
   def current_objects
     #TODO: If params[:q], handle multiple request types:

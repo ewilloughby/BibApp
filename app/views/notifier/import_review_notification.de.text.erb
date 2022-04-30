@@ -3,7 +3,7 @@ Hallo <%=@user.email %>,
 
 Ihr Import wurde verarbeitet, über unten aufgeführten Link, können Sie ihn aufrufen:
 
-<%= "#{$APPLICATION_URL.chomp("/")}#{user_import_path(@user, @import_id, :locale => @locale)}" %>
+<%= "#{$APPLICATION_URL.chomp("/")}#{user_import_url(@user, @import_id, :locale => @locale)}" %>
 
 Dankeschön
 - Ihr <%= "#{t('personalize.application_name')}" %> Team

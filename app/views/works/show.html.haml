@@ -1,6 +1,6 @@
 - require 'sword_1_3_adapter'
 
-- if current_user_role?("editor", @work)
+- if current_user_has_role?(:editor, @work)
   = render :layout => '/layouts/admin_bar' do
     %li= link_to t('works.show.edit'), edit_work_path
     - if !@work.archived?

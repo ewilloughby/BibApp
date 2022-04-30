@@ -5,7 +5,7 @@ require 'json'
 # https://github.com/liufengyun/hashdiff
 
 
-# replacing lib/index_solr_json to incorporate with synapse_solr_data_update
+# replacing lib/index_solr_json to incorporate with bibapp_solr_data_update
 
 class BibappSolrJsonDoc 
   
@@ -37,8 +37,8 @@ class BibappSolrJsonDoc
           positions << pos
         else
           # is this a problem?? probably
-          Rails.logger.info("Missing NON-SCALAR KEY in synapse_solr_json_doc: #{arr.inspect} | #{@doc.inspect}") 
-          raise StandardError.new("Missing NON-SCALAR KEY in synapse_solr_json_doc: #{arr.inspect}") 
+          Rails.logger.info("Missing NON-SCALAR KEY in bibapp_solr_json_doc: #{arr.inspect} | #{@doc.inspect}") 
+          raise StandardError.new("Missing NON-SCALAR KEY in bibapp_solr_json_doc: #{arr.inspect}") 
         end
       end
     end

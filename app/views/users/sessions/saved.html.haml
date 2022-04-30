@@ -1,0 +1,59 @@
+-# coding: UTF-8
+
+:css
+  form.export_inline {
+    float: left;
+    padding-top: 11.24px;
+  }
+  div.pagination {
+    float: left;
+    padding-right: 12px;
+  }
+  div#sort-by {
+    float: left;
+  }
+  .pagination {
+    border: 0;
+  }
+  ol.span-14.works {
+    border-top: 1px dotted black;
+    padding-top: 8px;
+  }
+  li.even.work, li.odd.work {
+    padding-top: 8px;
+  }
+
+- type_pub = 'saved'
+
+= render :layout => '/layouts/main_body_no_h2' do
+  - if @works.blank?
+    %h2 Saved
+    %p Nothing added yet.
+
+  - elsif @export.present?
+    = render layout: '/layouts/show_style_view', locals: {header: Work.model_name.human_pl, style: @export, ppath: saved_path, type: type_pub} do
+      = render "shared/pagination", total_hits: @saved.items.size
+    
+  - else
+    = render :layout => 'layouts/admin_bar' do
+      %li #{ link_to "Empty saved items?", delete_saved_url}
+
+    %h2 Saved #{@saved.items.size}
+    %div#export-ris-saved-btn=saved_ris_export(t('app.export_button'), params.merge({:total_hits => @saved.items.size})) 
+    
+    = render 'show_options_form'
+
+    .span-17
+      #display_style 
+        #{ will_paginate WillPaginate::Collection.new((params[:page]||1), @rows, @works.count)}
+        - unless @rows.to_i >= @saved.items.size
+          = form_tag "#works", :method => :get, :class => "export_inline" do
+            = hidden_field_tag "page", 1
+            = hidden_field_tag "rows", @works.count
+            = submit_tag "Show All"
+
+    %ol.span-14.works.clear-both
+      - @works.each do |work|
+        = render "shared/proper_work", :work => work, :links => [:find_it, :saved]
+
+    .span-14 #{ will_paginate WillPaginate::Collection.new(@page, @rows, @works.count) }

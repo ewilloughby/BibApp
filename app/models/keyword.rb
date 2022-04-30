@@ -1,6 +1,6 @@
-class Keyword < ActiveRecord::Base
+class Keyword < ApplicationRecord
   has_many :keywordings
-  has_many :works, :through => :keywordings
+  has_many :works, through: :keywordings
 
   # This is necessary because of the common
   # mistake of NOT separating keywords with
@@ -12,6 +12,6 @@ class Keyword < ActiveRecord::Base
   validates_length_of :name, :maximum => 255,
     :message => "of keyword is too long (maximum is 255 characters). Make sure your keywords are separated with semicolons (;)."
 
-    scope :order_by_name, -> { order('name ASC') }
+  scope :order_by_name, -> { order('name ASC') }
 
 end

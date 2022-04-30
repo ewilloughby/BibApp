@@ -1,6 +1,7 @@
-- if current_user_role?("admin", @person)
+- if current_user_has_role?(:admin, @person)
   = render :layout => 'layouts/admin_bar' do
-    %li= link_to t('people.edit.delete'), person_url(@person), :method => :delete, :confirm => t('people.edit.confirm')
+    - if can?(:destroy, @person)
+      %li= link_to t('people.edit.delete'), person_url(@person), :method => :delete, data: {:confirm => t('people.edit.confirm')}
     %li= link_to t('people.edit.add'), new_person_path
 
 = render :layout => 'layouts/main_body', :locals => {:header => edit_header(@person)} do

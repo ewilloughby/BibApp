@@ -1,19 +1,26 @@
 require 'machine_name'
 require 'namecase'
 
-class NameString < ActiveRecord::Base
+class NameString < ApplicationRecord
   include MachineName
 
   #### Associations ####
-  has_many :works, :through => :work_name_strings
-  has_many :work_name_strings, :dependent => :destroy
-  has_many :people, :through => :pen_names
+  #has_many :works, through: :work_name_strings
+  #has_many :work_name_strings, dependent: :destroy
+  #has_many :people, through: :pen_names
+  #has_many :pen_names
+  
+  # switching order for Rails 5+
+  has_many :work_name_strings, dependent: :destroy
+  has_many :works, through: :work_name_strings
   has_many :pen_names
-
+  has_many :people, through: :pen_names
+  
   #### Callbacks ####
 
   #### Named Scopes ####
-  scope :order_by_name, order('name')
+  #scope :order_by_name, order('name')
+  scope :order_by_name, -> { order('name ASC') }
   scope :name_like, lambda { |name| where('name like ?', "%#{name}%") }
 
   before_save :update_machine_name
@@ -35,7 +42,7 @@ class NameString < ActiveRecord::Base
 
 # Convert object into semi-structured data to be stored in Solr
   def to_solr_data
-    "#{name}||#{id}"
+    "#{name}||#{id}".force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8).unicode_normalize(:nfkc)
   end
 
   def to_param
@@ -52,4 +59,10 @@ class NameString < ActiveRecord::Base
   def update_machine_name
     self.machine_name = make_machine_name(self.name) if self.name_changed?
   end
+  
+  # for encoding issue with SOLR
+  def name=(aname)
+    write_attribute(:name, aname.force_encoding('UTF-8').encode('UTF-8')).unicode_normalize(:nfkc)
+  end   
+   
 end

@@ -162,8 +162,19 @@ class WorksController < ApplicationController
 
   #Create a new Work or many new Works
   def create
+    
     #check if we are adding new works directly to a person
     person_from_person_id
+
+    #if @person
+    #  #If adding to a person, must be an 'editor' of that person
+    #  #permit "editor on person", :person => @person
+    #else
+    #  #Default: anyone with 'editor' role (anywhere) can add works
+    #  #permit "editor"
+    #  # but what about an Editor of their own work? though I don't now have a way for editor to create a work
+    #  # which would then be their own work, so sticking with :admin role only
+    #end
 
     #Check if user hit cancel button
     if params['cancel']
@@ -179,11 +190,16 @@ class WorksController < ApplicationController
 
       #Create attribute hash
       r_hash = create_attribute_hash
-
-      @work = Work.create_from_hash(r_hash)
-
+      
+      tswnh = {staff_work_note: r_hash[:staff_work_note]}
+      
+      @work, error_msg = Work.create_from_hash(r_hash)
+      
       if @work.errors.blank?
         ensure_admin(@work, current_user)
+        
+        update_staff_notes(tswnh[:staff_work_note], @work.id) if tswnh[:staff_work_note].blank? == false
+        
         #If this was submitted as an individual work for a specific person then
         #automatically verify the contributorship
         if @person
@@ -205,7 +221,6 @@ class WorksController < ApplicationController
       @work.update_solr
     end
   end
-
   def update
 
     @work = Work.find(params[:id])
@@ -483,7 +498,7 @@ class WorksController < ApplicationController
     @publication = Publication.new
     @publisher = Publisher.new
     @publication.issn_isbn = params[:issn_isbn]
-
+    
     # Sometimes there will be no publication, sometimes it will be blank,
     # sometimes it will have a value. If it's nil or blank we still want
     # to have the @publication[:name] hash in case we're sent back to
@@ -495,9 +510,9 @@ class WorksController < ApplicationController
     attr_hash[:publication] = @publication.name
     attr_hash[:publisher] = @publisher.name
 
-    params[:work].each do |key, val|
-      attr_hash[key.to_sym] = val
-    end
+    
+    # Let staff add notes to works
+    attr_hash[:staff_work_note] = params[:staff_work_note] if params[:staff_work_note]
 
     return attr_hash.delete_if { |key, val| val.blank? }
 
@@ -529,8 +544,22 @@ class WorksController < ApplicationController
     authorize!(:admin, work)
   end
 
+  def update_staff_notes(snote, wid)
+    if StaffWorkNote.where(work_id: wid).exists?   
+      swn = StaffWorkNote.where(work_id: wid).first
+      if swn.note != snote
+        swn.note = snote
+        swn.save
+      end
+    else    
+      StaffWorkNote.find_or_create_by(work_id: wid) do |swn|
+        swn.note = snote
+      end
+    end
+  end
+
   def work_params
-    params.require(:work).permit(:type,:title_primary,:title_secondary,:title_tertiary,:volume,:issue,:start_page,:end_page,:abstract,:notes,:links,:publication_id,:publisher_id,:language,:copyright_holder,:publication_place,:sponsor,:date_range,:identifier,:location,:publication_date)
+    params.require(:work).permit(:type,:title_primary,:title_secondary,:title_tertiary,:volume,:issue,:start_page,:end_page,:abstract,:notes,:links,:publication_id,:publisher_id,:language,:copyright_holder,:publication_place,:sponsor,:location,:publication_date)
   end
 
 end

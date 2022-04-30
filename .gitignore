@@ -23,3 +23,5 @@ public/tolk/
 config/solr.yml
 config/smtp.yml
 config/database.yml
+.byebug_history
+public/system

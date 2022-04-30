@@ -1,0 +1,2 @@
+class StaffWorkNotesController < ApplicationController
+end

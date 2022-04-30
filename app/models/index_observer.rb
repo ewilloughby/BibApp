@@ -1,5 +1,5 @@
 # Index Observer:
-#   Performs Solr re-indexing for BibApp using Index model
+#   Performs Solr re-indexing for BibApp using Index model and PeopleIndex
 class IndexObserver < ActiveRecord::Observer
 
   cattr_accessor :skip
@@ -15,7 +15,10 @@ class IndexObserver < ActiveRecord::Observer
   end
 
   def before_destroy(record)
+    
+    Rails.logger.debug("IN INDEX_OBSERVER_METHOD_BEFORE_DESTORY with #{record.id} AND #{record.type}")
     record.try(:reindex_before_destroy)
+    
   end
 
 end

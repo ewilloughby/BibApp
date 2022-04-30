@@ -1,6 +1,13 @@
 Bibapp::Application.routes.draw do
 
 
+  devise_for :users, path_names: {sign_in: 'login', sign_out: 'logout'}, controllers: { sessions: 'users/sessions' } 
+  devise_scope :user do
+    get 'saved', :to => 'users/sessions#saved', :as => 'saved'
+    get 'delete_saved', :to => 'users/sessions#delete_saved', :as => 'delete_saved'
+    get 'add_many_to_saved', :to => 'users/sessions#add_many_to_saved', :as => 'add_many_to_saved'   
+  end
+
   def make_routes
     resources :works do
       collection do
@@ -164,19 +171,20 @@ Bibapp::Application.routes.draw do
     ####
     # Saved routes
     ####
-    get 'saved', :to => 'user_sessions#saved', :as => 'saved'
-    get 'sessions/delete_saved', :to => 'user_sessions#delete_saved',
-          :as => 'delete_saved'
-    get 'sessions/add_many_to_saved', :to => 'user_sessions#add_many_to_saved',
-          :as => 'add_many_to_saved'
+    # Commenting saved routes out for now - references authlogic user_sessions
+    #get 'saved', :to => 'user_sessions#saved', :as => 'saved'
+    #get 'sessions/delete_saved', :to => 'user_sessions#delete_saved',
+    #      :as => 'delete_saved'
+    #get 'sessions/add_many_to_saved', :to => 'user_sessions#add_many_to_saved',
+    #      :as => 'add_many_to_saved'
     ####
     # Authentication routes
     ####
     # Make easier routes for authentication (via restful_authentication)
-    get 'signup', :to => 'users#new', :as => 'signup'
-    get 'login', :to => 'user_sessions#new', :as => 'login'
-    get 'logout', :to => 'user_sessions#destroy', :as => 'logout'
-    get 'activate/:activation_code', :to => 'users#activate', :as => 'activate'
+    #get 'signup', :to => 'users#new', :as => 'signup'
+    #get 'login', :to => 'user_sessions#new', :as => 'login'
+    #get 'logout', :to => 'user_sessions#destroy', :as => 'logout'
+    #get 'activate/:activation_code', :to => 'users#activate', :as => 'activate'
 
     ####
     # DEFAULT ROUTES
@@ -213,7 +221,7 @@ Bibapp::Application.routes.draw do
     resource :user_session
 
     resources :authentications
-    get '/auth/:provider/callback' => 'authentications#create'
+    #get '/auth/:provider/callback' => 'authentications#create'
     get '/admin/index' => "admin#index"
     get 'admin/duplicates' => "admin#duplicates"
     get 'admin/ready_to_archive' => "admin#ready_to_archive"

@@ -1,38 +1,47 @@
 class ImportsController < ApplicationController
 
   # Require user be logged in for *everything*
-  before_action :login_required
+  before_action :authenticate_user!
   before_action :pen_name_setup, :only => [:create_pen_name, :destroy_pen_name]
-
+  
   authorize_resource :class => Import 
   authorize_resource :class => Work
 
   def index
     # List all imports
     params[:user_id] ||= current_user.id
-    @imports = Import.paginate(:conditions => {:user_id => params[:user_id]},
-                               :page => params[:page], :order => 'updated_at DESC')
+    #@imports = Import.paginate(:conditions => {:user_id => params[:user_id]},
+    #                           :page => params[:page], :order => 'updated_at DESC')
+    @imports = Import.where(user_id: params[:user_id]).paginate(page: params[:page]).order('updated_at DESC')
 
     # Only allow users to view their own imports, unless they are System editors
     @authorized = true
-    if params[:user_id].to_i != current_user.id.to_i && !current_user.has_role?("editor", System)
+    if params[:user_id].to_i != current_user.id.to_i && !current_user.role?(:admin)
       flash[:error] = t('common.imports.unauthorized')
       @authorized = false
     end
   end
 
   def new
+    params.permit(:state)
     if params[:person_id]
       @person = Person.find_by_id(params[:person_id].split("-")[0])
     else
       @person = nil
     end
+
+    # need this for exeception in form_for first arg which can't be empty or nil
+    @import = Import.new
   end
 
   def create
     # Start by creating the Attachment
     # @attachment = ImportFile.new(params[:import])
+    #byebug
+    #p import_params.inspect
     @attachment = ImportFile.new(import_params)
+    #p @attachment.valid?
+    # Attachment was not being saved, added for Loyola
     @attachment.save
 
     # Init our Import
@@ -42,6 +51,13 @@ class ImportsController < ApplicationController
 
     # Associate Attachment to Import
     @import.import_file = @attachment
+    @import.import_file.save
+
+    if @import.import_file.id.blank?
+      @import.destroy
+      flash[:error] = "Sorry. There was an issue with the import file in the Encoding or Mime Type. No actions performed"
+      redirect_back(fallback_location: default_home_path) and return
+    end
 
     # Try saving the import
     if @import.save
@@ -79,6 +95,7 @@ class ImportsController < ApplicationController
 
     # Init duplicate works count
     @dupe_count = 0
+    @missing = Array.new
 
     #As long as we have a batch of works to review, paginate them
     if @work_batch.present?
@@ -87,6 +104,7 @@ class ImportsController < ApplicationController
       @work_batch.each do |work_id|
         work = Work.find_by_id(work_id)
         @dupe_count += 1 if work and work.duplicate?
+        @missing << work_id unless Work.where(id: work_id).exists?
       end
 
       @works = Work.where("id in (?)", @work_batch).paginate(:page => @page, :per_page => @rows)
@@ -123,7 +141,7 @@ class ImportsController < ApplicationController
       # Error!
       flash[:error] = t('common.imports.flash_update_error')
       respond_to do |format|
-        format.html { redirect_to :back }
+        format.html { redirect_back(fallback_location: default_home_path) }
       end
     end
   end
@@ -131,7 +149,8 @@ class ImportsController < ApplicationController
   def create_pen_name
     #permit 'editor of Person'
     #look up person and name string and create pen name
-    PenName.find_or_create_by_person_id_and_name_string_id(:person_id => @person.id, :name_string_id => @name_string.id)
+    #PenName.find_or_create_by_person_id_and_name_string_id(:person_id => @person.id, :name_string_id => @name_string.id)
+    PenName.find_or_create_by(person_id: @person.id, name_string_id: @name_string.id)
     #regenerate two checkbox lists and pass back
     respond_to do |format|
       format.html do
@@ -142,7 +161,8 @@ class ImportsController < ApplicationController
 
   def destroy_pen_name
     #permit 'editor of :person', :person => @person
-    @pen_name = PenName.find_by_person_id_and_name_string_id(@person.id, @name_string.id)
+    #@pen_name = PenName.find_by_person_id_and_name_string_id(@person.id, @name_string.id)
+    @pen_name = PenName.find_by(person_id: @person.id, name_string_id: @name_string.id)
     @pen_name.destroy if @pen_name
     respond_to do |format|
       format.html do
@@ -166,7 +186,7 @@ class ImportsController < ApplicationController
   end
 
   def import_params
-    params.require(:import).permit(:data).to_h
+    params.require(:import).permit(:data, :user_id).to_h
   end
 
 end

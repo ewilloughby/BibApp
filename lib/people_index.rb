@@ -27,7 +27,6 @@ class PeopleIndex
   SOLR_PEOPLEMAPPING = {
     
       :id => :id, # is persons id
-      :orcid_id => :orcid_id,
       :first_name => :first_name,
       :middle_name => :middle_name,
       :last_name => :last_name,
@@ -55,7 +54,7 @@ class PeopleIndex
 
   }
 
-  # to delete a single person, this worked when I created a person for testing
+  # to delete a single person
   # the id is the record to be deleted which can be retrieved by using a query_param and filter such as
   # to find the ID
   # query_params = { query: ["last_name:Some", "first_name:First"], filter_queries: [], field_list: ['*'], rows: 15}

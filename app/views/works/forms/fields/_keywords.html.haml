@@ -1,4 +1,4 @@
-- include_stylesheet('specific/works/fields/common')
+-# encoding: UTF-8
 -#Add Keywords field, with Auto-Complete
 -# Also adds a list of existing Keywords
 
@@ -6,11 +6,11 @@
 -#  Default: use keywords assigned to @work.
 -#  @keywords should only exist if there were errors in saving work - it will be an Array of Strings
 - keywords = @work.keywords if @work.keywords
-- keywords = @keywords.collect {|kw| Keyword.find_or_create_by_name(kw)} if @keywords
+- keywords = @keywords.collect {|kw| Keyword.find_or_create_by(name: kw)} if @keywords
 
 = label_tag "keywords", "#{t 'works.forms.fields.keywords.label'}:"
 %span.instructions
   = t('works.forms.fields.keywords.instructions')
   %br
 
-= text_area_tag "keywords", keywords.collect {|kw| kw.name}.join('; '), :size => "25x10"
+= text_area_tag "keywords", keywords.collect {|kw| kw.name.force_encoding('UTF-8').encode('UTF-8')}.join('; '), :size => "25x10"

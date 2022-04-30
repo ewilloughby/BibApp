@@ -14,21 +14,19 @@ class Person < ActiveRecord::Base
 
   #### Associations ####
 
-  has_many :pen_names, :dependent => :destroy
-  has_many :name_strings, :through => :pen_names
+  has_many :pen_names, dependent: :destroy
+  has_many :name_strings, through: :pen_names
 
-  has_many :memberships, :dependent => :destroy
-  #has_many :groups, :through => :memberships, :conditions => ["groups.hide = ?", false], :order => 'position'
+  has_many :memberships, dependent: :destroy
   has_many :groups, -> { where("groups.hide = ?", false)}, through: :memberships
 
   #has_many :works, :through => :contributorships,
   #         :conditions => ["contributorships.contributorship_state_id = ?", Contributorship::STATE_VERIFIED]
+  has_many :contributorships, dependent: :destroy
   has_many :works, -> (contributorships) { where("contributorships.contributorship_state_id = ?", Contributorship::STATE_VERIFIED) }, through: :contributorships
 
-  has_many :contributorships, :dependent => :destroy
-
   has_one :image, :as => :asset, :dependent => :destroy
-  belongs_to :user
+  # belongs_to :user
 
   #### Validators ####
 
@@ -107,6 +105,13 @@ class Person < ActiveRecord::Base
       variants << variant_hash.call(:full, :omit) # Smith, John | smith john
       variants << variant_hash.call(:initial, :initial) # Smith, J. W. | smith j w
       variants << variant_hash.call(:initial, :omit) # Smith, J. | smith j
+    end
+  end
+
+  # unique index duplicate key issue
+  def orcid_id=(value)
+    unless value.empty?
+      write_attribute(:orcid_id, value) # same as self[:attribute_name] = value
     end
   end
 

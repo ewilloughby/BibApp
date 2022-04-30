@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module GoogleChartsHelper
   include TranslationsHelper
 
@@ -13,7 +14,17 @@ module GoogleChartsHelper
     end
     chd.chop!
     chl.chop!
-    "http://chart.apis.google.com/chart?cht=p&chco=346090&chs=350x100&#{chd}&#{chl}"
+    "https://chart.googleapis.com/chart?cht=p&chco=346090&chs=350x100&#{chd}&#{chl}"
+  end
+  
+  # replacement chart since above is deprecating in April 2015
+  # not using work_count, as not needing percent
+  def google_chart_api(facets, work_count)
+    arr = Array.new
+    facets[:types].each do |r|
+      arr << ["#{t_solr_work_type_pl(r.name)}", r.value]
+    end
+    arr
   end
 
 end

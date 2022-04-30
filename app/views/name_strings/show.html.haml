@@ -1,6 +1,9 @@
-- if current_user_any_role?("editor", Group)
+-# encoding: UTF-8
+-# if current_user_any_role?("editor", Group)
+- if can?("editor", Group)
   = render :layout => 'layouts/admin_bar' do
-    %li #{link_to t('name_strings.show.edit_link'), edit_name_string_path(@name_string)}
+    -# the edit has bugs, if change to an existing pen_name will get mysql duplicate error
+    -#%li #{link_to t('name_strings.show.edit_link'), edit_name_string_path(@name_string)}
 
 = render :layout => 'layouts/main_body_no_h2' do
   %h2

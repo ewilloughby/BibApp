@@ -2,13 +2,28 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+
+  require 'saved'
+# rails 5 doesn't use before_filter
+class << self
+  alias_method :before_filter, :before_action
+  
+  # do nothing as this and hide_actions were removed in 5
+  # being called from make_resourceful
+  def hidden_actions
+    []
+  end
+  
+end
+
   clear_helpers
   helper SharedHelper
   helper ProperSharedHelper
   include ProperSharedHelper
   helper TranslationsHelper
   helper CacheHelper
-  helper_method :current_user_session, :current_user, :logged_in?
+  #helper_method :current_user_session, :current_user, :logged_in?
+  helper_method :current_user, :logged_in?
 
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
@@ -53,7 +68,7 @@ class ApplicationController < ActionController::Base
       @saved = find_saved
       work = Work.find(params[:id])
       @saved.add_work(work)
-      redirect_to :back
+      redirect_back(fallback_location: work_path)
     end
   end
 
@@ -67,14 +82,14 @@ class ApplicationController < ActionController::Base
       @saved.add_work(work)
     end
 
-    redirect_to :back
+    redirect_back(fallback_location: work_path)
   end
 
   # Removes a work.id to the session[:saved] array
   def remove_from_saved
     @saved = find_saved
     @saved.remove_work(params[:id].to_i)
-    redirect_to :back
+    redirect_back(fallback_location: work_path)
   end
 
   # Sets the session[:saved] array to nil
@@ -91,10 +106,15 @@ class ApplicationController < ActionController::Base
   end
 
   def search(params)
-
+    logger.debug("/n/n=========== SEARCH_PARAMS=============\n")
+    logger.debug(params.inspect)
     # Solr filtering
     # * Start with an empty array or param filters, as appropriate
     # * If we have a nested object, filter for object's works
+    
+    # flag for search requests vs. index page defaults
+    @is_search = request.url.include?("search") ? true : false
+
     @filter = params[:fq].present? ? Array.wrap(params[:fq].clone) : []
 
     # Are we showing an object's works?
@@ -116,7 +136,7 @@ class ApplicationController < ActionController::Base
     # Default SolrRuby params
     @query = params[:q] || "*:*" # Lucene syntax for "find everything"
     @sort = params[:sort] || "year"
-    @order = params[:order] || "descending"
+     @order = params.key?(:order).blank? ? 'descending' : params[:order]
     @page = params[:page] || 0
     @facet_count = params[:facet_count] # Don't limit facet results
     @rows = params[:rows] || 10
@@ -158,34 +178,28 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def current_user_session
-    return @current_user_session if defined?(@current_user_session)
-    @current_user_session = UserSession.find
-  end
-
-  def current_user
-    return @current_user if defined?(@current_user)
-    @current_user = current_user_session && current_user_session.user
-  end
 
   def logged_in?
-    current_user
+    #current_user
+    # following for devise
+    ## TODO, replace logged_in? with following 
+    user_signed_in?
   end
 
   def require_user
     unless current_user
       store_location
       flash[:notice] = t('app.flash_require_user')
-      redirect_to new_user_session_url
+      redirect_to new_user_session_url # this goes to http://localhost:3000/login
       return false
     end
   end
 
   def require_no_user
     if current_user
-      store_location
+      store_location unless request.fullpath.match(/\/login/)
       flash[:notice] = t('app.flash_require_no_user')
-      redirect_back_or_default root_url
+      redirect_back_or_default default_home_url
       return false
     end
   end
@@ -229,5 +243,15 @@ class ApplicationController < ActionController::Base
     objects = klass.select("DISTINCT(name)").where("LOWER(name) LIKE ? OR LOWER(name) LIKE ?", beginning_search, word_search).order_by_name.limit(limit)
     objects.collect { |o| o.name }.to_json
   end
+
+  private
+    ## FOLLOWING FOR DEVISE, need to be in private
+    def after_sign_out_path_for(resource_or_scope)
+      default_home_path
+    end
+    
+    def after_sign_in_path_for(resource_or_scope)
+      default_home_path
+    end
 
 end

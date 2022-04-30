@@ -2,7 +2,9 @@ Hi <%= @user.email %>,
 
 Your batch import has been processed.  Please visit the following URL to review the import results:
 
-<%= "#{$APPLICATION_URL.chomp("/")}#{user_import_path(@user, @import_id, :locale => @locale)}" %>
+<%= "#{$APPLICATION_URL.chomp("/")}#{user_import_url(@user, @import_id, only_path: true)}" %>
+
+<%= @import_errors %>
 
 Thanks!
 - Your happy <%= "#{t('personalize.application_name')}" %> robot worker

@@ -24,8 +24,9 @@ gem 'rest-client', '2.0.2'
 
 #file attachment - to replace attachment_fu
 #TODO Can remove version requirement after 1.9 migration
-gem 'paperclip'
-
+#gem 'kt-paperclip'
+#gem "kt-paperclip", "~> 6.4", ">= 6.4.1"
+gem "kt-paperclip"
 gem "htmlentities"
 
 #Namecase - converts strings to be properly cased
@@ -50,6 +51,10 @@ gem 'will_paginate'
 # Broken out in Rails 4 into a separate Gem
 gem 'activerecord-session_store'
 gem 'rails-observers'
+
+# Need Zip Capability
+gem 'rubyzip'
+gem 'zip'
 
 #CMess - Assists with handling parsing citations from a non-Unicode text file
 #  See: http://prometheus.rubyforge.org/cmess/
@@ -99,10 +104,14 @@ gem 'puma'
 gem 'cancancan'
 
 #authentication
-gem 'authlogic'
+#gem 'authlogic'
 
 # Authlogic needs this
-gem "scrypt", "~> 3.0"
+#gem "scrypt", "~> 3.0"
+
+# Replacing authlogic authentication with Devise
+gem 'devise'
+
 #TODO will require some work to go to 1.0 series
 gem 'omniauth'
 

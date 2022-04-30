@@ -1,12 +1,14 @@
 class Publication < PubCommon
   #### Associations ####
 
-  belongs_to :publisher
-  belongs_to :authority, :class_name => "Publication", :foreign_key => :authority_id
+  # setting foreign key to optional as per rails 5 change for both publisher and authority
+  belongs_to :publisher, class_name: "Publisher", foreign_key: :publisher_id, optional: true
+  # this is referencing itself in many cases, or about 2/3 of the time
+  belongs_to :authority, class_name: "Publication", foreign_key: :authority_id, optional: true
   has_many :works, -> { where("work_state_id = ?", Work::STATE_ACCEPTED) } #accepted works
 
-  has_many :identifyings, :as => :identifiable
-  has_many :identifiers, :through => :identifyings
+  has_many :identifyings, as: :identifiable
+  has_many :identifiers, through: :identifyings
 
   # This is necessary due to very long titles for conference
   # proceedings. For example:
@@ -33,6 +35,9 @@ class Publication < PubCommon
   scope :sort_name_like, lambda { |name| where('sort_name like ?', name.downcase) }
   scope :name_like, lambda { |name| where('name like ?', name) }
 
+  # try limiting to pubs with works
+  #scope :with_works,  lambda { |work| where('publication_id = ?', work.id).exists? }
+  
   def before_create_actions
     unless self.initial_publisher_id.nil?
       self.publisher_id = Publisher.find(self.initial_publisher_id).authority.id
@@ -46,6 +51,12 @@ class Publication < PubCommon
   end
 
   #### Methods ####
+  
+  # is this a fix for encoding issues as was done in name_strings 
+  # if errors out at least staff will be alerted on bad character in name
+  def name=(aname)
+    write_attribute(:name, aname.nil? ? nil : aname.force_encoding('UTF-8').encode('UTF-8') )
+  end   
 
   def validate_name
     "#{self.name} #{self.issn_isbn}".downcase.gsub(/[^a-zA-Z0-9]+/, "")
@@ -57,7 +68,7 @@ class Publication < PubCommon
 
   def publisher_name=(name)
     name ||= 'Unknown'
-    self.publisher = Publisher.find_or_create_by_name(:name => name, :romeo_color => 'unknown') unless name.blank?
+    self.publisher = Publisher.find_or_create_by(name: name, romeo_color: 'unknown') unless name.blank?
   end
 
   def isbns
@@ -81,7 +92,8 @@ class Publication < PubCommon
       parsed_identifiers = Identifier.parse(identifier)
       parsed_identifiers.each do |pi|
         klass, id = pi
-        pub_id = Identifier.find_or_create_by_name_and_type(id, klass.id_type_string)
+        #pub_id = Identifier.find_or_create_by_name_and_type(id, klass.id_type_string)
+        pub_id = Identifier.find_or_create_by(name: id, type: klass.id_type_string)
         unless self.identifiers.include?(pub_id)
           self.identifiers << pub_id
         end
@@ -104,7 +116,8 @@ class Publication < PubCommon
     # If Publication authority changed, we need to echo new authority key
     # to each related model.
     logger.debug("\n\nPub: #{self.id} | Auth: #{self.authority_id}\n\n")
-    if (self.authority_id_changed? and self.authority_id != self.id) or self.publisher_id_changed?
+    if (self.saved_change_to_attribute?(:authority_id) and self.authority_id != self.id) or
+       self.saved_change_to_attribute?(:publisher_id)
 
       # Update publications
       logger.debug("\n\n===Updating Publications===\n\n")
@@ -131,8 +144,19 @@ class Publication < PubCommon
       return nil, nil
     else
       name, id = publication_data.split("||")
-      return name, id
+      return name.force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8).html_safe, id
     end
   end
-
+  
+  # SELECT distinct publications.* FROM publications LEFT OUTER JOIN works ON works.publication_id = publications.id AND
+  # (works.work_state_id = 3) WHERE (publications.id = authority_id) AND (works.publication_id = publications.id) AND
+  # (publications.sort_name like '1%');
+  def self.having_works(page)
+    sql = "SELECT distinct publications.* FROM publications LEFT OUTER JOIN works ON works.publication_id = publications.id " +
+    "AND works.work_state_id = 3 WHERE publications.id = authority_id AND works.publication_id = publications.id " +
+    "AND publications.sort_name like ? ORDER BY publications.sort_name"
+    
+    self.find_by_sql([sql, page])
+  end
+  
 end

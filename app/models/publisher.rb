@@ -5,7 +5,8 @@ class Publisher < PubCommon
   #### Associations ####
 
   has_many :publications
-  belongs_to :authority, :class_name => "Publisher", :foreign_key => :authority_id
+  # setting this to optional as was in prior versions
+  belongs_to :authority, class_name: "Publisher", foreign_key: :authority_id, optional: true
 
   has_many :works, -> { where("work_state_id = ?", Work::STATE_ACCEPTED) } #accepted works
 
@@ -48,7 +49,7 @@ class Publisher < PubCommon
     # If Publisher authority changed, we need to echo new authority key
     # to each related model.
     logger.debug("\n\nPub: #{self.id} | Auth: #{self.authority_id}\n\n")
-    if self.authority_id_changed? and self.authority_id != self.id
+    if self.saved_change_to_attribute?(:authority_id) and self.authority_id != self.id
 
       # Update publishers
       logger.debug("\n\n===Updating Publishers===\n\n")
@@ -88,7 +89,7 @@ class Publisher < PubCommon
     rescue Errno::ECONNREFUSED, Errno::EBADF, Errno::ENETUNREACH #not responding
       puts "Warning: Updating Sherpa data requires Solr to be running. Exiting...\n"
 
-    rescue Net::HTTPClientException #responding
+    rescue Net::HTTPServerException #responding
 
       # SHERPA's API is not-cached! Opening the URI directly will likely
       # produce a ruby net/http timeout.
@@ -109,8 +110,11 @@ class Publisher < PubCommon
         name = pub.at_css('name').text
         url = pub.at_css('homeurl').text
         romeo_color = pub.at_css('romeocolour').text
-
-        add = Publisher.find_or_create_by_sherpa_id(:sherpa_id => sherpa_id, :romeo_color => 'unknown')
+        
+        # SHOULD CHECK THIS 
+        # this is ODD code, find or create expects unknown romeo color, and then updates it's attributes
+        #add = Publisher.find_or_create_by_sherpa_id(:sherpa_id => sherpa_id, :romeo_color => 'unknown')
+        add = Publisher.find_or_create_by(sherpa_id: sherpa_id, romeo_color: 'unknown')
         add.update_attributes!({:name => name, :url => url, :romeo_color => romeo_color,
                                 :sherpa_id => sherpa_id, :publisher_source_id => SHERPA_SOURCE})
       end
@@ -132,7 +136,20 @@ class Publisher < PubCommon
       name = "Unknown"
       id = nil
     end
-    return name, id
+    return name.force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8).html_safe, id
   end
+  
+  def self.having_works(page)
+    sql = "SELECT distinct publishers.* FROM publishers LEFT OUTER JOIN works ON works.publisher_id = publishers.id AND " +       
+    "works.work_state_id = 3 WHERE publishers.id = authority_id AND works.publisher_id = publishers.id " +
+    "AND publishers.sort_name like ? ORDER BY publishers.sort_name"
+    
+    self.find_by_sql([sql, page])
+  end
+  
+  # as with publication
+  def name=(aname)
+    write_attribute(:name, aname.nil? ? nil : aname.force_encoding('UTF-8').encode('UTF-8'))
+  end   
 
 end

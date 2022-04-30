@@ -146,12 +146,16 @@ module ApplicationHelper
     end
   end
 
-  def current_user_role?(role, object)
-    logged_in? and current_user.has_role?(role, object)
+  def current_user_role?(role)
+    logged_in? and current_user.role?(role)
   end
 
   def current_user_any_role?(role, object)
     logged_in? and current_user.has_any_role?(role, object)
+  end
+
+  def current_user_has_role?(role, object)
+    logged_in? and can?(role, object)
   end
 
   def authorizable_type(authorizable)
