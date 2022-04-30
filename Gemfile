@@ -32,9 +32,6 @@ gem "htmlentities"
 #Namecase - converts strings to be properly cased
 gem "namecase"
 
-#RubyZip - used to create Zip file to send via SWORD
-gem "rubyzip"
-
 #Sword2Ruby - used for SWORD interaction
 gem "sword2ruby", ">=0.0.6", :git => 'https://github.com/BibApp/sword2ruby.git'
 
@@ -52,7 +49,7 @@ gem 'will_paginate'
 gem 'activerecord-session_store'
 gem 'rails-observers'
 
-# Need Zip Capability
+# Need Zip Capability, RubyZip - used to create Zip file to send via SWORD
 gem 'rubyzip'
 gem 'zip'
 
@@ -66,6 +63,9 @@ gem 'aasm'
 #lisbn - Helps validate ISBNs - as far as I can tell this is able to replace previously used ISBN_tools with minor
 #modifications
 gem 'lisbn'
+
+# hash comparison for SOLR
+gem 'hashdiff', '0.3.2'
 
 #delayed jobs
 gem 'delayed_job'
