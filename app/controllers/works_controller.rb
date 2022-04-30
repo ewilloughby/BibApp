@@ -88,7 +88,8 @@ class WorksController < ApplicationController
 
   end # end make_resourceful
 
-  def index
+  def index    
+    
     @title = Work.model_name.human_pl
     if params[:person_id]
       @current_object = Person.find_by_id(params[:person_id].split("-")[0])
@@ -102,13 +103,24 @@ class WorksController < ApplicationController
       params[:rows] ||= 100
       search(params)
     else
+    
       logger.debug("\n\n===Works: #{@current_object.inspect}")
+      
       # Default BibApp search method - ApplicationController
-
-      #Solr filter query for active people
+      # Solr filter query for active people
       params[:fq] ||= []
-      params[:fq] << "person_active:true" if Person.where(:active => true).count > 0
+      # this will restrict some output, even though all people are active
+      #params[:fq] << "person_active:true" if Person.where(:active => true).count > 0
       search(params)
+      
+      # group only index
+      #query = '*:*'
+      query = ['*:*', '-end_date:["" TO *]']
+      # active true isn't reliable, adding -end_date 
+      filter = ['active:true', 'verified_works_count:[1 TO *]']
+      rows = 400 # need a high row number like this to get a real sampling
+      num = Random.rand(10...50000)
+      @facets[:random_activepersons] = PeopleIndex.fetch(query, filter, rows, num)
     end
   end
 

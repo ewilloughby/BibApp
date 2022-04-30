@@ -1,9 +1,10 @@
+-# encoding: UTF-8
 -# Build Refine Results sidebar, using facet information from Solr
 
 .span-5
   .left_box
     .box_heading #{t 'shared.facets.heading'}
-
+    
     - remove_filter = facet_remove_filter(@filter, @current_object)
     - if remove_filter.present?
       .facet
