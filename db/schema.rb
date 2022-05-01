@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_30_002026) do
+ActiveRecord::Schema.define(version: 2022_05_01_224503) do
 
   create_table "attachments", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "asset_id"
@@ -219,6 +219,8 @@ ActiveRecord::Schema.define(version: 2022_04_30_002026) do
     t.string "display_name"
     t.text "postal_address"
     t.integer "user_id"
+    t.date "start_date"
+    t.date "end_date"
     t.index ["machine_name"], name: "person_machine_name"
     t.index ["user_id"], name: "index_people_on_user_id"
   end

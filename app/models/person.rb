@@ -153,6 +153,11 @@ class Person < ActiveRecord::Base
     Contributorship.verified.where(:person_id => self.id).includes(:work => [:publication, :name_strings, :keywords]).all
   end
 
+    # for person SOLR index
+    def works_count
+      Contributorship.verified.where(:person_id => self.id).count
+    end
+
   def queue_update_scoring_hash
     self.delay.update_scoring_hash
   end
