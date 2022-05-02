@@ -3,13 +3,16 @@ require 'database_methods'
 class PenNamesController < ApplicationController
 
   #Require a user be logged in to create / update / destroy
-  before_action :login_required, :only => [:new, :create, :destroy]
+  #before_action :login_required, :only => [:new, :create, :destroy]
+  before_action :authenticate_user! #, :only => [:new, :create, :destroy]
 
   before_action :find_pen_name, :only => [:destroy]
   before_action :find_person, :only => [:create, :create_name_string, :new, :destroy]
   before_action :find_name_string, :only => [:create, :create_name_string, :destroy]
   before_action :ajax_setup, :only => [:ajax_add, :ajax_destroy]
 
+  load_and_authorize_resource
+  
   make_resourceful do
     build :index, :show, :new, :update
 
@@ -32,11 +35,11 @@ class PenNamesController < ApplicationController
   def create
     #only 'editor' of person can assign a pen name
     #permit "editor of Person"
-
+    
     if params[:reload]
       @reload = true
     end
-
+    
     @person.name_strings << @name_string
     respond_to do |format|
       format.html { redirect_to new_pen_name_path(:person_id => @person.id) }
@@ -46,13 +49,14 @@ class PenNamesController < ApplicationController
   def create_name_string
     #only 'editor' of person can assign a pen name
     #permit "editor of Person"
-
+    
     name = params[:name_string][:name]
     machine_name = name.gsub(/[\W]+/, " ").strip.downcase
 
-    @name_string = NameString.find_or_create_by_machine_name(machine_name)
-    @name_string.name = name
-    @name_string.save
+    # may need to change next to NameString.where(machine_name: machine_name, name: name).first_or_create
+    # esp. if dealing with hyphenated names
+    #@name_string = NameString.find_or_create_by(machine_name: machine_name)
+    @name_string = NameString.where(machine_name: machine_name, name: name).first_or_create
 
     @person.name_strings << @name_string unless @person.name_strings.include?(@name_string)
     respond_to do |format|
@@ -81,19 +85,23 @@ class PenNamesController < ApplicationController
   end
 
   def ajax_add
-    PenName.find_or_create_by_person_id_and_name_string_id(:person_id => @person.id, :name_string_id => @name_string.id)
+    #PenName.find_or_create_by_person_id_and_name_string_id(:person_id => @person.id, :name_string_id => @name_string.id)
+    PenName.find_or_create_by(person_id: @person.id, name_string_id: @name_string.id)
     render :partial => 'current_namestrings', :layout => false
   end
 
   def ajax_destroy
-    PenName.find_by_person_id_and_name_string_id(@person.id, @name_string.id).destroy
+    #PenName.find_by_person_id_and_name_string_id(@person.id, @name_string.id).destroy
+    PenName.find_by(person_id: @person.id, name_string_id: @name_string.id).destroy
     render :partial => 'current_namestrings', :layout => false
   end
 
+  # this isn't creating pen_names, only displaying them when a user searches for other last names in pen names page
   def live_search_for_name_strings
+    
     @phrase = params[:q]
-    @person = Person.find(params[:person_id])
-
+    @person = Person.find(params[:person_id]) # person not populated with load_and_authorize_resource
+    
     @results = like_search(@phrase, @person.last_name).order_by_name
 
     @number_match = @results.length
@@ -132,7 +140,8 @@ class PenNamesController < ApplicationController
 
   def find_pen_name
     if params[:id].blank? and params[:pen_name_id].blank?
-      @pen_name = PenName.find_by_person_id_and_name_string_id(params[:person_id], params[:name_string_id])
+      #@pen_name = PenName.find_by_person_id_and_name_string_id(params[:person_id], params[:name_string_id])
+      @pen_name = PenName.find_by(person_id: params[:person_id], name_string_id: params[:name_string_id])
     else
       @pen_name = PenName.find_by_id(params[:id])
       @pen_name ||= PenName.find_by_id(params[:pen_name_id])
