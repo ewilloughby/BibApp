@@ -1,4 +1,4 @@
-- if current_user_role?("editor", Group)
+- if can?("editor", Group)
   = render :layout => 'layouts/admin_bar' do
     %li #{link_to t('common.publishers.new'), new_publisher_path}
     %li #{link_to t('common.publishers.authority'), authorities_publishers_path(:page => params[:page])}
