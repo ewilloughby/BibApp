@@ -46,3 +46,13 @@ background: url("http://hsd.luc.edu/sites/all/themes/loyola_style2/images/body-b
   background-image: url('http://hsd.luc.edu/sites/all/themes/loyola_style2/images/header-search-bg.png');
 }
 */
+
+/*Add margin to person last name to create space below profile photo*/
+
+.person-last-name {
+  width: 75px;
+  padding-left: 0.5em;
+  position: relative;
+  bottom: 2em;
+  margin-top: 1em;
+}
