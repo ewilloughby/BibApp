@@ -37,7 +37,7 @@ a, li, p, div {
 
 #footer {
   margin-top: 2em;
-  padding-top: 0.5em;
+  padding: 2em 0em 1em 0em;
 }
 
 #header a {
