@@ -13,7 +13,9 @@ require 'solr' if defined? Solr
 
 # Solr Path (in /vendor/solr by default)
 #SOLR_PATH = "#{File.dirname(__FILE__)}/../../vendor/solr" unless defined? SOLR_PATH
-SOLR_PATH = "/opt/solr/server" unless defined? SOLR_PATH
+#SOLR_PATH = "/opt/solr/server" unless defined? SOLR_PATH
+#Mac Path below
+SOLR_HOME_PATH = ""
 
 # Solr Home Path (in /vendor/bibapp-solr by default)
 SOLR_HOME_PATH = "#{File.dirname(__FILE__)}/../../vendor/bibapp-solr" unless defined? SOLR_HOME_PATH

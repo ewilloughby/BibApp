@@ -7,6 +7,7 @@ require 'rake'
 require 'net/http'
 require 'active_record'
 require 'index'
+require 'people_index'
 require 'rbconfig'
 
 namespace :solr do
@@ -114,6 +115,30 @@ namespace :solr do
     Index.optimize_index
      puts "Finished optimization!"
   end
+
+  desc 'Refresh Solr PEOPLE index' 
+  task :refresh_people_index => :environment do
+      
+    puts "\nRe-indexing all Synapse People in SOLR ...\n\n"
+    start_time = Time.now
+    puts "People Indexing Start time: #{start_time.localtime}"
+    
+    PeopleIndex.index_all
+
+    end_time = Time.now
+    puts "People Indexing End time: #{end_time.localtime}"
+
+    #Caculate total indexing time
+    total = end_time.to_i - start_time.to_i
+    time = "#{total.div(60).to_s} minutes" if total >=120
+    time = "#{total.div(60).to_s} minute, #{total.remainder(60).to_s} seconds" if total >= 60 and total < 120
+    time = "#{(total).to_s} seconds" if total < 60
+
+    puts "Finished People indexing!  Total indexing time: #{time}"
+
+  end
+
+
 
   desc 'Refresh Solr index'
   task :refresh_index => :environment do

@@ -46,7 +46,7 @@ class PeopleIndex
       #:width => :width,
       #:data_file_name => :data_file_name,
       :people_data => Proc.new { |perp| perp.to_solr_data },
-      :author_stats => Proc.new { |perp| perp.solr_author_stats },
+      #:author_stats => Proc.new { |perp| perp.solr_author_stats },
       
       #Person's active status in separate field for filtering
       :active => :active,

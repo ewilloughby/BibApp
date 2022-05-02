@@ -91,10 +91,10 @@ class PublicationsController < ApplicationController
   end
 
   def authorities
+    # not sure about permissions here
     #Only group editors can assign authorities
-    #permit "editor of Group"
-
-    @a_to_z = Publication.letters
+    
+    @a_to_z = Publication.letters(true).delete_if{|x| !x.sub(/[0-9A-Za-z]/, '').empty?}.delete_if{|x| x.empty?}
     @page = params[:page] || @a_to_z[0]
 
     if params[:q]

@@ -1,18 +1,22 @@
+-# encoding: UTF-8
 -#
 -# Render People facets from Solr data
 -#
 - #count and randomize may be passed
 - count ||= nil
 - randomize ||= false
+-# home page restricted to people with images, searches not
+- asearch = defined?(@is_search) == nil ? false : @is_search
+
 .span-15
   %h3 #{Person.model_name.human_pl}
   %ol#people
-    - convert_and_filter_people_facets(@facets[:people_data], count, @group, controller.controller_name == 'groups', randomize).each do |fields|
+    - convert_and_filter_people_facets(@facets, count, @group, controller.controller_name == 'groups', asearch,).each do |fields|
       %li.inline
         .person.span-3
           .person-image-wrapper
-            = link_to(image_tag(fields[:image_url], :size => "75x100", :alt => fields[:last_name], :title => fields[:last_name], :class => 'person-image'), person_path(fields[:id]))
+            %div{:style => "text-align:center;width:80px;height:100px;border: 1px dashed #CCCCCC;"}
+              = author_img_geometry(fields[:image_url], fields[:last_name], fields[:id], fields[:size], "75x100")
           .person-image-metadata
-            %strong= fields[:value]
           .person-last-name.left
             %strong= link_to fields[:last_name], person_path(fields[:id])

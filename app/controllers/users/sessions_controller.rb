@@ -63,7 +63,7 @@ class Users::SessionsController < Devise::SessionsController
          unless @export.blank?
            ce = WorkExport.new
            
-           @works = Work.where(:id => session[:saved].all_works).sort_by {|w| [w.publication_date_year, w.first_author_sort]}.paginate(page: @page, per_page: @rows)
+           @works = Work.where(:id => session[:saved].all_works).sort_by {|w| [w.publication_date_year]}.paginate(page: @page, per_page: @rows)
            
            # sorting by pub date year, then first author
            @works = ce.drive_csl(@export, @works.sort_by {|w| [w.publication_date_year, w.first_author_sort] })

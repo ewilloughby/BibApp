@@ -10,12 +10,12 @@ class ImportsController < ApplicationController
   def index
     # List all imports
     params[:user_id] ||= current_user.id
-    #@imports = Import.paginate(:conditions => {:user_id => params[:user_id]},
-    #                           :page => params[:page], :order => 'updated_at DESC')
+                              
     @imports = Import.where(user_id: params[:user_id]).paginate(page: params[:page]).order('updated_at DESC')
-
+    
     # Only allow users to view their own imports, unless they are System editors
     @authorized = true
+    #if params[:user_id].to_i != current_user.id.to_i && !current_user.has_role?("editor", System)
     if params[:user_id].to_i != current_user.id.to_i && !current_user.role?(:admin)
       flash[:error] = t('common.imports.unauthorized')
       @authorized = false
@@ -90,8 +90,14 @@ class ImportsController < ApplicationController
     @rows = params[:rows] || 10
 
     #load last batch from session
-    @work_batch = @import.works_added
-    @errors = @import.import_errors
+    @work_batch = @import.works_added ||= {}
+    @errors = @import.import_errors rescue {}
+    
+    if @errors.is_a?(String)
+      @errors = Hash[:import_error, Array.wrap(@errors)]
+      logger.debug(@errors.length)
+      logger.debug(@errors.inspect)
+    end
 
     # Init duplicate works count
     @dupe_count = 0
@@ -107,7 +113,7 @@ class ImportsController < ApplicationController
         @missing << work_id unless Work.where(id: work_id).exists?
       end
 
-      @works = Work.where("id in (?)", @work_batch).paginate(:page => @page, :per_page => @rows)
+      @works = Work.where("id in (?)", @work_batch - @missing).paginate(:page => @page, :per_page => @rows)
 
     end
 
@@ -186,7 +192,7 @@ class ImportsController < ApplicationController
   end
 
   def import_params
-    params.require(:import).permit(:data, :user_id).to_h
+    params.require(:import).permit(:data).to_h
   end
 
 end

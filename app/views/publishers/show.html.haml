@@ -1,11 +1,13 @@
-- if current_user_any_role?("editor", Group) and @export.blank?
+- type_pub = "publishers"
+
+- if can?("editor", Group) and @export.blank?
   = render :layout => 'layouts/admin_bar' do
     %li #{link_to t('common.publishers.edit'), edit_publisher_path(@publisher)}
 
 = render :layout => 'layouts/main_body_no_h2' do
   - if @export.present?
-    %h2 #{Work.model_name.human_pl}
-    = @works
+    = render layout: '/layouts/show_style_view', locals: {header: Work.model_name.human_pl, style: @export, ppath: publisher_path, type: type_pub} do
+      = render "shared/pagination", total_hits: @q.total_hits
 
   - else
     %h2.span-18.left #{ name_or_unknown(@publisher.name)}
@@ -13,7 +15,7 @@
       = render 'shared/sherpa_status', :publisher => @publisher, :show_explanation => false
 
     %div.clear-both
-    = render "shared/people", :count => 10, :randomize => false
+    = render "shared/people", :count => 10
     = render "shared/groups", :count => 10
     = render 'shared/pub_common/search_within_div', :submit_url => publisher_path
 

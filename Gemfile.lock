@@ -143,6 +143,7 @@ GEM
     haml (5.2.2)
       temple (>= 0.8.0)
       tilt
+    hashdiff (0.3.2)
     hashie (5.0.0)
     htmlentities (4.3.4)
     http-cookie (1.0.4)
@@ -361,6 +362,7 @@ DEPENDENCIES
   factory_bot
   fastercsv
   haml
+  hashdiff (= 0.3.2)
   htmlentities
   jquery-rails
   kt-paperclip
@@ -371,6 +373,7 @@ DEPENDENCIES
   mysql2 (= 0.5.3)
   namecase
   net-ldap
+  nokogiri (>= 1.13.4)
   omniauth
   puma
   rails (~> 6.0.4)
