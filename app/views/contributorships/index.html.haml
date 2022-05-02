@@ -1,5 +1,5 @@
 - include_javascript('specific/contributorships/index')
-- if current_user_any_role?("editor", Group)
+- if can?("editor", Group)
   = render :layout => '/layouts/admin_bar' do
     %li= link_to t('contributorships.index.delete_person'), person_url(@person),
       :method => :delete, :confirm => t('contributorships.index.delete_person_confirm')

@@ -1,4 +1,4 @@
-- if current_user_any_role?("editor", Group)
+- if can?("editor", Group)
   = render :layout => 'layouts/admin_bar' do
     %li #{link_to t('people.index.add'), new_person_path}
 
