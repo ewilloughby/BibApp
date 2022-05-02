@@ -214,8 +214,9 @@ Bibapp::Application.routes.draw do
     end
 
     # Default homepage to works index action
-    root :to => 'works#index'
-
+    #root :to => 'works#index'
+    root to: 'works#index', as: 'default_home'
+    
     get 'citations', :to => 'works#index'
 
     resource :user_session
@@ -234,6 +235,15 @@ Bibapp::Application.routes.draw do
     get 'roles/create' => "roles#create"
     get 'roles/new_admin' => "roles#new_admin"
     get 'roles/new_editor' => "roles#new_editor"
+
+    #Static Routes
+    get "/about" => 'static#about', :as => 'about'
+    get "/faq" => 'static#faq', :as => 'faq'
+
+    #Contact Us
+    # had to modify second, from :as => contact since it was ALSO being used in get
+    get 'contact' => 'contact_mailer#new', :as => 'contact', :via => :get
+    post 'contact' => 'contact_mailer#create', :as => 'post_contact', :via => :post
   end
 
   if I18n.available_locales.many?
