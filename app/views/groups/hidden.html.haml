@@ -1,4 +1,4 @@
-- if current_user_role?("editor", System)
+- if can?("editor", @group)
   = render :layout => 'layouts/main_body', :locals => {:header => t('groups.hidden.header')} do
 
     - if @hidden_groups.empty?
