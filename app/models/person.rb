@@ -57,6 +57,22 @@ class Person < ActiveRecord::Base
     end
   end
 
+  def update_contributorship_status(work_id)
+    # contributorship status should already be refreshed for ???
+    logger.debug("\n\n ============ UPDATING_CONTRIBUTORSHIP_STATUS for person.id: #{self.id} for work: #{work_id}======= \n\n")
+    if Person.exists?(self.id)
+      # do person before work so work will have access to new person data
+      PeopleIndex.update_solr(self)
+      if Work.exists?(work_id)
+        wrk = Work.find(work_id)
+    	  unless Delayed::Job.where(delayed_reference_id: wrk.id, delayed_reference_type: wrk.type).exists?
+          logger.debug("\n ======== WILL-BE-UPDATING-SOLR-WORK for work.id: #{wrk.id} OF PERSON.id: #{self.id} ==\n") 
+     	    Delayed::Job.enqueue ProcessWorksDelayedJob.new(wrk.id, wrk.type)
+        end
+      end
+    end
+  end
+
   def make_variant_names
     # Example is me...
     # first_name   => "John"
