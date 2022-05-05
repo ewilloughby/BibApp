@@ -1,5 +1,8 @@
 class Identifier < ActiveRecord::Base
 
+  # Error: Invalid single-table inheritance type: ISSN is not a subclass of Identifier - fixed by inheritance_column
+  self.inheritance_column = :_type_disabled
+
   has_many :publications, :through => :identifyings
   has_many :identifyings, :dependent => :destroy
 
