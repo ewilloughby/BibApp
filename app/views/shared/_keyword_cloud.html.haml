@@ -1,3 +1,5 @@
+-# encoding: UTF-8
+- include_javascript('specific/shared/_keyword_cloud')
 %h3 #{t 'shared.keyword_cloud.header'}
 .text-center
   -if keywords
@@ -11,4 +13,4 @@
         = submit_tag t('shared.keyword_cloud.submit'), :onclick=>"go_dim()"
 
   #darkBackgroundLayer.darkenBackground{:name=>"darkBackgroundLayer", :style=>"display:none;"}
-  %img#spinner.highZ{:src=>"/assets/ajax-loader.gif", :style=>"display:none;"}
+  =image_tag('ajax-loader.gif', class: 'highZ', style: 'display:none')
