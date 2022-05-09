@@ -8,6 +8,7 @@
     = link_to('FAQ', faq_path)
 
   - if logged_in?
+    %br
     %li
       %span{style: 'color: #FAB123;'} Hi #{current_user.bibapp_staff.first_name.capitalize}
     %li
