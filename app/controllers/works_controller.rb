@@ -412,7 +412,7 @@ class WorksController < ApplicationController
   def set_contributor_name_strings(work, accumulator, parameter_key, role)
     params[parameter_key] ||= []
     params[parameter_key].each do |name|
-      name_string = NameString.find_or_initialize_by_name(name)
+      name_string = NameString.find_or_initialize_by(name)
       accumulator << {:name => name_string, :role => role}
     end
     work.set_work_name_strings(accumulator)
