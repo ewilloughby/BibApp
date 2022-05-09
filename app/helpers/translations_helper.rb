@@ -57,6 +57,17 @@ module TranslationsHelper
     Work.types.collect {|type| [type, type.gsub(/[()\/ ]/, '').constantize.model_name.human]}.sort_alphabetical_by {|a| a.last}
   end
 
+
+  def ensure_encoding_utf(whash)
+    if whash.is_a?(Hash)
+      whash.each do |key,val|
+        if val.is_a?(String)
+          #whash[key] = val.force_encoding('ASCII-8BIT').force_encoding('UTF-8')
+          whash[key] = val.force_encoding('UTF-8')
+        end
+      end
+    end
+  end
   protected
 
   #Need to handle the cases where the name is just 'Unknown' or if it has some identifiers appended to it
