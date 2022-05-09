@@ -43,17 +43,17 @@ class Person < ActiveRecord::Base
   after_save :update_memberships_end_dates
 
   #### Methods ##
-  def set_pen_names
+  def set_pen_names    
     # Accept Person.new form name field params and autogenerate pen_name associations
     # Find or create
     names = make_variant_names.uniq
     existing_name_strings = NameString.where(:machine_name => names.collect { |n| n[:machine_name] }).all
     existing_names = existing_name_strings.collect { |n| n.machine_name }
     new_name_strings = (names.reject { |n| existing_names.include?(n[:machine_name]) }).collect do |v|
-      NameString.find_or_create_by_machine_name(v)
+      NameString.find_or_create_by(machine_name: v[:machine_name], name: v[:name]) # machine_name and name has a unique index
     end
     (existing_name_strings + new_name_strings).each do |ns|
-      PenName.find_or_create_by_person_id_and_name_string_id(:person_id => self.id, :name_string_id => ns.id)
+      PenName.find_or_create_by(person_id: self.id, name_string_id: ns.id)
     end
   end
 
