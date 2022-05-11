@@ -1,11 +1,15 @@
+-# encoding: UTF-8
 %ul#global-nav.header-nav
   %li
-    = static_html_link('about.html', t('app.about'))
+    %a{:href => 'http://library.luhs.org/hslibrary/index.htm'}>Health Sciences Library
   %li
-    = static_html_link('faq.html', t('app.faq'))
+    = link_to('About', about_path)
+  %li
+    = link_to('FAQ', faq_path)
+
   - if logged_in?
+    %br
     %li
-      %span #{link_to t('app.account'), edit_user_path(current_user)}
+      %span{style: 'color: #FAB123;'} Hi #{current_user.bibapp_staff.first_name.capitalize}
     %li
       %span #{link_to t('app.logout'), destroy_user_session_path, method: :delete}
-

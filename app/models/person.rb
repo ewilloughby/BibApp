@@ -43,17 +43,33 @@ class Person < ActiveRecord::Base
   after_save :update_memberships_end_dates
 
   #### Methods ##
-  def set_pen_names
+  def set_pen_names    
     # Accept Person.new form name field params and autogenerate pen_name associations
     # Find or create
     names = make_variant_names.uniq
     existing_name_strings = NameString.where(:machine_name => names.collect { |n| n[:machine_name] }).all
     existing_names = existing_name_strings.collect { |n| n.machine_name }
     new_name_strings = (names.reject { |n| existing_names.include?(n[:machine_name]) }).collect do |v|
-      NameString.find_or_create_by_machine_name(v)
+      NameString.find_or_create_by(machine_name: v[:machine_name], name: v[:name]) # machine_name and name has a unique index
     end
     (existing_name_strings + new_name_strings).each do |ns|
-      PenName.find_or_create_by_person_id_and_name_string_id(:person_id => self.id, :name_string_id => ns.id)
+      PenName.find_or_create_by(person_id: self.id, name_string_id: ns.id)
+    end
+  end
+
+  def update_contributorship_status(work_id)
+    # contributorship status should already be refreshed for ???
+    logger.debug("\n\n ============ UPDATING_CONTRIBUTORSHIP_STATUS for person.id: #{self.id} for work: #{work_id}======= \n\n")
+    if Person.exists?(self.id)
+      # do person before work so work will have access to new person data
+      PeopleIndex.update_solr(self)
+      if Work.exists?(work_id)
+        wrk = Work.find(work_id)
+    	  unless Delayed::Job.where(delayed_reference_id: wrk.id, delayed_reference_type: wrk.type).exists?
+          logger.debug("\n ======== WILL-BE-UPDATING-SOLR-WORK for work.id: #{wrk.id} OF PERSON.id: #{self.id} ==\n") 
+     	    Delayed::Job.enqueue ProcessWorksDelayedJob.new(wrk.id, wrk.type)
+        end
+      end
     end
   end
 

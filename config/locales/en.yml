@@ -144,9 +144,9 @@ en:
         location: Location
         medium: Medium
         notes: Notes
-        publication: "Publication Title"
+        publication: "Journal Title"
         publication_date: "Date Published"
-        publication_place: "Publication Place"
+        publication_place: "Journal Place"
         publisher: Publisher
         sponsor: Sponsor
         start_page: "Start Page"
@@ -264,8 +264,8 @@ en:
         one: "Presentation / Lecture"
         other: "Presentations / Lectures"
       publication:
-        one: Publication
-        other: Publications
+        one: Journals
+        other: Journals
       publisher:
         one: Publisher
         other: Publishers
@@ -297,8 +297,8 @@ en:
         one: "Web Site"
         other: "Web Sites"
       work:
-        one: Work
-        other: Works
+        one: Article
+        other: Articles
   admin:
     deposit:
       date: "Date Deposited"
@@ -315,9 +315,9 @@ en:
         one: "1 possible duplicate"
         other: "%{count} possible duplicates"
         zero: "No duplicates"
-      works: "Duplicate Works"
+      works: "Duplicate Articles"
     ready_to_archive:
-      no_works: "No works are marked \"ready to archive\"!"
+      no_works: "No articles are marked \"ready to archive\"!"
       ready: "Ready to Archive: %{count} remain"
     sherpa:
       info1: "Publisher records will be replaced with those retrieved from SHERPA/RoMEO; local changes may be lost."
@@ -366,11 +366,12 @@ en:
     important: Important
     imports: "Manage imports"
     keywords: Keywords
-    login: Login
+    library: Health Sciences Library
+    login: Library Staff Login
     logout: Logout
     more_groups: "More groups"
     more_people: "More people"
-    more_publications: "More publications"
+    more_publications: "More journals"
     more_publishers: "More publishers"
     more_years: "More years"
     name: Name
@@ -399,7 +400,7 @@ en:
     select_all: "Select All"
     send_to: "Send to"
     show: Show
-    signup: Signup
+    signup: ""
     sort_by: "Sort By"
     sort_title: Title
     source: Source
@@ -465,7 +466,7 @@ en:
       color: "RoMEO Color"
       denied: denied
       flash_act_on_many: "Contributorships were successfully %{action}."
-      index: "Works of a person"
+      index: "Articles of a person"
       index_title_html: "%{display_name}: %{status} Contributorships"
       matches: "Possible Matches"
       policy: Policy
@@ -502,9 +503,9 @@ en:
       flash_update_accepted: "Batch accepted -- The imported data will appear shortly."
       flash_update_error: "Sorry... but there was an error updating the import."
       flash_update_rejected: "Batch rejected"
-      header: "Add Works"
+      header: "Add Articles"
       new: "Import File"
-      person_header_html: "Add Works for %{person_link}"
+      person_header_html: "Add Articles for %{person_link}"
       states:
         accepted: "accepted"
         processing: "processing"
@@ -538,7 +539,7 @@ en:
     people:
       batch_csv_error: "An error was generated processing your request."
       confirm: "Really delete this person?"
-      contributorships: "Manage works"
+      contributorships: "Manage articles"
       delete: "Delete person"
       edit: "Edit person"
       edit_header_html: "%{link}: Personal Info"
@@ -562,18 +563,18 @@ en:
       roles: "Manage roles"
       types: "Types of work"
     pub_common:
-      flash_operate_on_box_generic: "One or more publications could not be found."
+      flash_operate_on_box_generic: "One or more journals could not be found."
       flash_update_multiple_generic_cancel: "Cancelled authority selection"
       flash_update_multiple_generic_not_unique: "You must select one record as the authority."
     publications:
-      authority: "Admin Publication Authorities"
+      authority: "Admin Journal Authorities"
       confirm: "Really delete this Publication?"
-      delete: "Delete this Publication"
-      edit: "Edit this Publication"
-      flash_destroy_failure: "This publication has %{count} work associated with it, which must be altered or removed before this publication can be deleted."
-      flash_destroy_success: "Publications were successfully deleted."
-      new: "Add a Publication"
-      publication_name: "Publication Name"
+      delete: "Delete this Journal"
+      edit: "Edit this Journal"
+      flash_destroy_failure: "This journal has %{count} work associated with it, which must be altered or removed before this publication can be deleted."
+      flash_destroy_success: "Journals were successfully deleted."
+      new: "Add a Journal"
+      publication_name: "Journal Name"
       publisher: "Published by"
     publishers:
       authority: "Admin Publisher Authorities"
@@ -638,32 +639,32 @@ en:
       show: View
       show_all: "View all"
     works:
-      add_works_html: "Add Works"
-      add_works_for_person_html: "Add Works for %{person_link}"
+      add_works_html: "Add Articles"
+      add_works_for_person_html: "Add Articles for %{person_link}"
       authors: "Authors at %{institution}"
       coauthors: "Coauthors at %{institution}"
       conference_location: "Conference Location"
-      confirm: "Really delete this work?"
+      confirm: "Really delete this article?"
       contributors: Contributor
-      delete: "Delete work"
+      delete: "Delete article"
       duplicate: "Show duplicates"
-      edit: "Edit work"
+      edit: "Edit article"
       et_al: "et al."
-      flash_create: "Work was successfully created."
-      flash_destroy_has_duplicates: "This work has duplicates, which must be altered or deleted before this work can be deleted."
-      flash_destroy_multiple_privileges: "One or more works could not be deleted, as you have insufficient privileges"
-      flash_destroy_multiple_successful: "Works were successfully deleted."
-      flash_destroy_success: "Works were successfully deleted."
-      flash_update: "Work was successfully updated."
+      flash_create: "Article was successfully created."
+      flash_destroy_has_duplicates: "This article has duplicates, which must be altered or deleted before this article can be deleted."
+      flash_destroy_multiple_privileges: "One or more articles could not be deleted, as you have insufficient privileges"
+      flash_destroy_multiple_successful: "Articles were successfully deleted."
+      flash_destroy_success: "Articles were successfully deleted."
+      flash_update: "Article was successfully updated."
       location: Location
       location_given: "Location Given"
-      new: "Add a work"
+      new: "Add an Article"
       new_attachment: "Add attachment"
       no_abstract: "No abstract available"
-      orphans: "Orphaned works"
+      orphans: "Orphaned articles"
       publication_place: "Publication Place"
-      recent: "Recent works"
-      recommendations: "Similar works at %{institution}"
+      recent: "Recent articles"
+      recommendations: "Similar articles at %{institution}"
       update_author_list: "Successfully updated order of authors!"
       update_editor_list: "Successfully updated order of editors!"
       update_list: "Successfully updated order of list!"
@@ -699,7 +700,7 @@ en:
   facet_headings:
     groups: Groups
     people: People
-    publications: Publications
+    publications: Journals
     publishers: Publishers
     years: Years
   groups:
@@ -743,14 +744,14 @@ en:
   imports:
     accepted:
       text_html: "This import was <strong>accepted</strong>"
-      warning: "This import has been accepted, but contains no works. They may have been deleted."
+      warning: "This import has been accepted, but contains no articles. They may have been deleted."
     batch_import_form:
       legend: "Batch Import (RIS | Medline | Refworks XML)"
       text: "Upload a file containing the citations"
     default:
       accept: "Accept Batch"
-      blank: "This import is reviewable, but contains no works. They may have been deleted."
-      not_blank: "Duplicate works are not shown within the system.  Accepting a batch with duplicates does not mean the dupes will appear."
+      blank: "This import is reviewable, but contains no articles. They may have been deleted."
+      not_blank: "Duplicate articles are not shown within the system.  Accepting a batch with duplicates does not mean the dupes will appear."
       reject: "Reject Batch"
     details_generic:
       header: "Batch report"
@@ -770,33 +771,33 @@ en:
     matched:
       matched: Matched
       matched_total_html:
-        one: "%{count} work to %{imported_for}."
-        other: "%{count} works to %{imported_for}."
+        one: "%{count} article to %{imported_for}."
+        other: "%{count} articles to %{imported_for}."
       remaining_total: "%{count} remain to match."
     new:
       add_import: "Add an Import"
       show_all: "Show all Imports"
     pen_names:
       my_names: "My Names"
-      works_matched: "Works Matched"
+      works_matched: "Articles Matched"
     processing:
       text_html: "This import is in processing. You'll receive an <strong>email</strong> when the batch is complete"
     rejected:
-      text_html: "This import was <strong>rejected</strong> and all works associated with the import were destroyed."
+      text_html: "This import was <strong>rejected</strong> and all articles associated with the import were destroyed."
     show:
       add: "Add an import"
       header: "Review Batch"
       show: "Show my imports"
       subheader_html: "Imported For %{imported_for}"
     work_counts:
-      duplicate_works: "Duplicate works"
-      new_works: "New works"
+      duplicate_works: "Duplicate articles"
+      new_works: "New articles"
     work_type_list:
       header: "Select a type"
     works_destroy_form:
-      submit: "Delete selected works"
+      submit: "Delete selected articles"
     works_imported:
-      header: "Works Imported"
+      header: "Articles Imported"
   #The jsperanto section is for use with the jsperanto jquery i18n library for javascript files
   #As such, it uses different interpolation and pluralization syntax. See Bibapp wiki.
   #This section is used to autogenerate files in public/javascripts/translations that jsperanto uses to translate.
@@ -820,15 +821,15 @@ en:
           confirm_unverify_plural: "Are you sure you want to unverify the __count__ selected items?"
       imports:
         show:
-          matched_total: "__count__ work to __imported_for__"
-          matched_total_plural: "__count__ works to __imported_for__"
-          matched_total_zero: "__count__ works to __imported_for__"
+          matched_total: "__count__ article to __imported_for__"
+          matched_total_plural: "__count__ articles to __imported_for__"
+          matched_total_zero: "__count__ articles to __imported_for__"
           remaining_total: "__count__ remains unmatched."
           remaining_total_plural: "__count__ remain unmatched."
           remaining_total_zero: "Everything matches."
       keywords:
         timeline:
-          title: "Work Types"
+          title: "Article Types"
       memberships:
         new:
           select_group: "Please select a group to join."
@@ -852,7 +853,7 @@ en:
     new:
       heading: "New keyword"
     timeline:
-      chart_header: "Work Types by Year"
+      chart_header: "Article Types by Year"
       chart_loading: loading...
       cloud_header: "Popular Research Topics by Year"
       handle_alt: "Drag left or right"
@@ -936,7 +937,7 @@ en:
       no_suggestions: "There are no immediate suggestions for"
   people:
     admin_actions:
-      add: "Add Works"
+      add: "Add Articles"
       archive: "Archive Analysis"
       edit: "Edit this Person"
       manage_contributorships: "Manage Contributorships"
@@ -946,7 +947,7 @@ en:
       legend_present: "CSV Upload"
       select_file: "Select a CSV Comma delimited file for batch processing."
     co_authors_list:
-      shared_works: "Shared Works"
+      shared_works: "Shared Articles"
     edit:
       add: "Add a new person"
       confirm: "Permanently delete this person? This cannot be undone."
@@ -981,7 +982,7 @@ en:
       description: "Latest %{university_name} work from %{object_name}"
   publications:
     authorities:
-      instructions_html: "To set publication authorities, add records to the box below, select one record as the authority, and click the <em>Set Authority</em> button."
+      instructions_html: "To set journal authorities, add records to the box below, select one record as the authority, and click the <em>Set Authority</em> button."
     edit:
       confirm: "Permanently delete this publication? This cannot be undone."
     form:
@@ -996,7 +997,7 @@ en:
       published_by: "Published by"
   publishers:
     authorities:
-      instructions_html: "To set publisher authorities, add publication records to the box below, select one record as the authority, and click the <em>Set Authority</em> button."
+      instructions_html: "To set publisher authorities, add journal records to the box below, select one record as the authority, and click the <em>Set Authority</em> button."
     form:
       auth_record: "Publisher Authority Record"
       copy_allowed: "Publisher's Copy Allowed?"
@@ -1033,7 +1034,7 @@ en:
       advanced_search: "Try our advanced search options."
       different_keywords: "Try different keywords."
       double_check: "Double check your spelling."
-      error: "Sorry, your search for \"%{query}\" came up empty."
+      error: "Sorry, your search for &ldquo;&{query}&rdquo; came up empty."
       suggestions: Suggestions
     spelling_suggestions:
       did_you_mean: "Did you mean"
@@ -1049,7 +1050,7 @@ en:
     coauthors_table:
       header: "%{university_name} Co-Authors"
       last_name: "Last Name"
-      work_count: "# of Works"
+      work_count: "# of Articles"
     contribution_actions:
       deny: Deny
       verify: Verify
@@ -1277,7 +1278,7 @@ en:
         merge_tags:
           label: Tag(s)
         publication:
-          label: "Publication Title"
+          label: "Journal Title"
         tags:
           add: "Add Tag to List"
           label: Tag(s)
@@ -1295,15 +1296,15 @@ en:
     index:
       add: "Add a Work"
       heading_html: "At the library, we <span class=\"hearts\"> &hearts;</span> our researchers."
-      view_orphans: "View orphaned works"
+      view_orphans: "View orphaned articles"
     layouts:
       merge_form:
-        accepted: "Accepted work"
-        duplicate: "Duplicate work"
+        accepted: "Accepted article"
+        duplicate: "Duplicate article"
     local_authors:
       heading: "%{university_name} Authors"
     local_recommendations:
-      heading: "Related %{university_name} Work"
+      heading: "Related %{university_name} Article"
     metadata:
       links:
         label: DOI/URL
@@ -1311,12 +1312,12 @@ en:
       header: "Select a type"
     orphans:
       confirm: "Are you sure? This operation cannot be undone."
-      header: "Orphaned works"
-      submit: "Delete checked works"
+      header: "Orphaned articles"
+      submit: "Delete checked articles"
     shared:
-      header: "Shared works for:"
-      title: "Shared works"
+      header: "Shared articles for:"
+      title: "Shared articles"
     show:
       archive: "Archive Research"
       deposit: "Deposit Attachments"
-      edit: "Edit this work"
+      edit: "Edit this article"

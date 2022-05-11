@@ -1,5 +1,5 @@
 - include_javascript('specific/memberships/new')
-- if current_user_any_role?("editor", Group)
+- if can?("editor", @group)
   = render :layout => '/layouts/admin_bar' do
     %li= link_to t('memberships.new.delete_person'), person_url(@person), :method => :delete, :confirm => t('memberships.new.delete_confirm')
     %li= link_to t('memberships.new.add_person'), new_person_path

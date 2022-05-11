@@ -1,4 +1,4 @@
-- if current_user_role?("admin", System)
+- if current_user_role?(:admin)
   = render :layout => 'layouts/admin_bar' do
     %li= link_to t('roles.index.add_admins'), {:controller=>"roles", :action=>"new_admin"}
     %li= link_to t('roles.index.add_editors'), {:controller=>"roles", :action=>"new_editor"}

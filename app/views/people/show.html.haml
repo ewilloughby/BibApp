@@ -1,6 +1,6 @@
 - @title = @person.display_name # Specify text at end of HTML <title> tag
 
-- if current_user_role?("editor", @person)
+- if can?("editor", @person)
   = render :partial => "admin_actions", :layout => "layouts/admin_bar"
 
 / ### Main ###

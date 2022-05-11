@@ -184,4 +184,23 @@ module ApplicationHelper
     yield collection.collect {|member| member.id}
   end
 
+  def set_image_geometry(size, format)
+    return format if size.nil? || size.split('x').compact.length != 2
+    image_w,image_h = size.split('x').collect {|x| x.to_f}
+    format_h = format.split('x')[1].to_i
+    n_width = (image_w*(format_h/image_h)).floor 
+    return "#{n_width}x#{format_h}"
+  end
+    
+  def resize_for_list_p(phsh)
+     return "50x66" if phsh['imgpath'].blank? || phsh['imgpath'] == 'man.jpg'
+     # sometimes geometry not saved for attachment
+     #return "50x66" if person.image.width.nil? || person.image.height.nil?
+     return "50x66" if phsh['width'].nil? || phsh['height'].nil?
+     const = 0.40 
+     width = (phsh['width'].to_i*const).floor
+     height = (phsh['height'].to_i*const).floor
+     return "#{width}x#{height}"
+  end
+
 end

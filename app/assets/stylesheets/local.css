@@ -1,0 +1,58 @@
+@import "bibapp.css";
+/*
+ * Choose two colors for your institution:
+ * 1. A border color: #CC9933 (UW-Madison Gold)
+ * 2. A heading color: #990000 (UW-Madison Red)
+ * Add your colors below where necessary.
+ * LUC red is #680013
+*/
+
+
+body {
+background: url("http://hsd.luc.edu/sites/all/themes/loyola_style2/images/body-bg.jpg") repeat scroll 0 0 transparent;}
+}
+.container {
+ border-left:1px dotted #000;
+ border-right:1px dotted #000;
+}
+
+#header {
+ color: #680013; /* Red */
+ border-bottom: 3px double #680013; /* Gold */
+ background-image:url('/assets/header.png');
+}
+
+#header a {color:#680013;} /* Red */
+#filter {color:#CC9933;} /* Gold */
+
+#footer {
+	color:#A2A2A2;
+	border-top: 1px solid #680013;
+	border-bottom: 3px solid #000; /* Gold */
+	background-image:url('/assets/header.png');
+}
+
+#footer a {
+	color:#680013;
+}
+
+/* Style for displaying Deposit License Agreement, etc. in nice scrollable div */
+.scrollarea {
+    width: 550px;
+    height: 250px;
+    overflow: scroll;
+}
+/*#search-box {
+  background-image: url('http://hsd.luc.edu/sites/all/themes/loyola_style2/images/header-search-bg.png');
+}
+*/
+
+/*Add margin to person last name to create space below profile photo*/
+
+.person-last-name {
+  width: 75px;
+  padding-left: 0.5em;
+  position: relative;
+  bottom: 2em;
+  margin-top: 1em;
+}

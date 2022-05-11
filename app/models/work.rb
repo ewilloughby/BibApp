@@ -423,12 +423,17 @@ class Work < ActiveRecord::Base
   # Arguments:
   #  * array of keyword strings
   def set_keyword_strings(keyword_strings)
-    keyword_strings = Array.wrap(keyword_strings)
+    keyword_strings = Array.wrap(keyword_strings).delete_if{|x| x.empty?}
+    return if self.keywords.collect{|x| x.name} == keyword_strings
+    
     keywords = keyword_strings.uniq.collect do |add|
-      Keyword.find_or_initialize_by_name(add)
+      Keyword.find_or_initialize_by(name: add.force_encoding('UTF-8').encode('UTF-8'))
     end
     self.set_keywords(keywords)
-    self.save
+    # commented out - this would seem to be duplicated in later call to update_attributes?
+    # but possible repercussion with deduplicate not being called enough times. 
+    # Possible fix in Imports model that calls deduplicate so commenting out again
+    #self.save 
   end
 
   # Initializes an array of Tags
@@ -852,9 +857,11 @@ class Work < ActiveRecord::Base
     open_url_kevs = Hash.new
     open_url_kevs[:format] = "&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal"
     open_url_kevs[:genre] = "&rft.genre=article"
-    open_url_kevs[:title] = "&rft.atitle=#{CGI.escape(self.title_primary)}"
+    #open_url_kevs[:title] = "&rft.atitle=#{CGI.escape(self.title_primary)}"
+    open_url_kevs[:title] = "&rft.atitle=#{CGI.escape(self.title_primary.force_encoding('UTF-8').encode('UTF-8'))}"
     unless self.publication.nil?
-      open_url_kevs[:source] = "&rft.jtitle=#{CGI.escape(self.publication.authority.name)}"
+      #open_url_kevs[:source] = "&rft.jtitle=#{CGI.escape(self.publication.authority.name)}"
+      open_url_kevs[:source] = "&rft.jtitle=#{CGI.escape(self.publication.authority.name.force_encoding('UTF-8').encode('UTF-8'))}"
       open_url_kevs[:issn] = "&rft.issn=#{self.publication.issns.first[:name]}" if !self.publication.issns.empty?
     end
     open_url_kevs[:date] = "&rft.date=#{self.publication_date_string}"

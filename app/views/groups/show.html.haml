@@ -1,4 +1,4 @@
-- if current_user_role?("editor", @group)
+- if can?("editor", @group)
   = render :layout => 'layouts/admin_bar' do
     %li= link_to t('groups.show.add'), new_group_path
     %li= link_to t('groups.show.edit'), edit_group_path

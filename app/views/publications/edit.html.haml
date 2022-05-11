@@ -1,4 +1,4 @@
-- if current_user_any_role?("editor", Group)
+- if can?("editor", Group)
   = render :layout => 'layouts/admin_bar' do
     %li= link_to t('common.publications.delete'), publication_url(@publication), :method => :delete, :confirm => t('publications.edit.confirm')
 

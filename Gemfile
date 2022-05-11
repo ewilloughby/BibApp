@@ -140,7 +140,7 @@ gem 'capistrano'
 #doing simply 'thin start' may pull in unbundled gems and cause
 #dependency conflicts
 group :development do
-  gem 'thin'
+  #gem 'thin'
   gem 'listen'
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,

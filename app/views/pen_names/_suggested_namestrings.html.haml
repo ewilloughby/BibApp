@@ -3,4 +3,4 @@
     #{t '.no_suggestions'}:
     %strong= "#{@person.last_name}"
   - else
-    = render :partial => "name_string", :collection => @suggestions - @person.name_strings(true), :locals => { :person => @person, :selected => false }
+    = render :partial => "name_string", :collection => @suggestions - @person.name_strings(), :locals => { :person => @person, :selected => false }
