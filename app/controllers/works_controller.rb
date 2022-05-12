@@ -144,7 +144,7 @@ class WorksController < ApplicationController
   def change_type
     t = params[:type]
     work = Work.find(params[:id])
-    authorize!(:admin, work)
+    authorize!(:superadmin, work)
 
     wtypes = Work.types.collect {|type| type.gsub(/[()\/\s]/, '')}
     
@@ -203,14 +203,14 @@ class WorksController < ApplicationController
       #Create attribute hash
       r_hash = create_attribute_hash
       
-      tswnh = {staff_work_note: r_hash[:staff_work_note]}
+      #tswnh = {staff_work_note: r_hash[:staff_work_note]}
       
       @work, error_msg = Work.create_from_hash(r_hash)
       
       if @work.errors.blank?
         ensure_admin(@work, current_user)
         
-        update_staff_notes(tswnh[:staff_work_note], @work.id) if tswnh[:staff_work_note].blank? == false
+        #update_staff_notes(tswnh[:staff_work_note], @work.id) if tswnh[:staff_work_note].blank? == false
         
         #If this was submitted as an individual work for a specific person then
         #automatically verify the contributorship
@@ -522,9 +522,12 @@ class WorksController < ApplicationController
     attr_hash[:publication] = @publication.name
     attr_hash[:publisher] = @publisher.name
 
-    
+    # Add other fields from the work to the hash
+    params[:work].each do |key, val|
+      attr_hash[key.to_sym] = val
+    end
     # Let staff add notes to works
-    attr_hash[:staff_work_note] = params[:staff_work_note] if params[:staff_work_note]
+    #attr_hash[:staff_work_note] = params[:staff_work_note] if params[:staff_work_note]
 
     return attr_hash.delete_if { |key, val| val.blank? }
 
