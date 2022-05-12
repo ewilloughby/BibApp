@@ -49,7 +49,7 @@ class Work < ActiveRecord::Base
   has_many :attachments, :as => :asset
   #belongs_to :work_archive_state
 
-  validates_presence_of :title_primary
+  #validates_presence_of :title_primary
   validates_numericality_of :publication_date_year, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :publication_date_month, :in => 1..12, :allow_nil => true
   validates_each :publication_date_month do |record, attr, value|
@@ -286,17 +286,20 @@ class Work < ActiveRecord::Base
 
   # Creates a new work from an attribute hash
   # Caller must check to see if there were any validation errors
-  def self.create_from_hash(h, add_contributorships = true)
+  def self.create_from_hash(h, add_contributorships = true)  
     klass = h[:klass]
-
+    logger.debug("\n\n===CREATE NEW WORK FROM HASH===\n\n")
+    logger.debug("Class type is #{klass}")
+    logger.debug("add_contributorships argument is #{add_contributorships}")
+    
     # Are we working with a legit SubKlass?
     klass = klass.constantize
     if klass.superclass != Work
       raise NameError.new("#{klass_type} is not a subclass of Work")
     end
-
     work = klass.new
     work.title_primary = h[:title_primary]
+    # import sets add_contributorships to false
     work.skip_create_contributorships = !add_contributorships
     work.update_from_hash(h)
   end
@@ -572,7 +575,6 @@ class Work < ActiveRecord::Base
   #  (not all hash values need be set)
   def set_publication_info(publication_hash)
     logger.debug("\n\n===SET PUBLICATION INFO===\n\n")
-
     # If there is no publisher name, set to Unknown
     set_publisher = set_publisher_from_name(publication_hash[:publisher_name])
     set_publication_from_name(publication_hash[:name], publication_hash[:issn_isbn], set_publisher)
@@ -680,6 +682,10 @@ class Work < ActiveRecord::Base
 
   # Return a hash comprising all the Contributorship scoring methods
   def update_scoring_hash
+    logger.info "\n\n===== IN UPDATE_SCORING_HASH in WORK MODEL =====\n\n"
+    logger.info "\n\n===== PUBLICATION DATE YEAR: #{self.publication_date_year} =====\n\n"
+    logger.info "\n\n===== PUBLICATION ID: #{self.publication_id} =====\n\n"
+    logger.info "\n\n===== KEYWORD IDS: #{self.keyword_ids} =====\n\n"
     self.scoring_hash = {:year => self.publication_date_year,
                          :publication_id => self.publication_id,
                          :collaborator_ids => self.name_strings.collect { |ns| ns.id }, #there's an error if one tries to do this the natural way
@@ -1236,6 +1242,7 @@ class Work < ActiveRecord::Base
     
     position = counter
     name_strings_hash.flatten.each do |cns|
+      logger.debug("\n\n IN ADD_NEW_NAME_STRINGS_SUBMISSION: #{self.id} ===============\n")
       machine_name = make_machine_name(cns[:name])
       name = cns[:name].strip
       logger.debug("ADD_NEW_NAME_STRING_SUBMISSION: #{name}")
