@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_01_224503) do
+ActiveRecord::Schema.define(version: 2022_05_12_152638) do
 
   create_table "attachments", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "asset_id"
@@ -176,12 +176,12 @@ ActiveRecord::Schema.define(version: 2022_05_01_224503) do
   end
 
   create_table "name_strings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "name"
+    t.binary "name", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "machine_name"
     t.boolean "cleaned", default: false
-    t.index ["machine_name"], name: "machine_name", unique: true
+    t.index ["machine_name", "name"], name: "index_name_strings_on_machine_name_and_name", unique: true
     t.index ["name"], name: "author_name"
   end
 
@@ -393,7 +393,7 @@ ActiveRecord::Schema.define(version: 2022_05_01_224503) do
     t.string "language"
     t.text "copyright_holder"
     t.boolean "peer_reviewed"
-    t.string "machine_name"
+    t.string "machine_name", limit: 765
     t.string "publication_place"
     t.string "sponsor"
     t.string "date_range"
@@ -412,7 +412,7 @@ ActiveRecord::Schema.define(version: 2022_05_01_224503) do
     t.integer "publication_date_year"
     t.integer "publication_date_month"
     t.integer "publication_date_day"
-    t.string "sort_name"
+    t.string "sort_name", limit: 765
     t.integer "import_job_id"
     t.index ["batch_index"], name: "batch_index"
     t.index ["machine_name"], name: "work_machine_name"

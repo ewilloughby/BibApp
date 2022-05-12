@@ -26,13 +26,13 @@ module ProperSharedHelper
 
   def proper_name_string_links(people_hashes, prefix, postfix, work)
     return '' if people_hashes.blank?
-    links = people_hashes.first(5).collect do |hash|
+    links = people_hashes.first(10).collect do |hash|
       link_to(h("#{hash[:name].gsub(",", ", ")}"), name_string_path(hash[:id]), {:class => "name_string"})
     end
-    if people_hashes.size > 5
+    if people_hashes.size > 10
       links << link_to(t('common.shared.more'), work_path(work.id))
     end
-    return [prefix, links.join("; "), postfix].join.html_safe
+    return [prefix, links.join("; "), postfix].join.force_encoding('UTF-8').encode('UTF-8').html_safe
   end
 
   def proper_link_to_work_publication(work)

@@ -15,7 +15,8 @@ class ImportFile < Attachment
  
   # could include images as well
   # validates_attachment_file_name :data, :matches => [/txt\Z/,/xml\Z/]
-  validates_attachment_file_name :data, matches: %r{\.xml\Z}i
+  #validates_attachment_file_name :data, matches: %r{\.xml\Z}i
+  validates_attachment_file_name :data, matches: [/xml\Z/, /ris\Z/, /txt\Z/]
  
  end
  

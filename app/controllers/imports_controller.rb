@@ -9,8 +9,7 @@ class ImportsController < ApplicationController
 
   def index
     # List all imports
-    params[:user_id] ||= current_user.id
-                              
+    params[:user_id] ||= current_user.id                               
     @imports = Import.where(user_id: params[:user_id]).paginate(page: params[:page]).order('updated_at DESC')
     
     # Only allow users to view their own imports, unless they are System editors

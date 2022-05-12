@@ -7,6 +7,7 @@ class GroupsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :hide]
   
   load_and_authorize_resource
+  skip_authorize_resource :only => [:show, :index, :group_dashboard]
   # since I'm using check_authorization in application_controller
   skip_authorization_check :only => [:show, :index, :group_dashboard] 
 
