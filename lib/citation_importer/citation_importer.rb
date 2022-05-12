@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # CitationImporter plugin
 #
@@ -9,7 +10,8 @@ class CitationImporter
   #Must require ActiveRecord so we have access to Rails Unicode tools
   # See: http://api.rubyonrails.org/classes/ActiveSupport/CoreExtensions/String/Unicode.html
   require 'active_record'
-
+  require 'logger'
+  
   @@importers = Array.new
 
   class << self
@@ -24,8 +26,11 @@ class CitationImporter
     end
 
     def logger
-      #Use RAILS_DEFAULT_LOGGER by default for all logging
-      @@logger ||= Rails.logger
+      if defined?(Rails)
+        @@logger ||= ::Rails.logger
+      else
+        @@logger = Logger.new(STDERR)
+      end
     end
   end
 
@@ -34,9 +39,14 @@ class CitationImporter
   end
 
   def citation_attribute_hashes(parsed_citations)
+    CitationImporter.logger.debug("\nAttempting to create #{parsed_citations.length} citations...\n")
+    hashes = Array.new
     parsed_citations.collect do |c|
-      citation_attribute_hash(c)
+      hashes << citation_attribute_hash(c)
     end
+    CitationImporter.logger.debug("\nSuccessfully created #{hashes.length} citations!\n")
+    
+    return hashes
   end
 
   # Generate a valid BibApp attribute Hash from a parsed citation
