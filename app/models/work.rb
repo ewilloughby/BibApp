@@ -825,7 +825,7 @@ class Work < ActiveRecord::Base
   def authors
     self.work_name_strings.with_role(self.creator_role).includes(:name_string).collect do |wns|
       ns = wns.name_string
-      {:name => ns.name, :id => ns.id}
+      {:name => ns.name.force_encoding('UTF-8').encode('UTF-8'), :id => ns.id}
     end
   end
 
@@ -1276,7 +1276,6 @@ class Work < ActiveRecord::Base
       end
       
       cns[:wns_id] = nwns.id
-      
       # find the pen_name record for the new or existing name_string
       # an edit with a known pen name will make the association and the contrib get added
       pns = PenName.find_by_name_string_id(name_string.id) 

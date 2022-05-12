@@ -9,7 +9,11 @@ module StringMethods
   #return a UTF8 version of the string, throwing an EncodingException if there
   #is a problem
   def ensure_utf8(str)
+    Rails.logger.info "\n ++++++++++++++++++ TESTING ENSURE_UTF8 ======================  \n"
     return str if str.is_utf8?
+    Rails.logger.warning " ++++++ NOT UTF8 ++++++++ will attempt to convert to UTF8 "
+    Rails.logger.warning(str)
+    
     encoding = CMess::GuessEncoding::Automatic.guess(str)
     # As long as encoding could be guessed, try to convert to UTF-8
     unless encoding.blank? or (encoding == CMess::GuessEncoding::Encoding::UNKNOWN)

@@ -6,6 +6,7 @@ class SearchController < ApplicationController
   def index
     # Default BibApp search method - ApplicationController
     search(params)
+    #byebug
 
     respond_to do |format|
       format.html # Do HTML
