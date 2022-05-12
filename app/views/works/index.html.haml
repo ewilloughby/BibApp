@@ -1,3 +1,4 @@
+-# encoding: UTF-8
 / ### Person / Works ###
 - if params[:person_id] && can?(:edit, Person.find(params[:person_id]))
   = render :partial => "people/admin_actions", :layout => 'layouts/admin_bar'
