@@ -21,7 +21,8 @@ class ContentFile < Attachment
   #validates_attachment_content_type :data, :content_type => [/text\/plain/, /text\/xml/, 
   #   /application\/x-Inst-for-Scientific-Inf/, /application\/x-Research-Info-Systems/]
   #validates_attachment_content_type :data, content_type: ["application/xml", "text/xml"]
-  validates_attachment_file_name :data, matches: %r{\.xml\Z}i
+  #validates_attachment_file_name :data, matches: %r{\.xml\Z}i
+  validates_attachment_file_name :data, matches: [/xml\Z/, /ris\Z/, /txt\Z/]
   # could include images as well
   #validates_attachment_file_name :data, :matches => [/pdf\Z/, /csv\Z/, /txt\Z/, /xml\Z/]
  

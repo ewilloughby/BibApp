@@ -42,6 +42,14 @@ class Attachment < ActiveRecord::Base
     end
   end
 
+  after_save :after_save
+ 
+  def after_save
+    if self.asset.kind_of?(Person) and self.kind_of?(Image)
+      PeopleIndex.update_solr( Person.find(self.asset_id) ) 
+    end
+  end
+
   # Return the full URL of the file in BibApp
   # Needs the request object to build the URL
   def public_url(request)
