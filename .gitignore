@@ -29,6 +29,6 @@ public/system
 .vscode
 
 # Ignore deploy secrets
-/config/deploy.rb
-/config/deploy/*
-/Capfile
+config/deploy.rb
+config/deploy/*
+Capfile
