@@ -54,6 +54,6 @@
           :show_dupes => show_dupes, :links_array => links_array
   - else
     .span-17.clear-both.no-padding-or-margin
-      = @works.html_safe
+      = @works.force_encoding('UTF-8').html_safe
 
   = pagination

@@ -1,3 +1,4 @@
+-# encoding: UTF-8
 = render :layout => 'layouts/main_body', :locals => {:header => t('works.shared.header')} do
   - @authors.each do |author|
     %h3 #{link_to author.name, person_url(author)}

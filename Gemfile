@@ -132,9 +132,6 @@ gem 'sort_alphabetical'
 #allow for HTML sanitizing for fields where we want to allow some html
 gem 'loofah-activerecord'
 
-#For deployment, but can be ignored if not using capistrano
-gem 'capistrano'
-
 #include thin webserver for development
 #to start it, do 'bundle exec thin start' - this is important, as
 #doing simply 'thin start' may pull in unbundled gems and cause
@@ -142,6 +139,11 @@ gem 'capistrano'
 group :development do
   #gem 'thin'
   gem 'listen'
+
+  # deployment
+  gem "capistrano", "~> 3.10", require: false
+  gem "capistrano-rails", "~> 1.6", require: false
+
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,
   #so whenever adding new Gems or otherwise generating a new Gemfile.lock to check in

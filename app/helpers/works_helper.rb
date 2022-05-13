@@ -85,7 +85,7 @@ module WorksHelper
   #takes an array of work name strings and gives back the html for links to the names
   def work_name_strings_to_links(work_name_strings)
     work_name_strings.collect { |wns| wns.name_string }.collect do |ns|
-      link_to(h(ns.name.gsub(',', ', ')), name_string_path(ns))
+      link_to(h(ns.name.force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8).gsub(',', ', ')), name_string_path(ns))
     end.join('; ').html_safe
   end
 

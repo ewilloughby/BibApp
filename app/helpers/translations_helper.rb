@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module TranslationsHelper
   def t_bibapp_role_name(role_name, opts = {})
     opts.reverse_merge!(:count => 1)
@@ -44,10 +45,16 @@ module TranslationsHelper
   #For i18n - since 'Unknown' is stored as a name in the db for unknown publications/publishers
   #we need to translate if this is the value. This is kind of kludgy, but will have to do for now
   def name_or_unknown(name)
+    # issues with ASCII-8bit and UTF-8 even though the char below is UTF-8, but I think the issue is utf8 fine here
+    # it's just the other text getting combined
+    #cy = '©'.force_encoding(Encoding::UTF_8)
+    #name = name.gsub(/cy/,'')
+
     if is_unknown?(name)
       translate_unknown(name)
     else
-      name
+      #name.force_encoding('ASCII-8BIT').force_encoding('UTF-8').html_safe
+      name.force_encoding('UTF-8').html_safe
     end
   end
 
@@ -56,8 +63,7 @@ module TranslationsHelper
   def sorted_work_types
     Work.types.collect {|type| [type, type.gsub(/[()\/ ]/, '').constantize.model_name.human]}.sort_alphabetical_by {|a| a.last}
   end
-
-
+  
   def ensure_encoding_utf(whash)
     if whash.is_a?(Hash)
       whash.each do |key,val|
@@ -68,6 +74,7 @@ module TranslationsHelper
       end
     end
   end
+
   protected
 
   #Need to handle the cases where the name is just 'Unknown' or if it has some identifiers appended to it
