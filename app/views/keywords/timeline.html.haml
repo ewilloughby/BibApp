@@ -1,3 +1,4 @@
+- include_javascript('https://www.gstatic.com/charts/loader.js')
 - include_javascript('specific/keywords/timeline')
 
 = render :layout => '/layouts/main_body', :locals => {:header => body_header(@current_object)} do
@@ -12,8 +13,9 @@
 
   #timeline-chart.span-7.prepend-1.last-1
     %h3 #{t('keywords.timeline.chart_header')}
-    #chart-img
-      %img.left{:src => "/assets/ajax-loader.gif", :title => t('.chart_loading')}
+    - unless @work_counts.blank?
+      #chart-img
+        =image_tag('ajax-loader.gif', title: t('keywords.timeline.chart_loading'))
 
   = js_data_div('year-tags', @years)
   = js_data_div('chart-urls', @chart_urls)
