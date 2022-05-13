@@ -845,7 +845,7 @@ ol#people {
 li input#work_title_primary,
 li input#work_title_secondary,
 li input#work_title_tertiary {
-  width: 800px;
+  width: 100%;
 }
 
 
