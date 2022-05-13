@@ -1,3 +1,4 @@
+-# encoding: UTF-8
 -# Add an contributors field, with Auto-Complete.
 -# Also adds a list of existing contributors
 
@@ -7,7 +8,7 @@
 
 -# if name strings are explicitly passed then use them, otherwise collect them from the work
 - contributors = @editor_name_strings if @editor_name_strings
-- contributors ||= @work.work_name_strings.reject{|wns| wns.role == @work.creator_role}.collect{ |wns| {:name => wns.name_string.name, :role => wns.role}} if @work.name_strings
+- contributors ||= @work.work_name_strings.reject{|wns| wns.role == @work.creator_role}.collect{ |wns| {:name => wns.name_string.name.force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8), :role => wns.role}} if @work.name_strings
 
 .author_block
   = label :author, :string, t('works.forms.fields.contributor_name_strings.label')
@@ -21,9 +22,9 @@
           - roles.each do |r|
             %option{:value => r, :selected => selected_if_equal(r, roles[0])}= t_work_role_name(r)
         = text_field_tag "contributors[]", nil, {:class=>'text'}
-        = link_to_function t('works.forms.fields.contributor_name_strings.remove'), 'remove_enclosing_list_item(this);'
+        = link_to t('works.forms.fields.contributor_name_strings.remove'), '', class: 'remove_enclosing_list_item'
     -else
       - contributors.each_with_index do |contributor, i|
-        = render 'works/forms/fields/contributor_list_item', :ns_id=> i, :ns_name=>contributor[:name], :ns_role=>contributor[:role]
+        = render 'works/forms/fields/contributor_list_item', :ns_id=> i, :ns_name=>contributor[:name].force_encoding(Encoding::UTF_8).encode(Encoding::UTF_8), :ns_role=>contributor[:role]
 
-  = link_to_function t('works.forms.fields.contributor_name_strings.add'), 'add_contributor_list_item()'
+  = link_to t('works.forms.fields.contributor_name_strings.add'), '', class: 'add_contributor_list_item'
