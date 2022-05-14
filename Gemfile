@@ -98,20 +98,11 @@ gem 'yaml_db'
 # Puma
 gem 'puma'
 
-# authorization, replacing plugin used previously
-# We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
-# 
-#gem 'authorization'
 #replacing authorization with cancancan
 gem 'cancancan'
 
 #authentication
-#gem 'authlogic'
-
-# Authlogic needs this
-#gem "scrypt", "~> 3.0"
-
-# Replacing authlogic authentication with Devise
+# Replaced authlogic with Devise
 gem 'devise'
 
 #TODO will require some work to go to 1.0 series
@@ -132,10 +123,6 @@ gem 'sort_alphabetical'
 #allow for HTML sanitizing for fields where we want to allow some html
 gem 'loofah-activerecord'
 
-#include thin webserver for development
-#to start it, do 'bundle exec thin start' - this is important, as
-#doing simply 'thin start' may pull in unbundled gems and cause
-#dependency conflicts
 group :development do
   #gem 'thin'
   gem 'listen'
