@@ -26,4 +26,8 @@ config/database.yml
 .byebug_history
 public/system
 .DS_Store
-.vscode/
+.vscode
+# Ignore deploy secrets
+config/deploy.rb
+config/deploy/*
+Capfile
