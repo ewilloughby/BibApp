@@ -131,6 +131,8 @@ group :development do
   gem "capistrano", "~> 3.10", require: false
   gem "capistrano-rails", "~> 1.6", require: false
   gem 'capistrano-passenger'
+  gem 'ed25519', '~> 1.2.4'
+  gem 'bcrypt_pbkdf', '~> 1.1.0'
 
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,
