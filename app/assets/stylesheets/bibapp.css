@@ -307,7 +307,7 @@ ol.facet_filters li {
 /* Active filter (which can be removed) */
 li.active-filter {
   list-style: none; 
-  background: url('/synapse/assets/cross-button.png') left center no-repeat;
+  background: url('/assets/icons/cross-button.png') left center no-repeat;
   padding-left: 1.5em;
 }
 
@@ -845,7 +845,7 @@ ol#people {
 li input#work_title_primary,
 li input#work_title_secondary,
 li input#work_title_tertiary {
-  width: 800px;
+  width: 100%;
 }
 
 

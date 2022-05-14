@@ -12,17 +12,17 @@
 
 /* sorting icons */
 .dataTables_wrapper .sorting:after {
-  content: url(/icons/sort.png);
+  content: url(/assets/icons/sort.png);
   padding-left: 10px;
 }
 
 .dataTables_wrapper .sorting_asc:after {
-  content: url(/icons/sort--plus.png);
+  content: url(/assets/icons/sort--plus.png);
   padding-left: 10px;
 }
 
 .dataTables_wrapper .sorting_desc:after {
-  content: url(/icons/sort--minus.png);
+  content: url(/assets/icons/sort--minus.png);
   padding-left: 10px;
 }
 

@@ -1,3 +1,12 @@
-%h3 #{t '.header'}
+- include_javascript('specific/keywords/timeline')
+= javascript_include_tag 'https://www.gstatic.com/charts/loader.js'
+%h3 #{t '.header'} 
 .text-center
-  %img.chart-image{:src => @chart_url}
+  - unless @work_counts.blank? 
+    #chart-img
+      =image_tag('ajax-loader.gif', alt: t('app.chart_loading'), title: t('app.chart_loading'))
+
+  = js_data_div('year-tags', @years)
+  = js_data_div('chart-urls', @chart_urls)
+  = js_data_div('work-counts', @work_counts)
+  

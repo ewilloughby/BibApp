@@ -27,7 +27,6 @@ config/database.yml
 public/system
 .DS_Store
 .vscode
-
 # Ignore deploy secrets
 config/deploy.rb
 config/deploy/*
