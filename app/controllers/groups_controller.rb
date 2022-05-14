@@ -46,14 +46,47 @@ class GroupsController < ApplicationController
     end
 
     before :show do
-      search(params)
+      
+      search( params.merge({'rows' => 15}) ) 
+
       @group = @current_object
       @title = @group.name
       work_count = @q.data['response']['numFound']
+      
+      @chart_urls = Array.new
+      @work_counts = Array.new
+      @years = Array.new
+      @is_search = false
+      
+      facet_years = @facets[:years].compact
 
+      # not sure why some are reversed years in facets which breaks Range to_a
+      #year_array = facet_years.empty? ? [] : Range.new(facet_years.first.name, facet_years.last.name).to_a
+
+      year_array = if facet_years.empty?
+        []
+      elsif facet_years.last.name > facet_years.first.name
+        Range.new(facet_years.first.name, facet_years.last.name).to_a
+      else
+        Range.new(facet_years.last.name, facet_years.first.name).to_a
+      end
+
+      @years << year_array.last unless year_array.empty?
+
+      # group only index
+      query = '*:*'
+      filter = ['active:true', "group_id:#{@group.id}", 'verified_works_count:[1 TO *]']
+      rows = 400
+
+      #@facets already exists so adding a key that wouldn't exist
+      num = Random.rand(10...50000)
+      @facets[:random_activepersons] = PeopleIndex.fetch(query, filter, rows, num)
+ 
       if work_count > 0
-        @chart_url = google_chart_url(@facets, work_count)
+        #@chart_url = google_chart_url(@facets, work_count)
+        @chart_urls << google_chart_api(@facets, work_count)
         @keywords = set_keywords(@facets)
+        @work_counts[0] = work_count
       end
     end
 
