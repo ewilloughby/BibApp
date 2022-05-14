@@ -132,6 +132,7 @@ group :development do
   gem "capistrano", "~> 3.10", require: false
   gem "capistrano-rails", "~> 1.6", require: false
   gem 'capistrano-passenger'
+  gem 'capistrano-rbenv', '~> 2.2'
   gem 'ed25519', '~> 1.2.4'
   gem 'bcrypt_pbkdf', '~> 1.1.0'
 
