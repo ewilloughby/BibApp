@@ -8,7 +8,7 @@
   <tr>
     <td><%= link_to t('app.show'), keywording %></td>
     <td><%= link_to t('app.edit'), edit_keywording_path(keywording) %></td>
-    <td><%= link_to t('app.destroy'), keywording, :confirm => t('app.are_you_sure'), :method => :delete %></td>
+    <td><%= link_to t('app.destroy'), keywording, data: {:confirm => t('app.are_you_sure')}, :method => :delete %></td>
   </tr>
 <% end %>
 </table>
