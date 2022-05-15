@@ -1,6 +1,6 @@
 class System < ActiveRecord::Base
   self.abstract_class = true
-	acts_as_authorizable
+	#acts_as_authorizable
 
 	#This System model has NO underlying database table.
 	#It is used to give users System-wide roles (using Authorization plugin)
