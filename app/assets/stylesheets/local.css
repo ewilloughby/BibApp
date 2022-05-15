@@ -19,7 +19,7 @@ background: url("https://hsd.luc.edu/media/healthsciencesdivision/images/body-bg
 #header {
  color: #680013; /* Red */
  border-bottom: 3px double #680013; /* Gold */
- background-image:url('/assets/header.png');
+ background-image:url('/static/images/header.png');
 }
 
 #header a {color:#680013;} /* Red */
@@ -29,7 +29,7 @@ background: url("https://hsd.luc.edu/media/healthsciencesdivision/images/body-bg
 	color:#A2A2A2;
 	border-top: 1px solid #680013;
 	border-bottom: 3px solid #000; /* Gold */
-	background-image:url('/assets/header.png');
+	background-image:url('/static/images/header.png');
 }
 
 #footer a {
