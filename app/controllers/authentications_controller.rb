@@ -1,3 +1,4 @@
+=begin
 class AuthenticationsController < ApplicationController
   def create
     omniauth = request.env['omniauth.auth']
@@ -48,3 +49,4 @@ class AuthenticationsController < ApplicationController
     redirect_to root_url
   end
 end
+=end

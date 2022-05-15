@@ -1,3 +1,4 @@
+=begin
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe UserSessionsController do
@@ -46,3 +47,5 @@ describe UserSessionsController do
   end
 
 end
+
+=end
