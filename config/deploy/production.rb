@@ -7,7 +7,8 @@ server "10.69.2.68", user: "rubyapp", roles: %w{app db web}
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
 
-
+# Fix failing listen gem bundle due to development
+set :bundle_without, %w{test}.join(':')
 
 # role-based syntax
 # ==================
