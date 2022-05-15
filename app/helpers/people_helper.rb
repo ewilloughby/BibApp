@@ -18,6 +18,6 @@ module PeopleHelper
   end
 
   def show_header(person)
-    "#{link_to(h(@person.display_name), person_path(@person))} #{link_to(fugue_icon_tag('feed'), person_path(@person, :format => "rss"))}".html_safe
+    "#{link_to(h(person.display_name), person_path(person))} #{link_to(fugue_icon_tag('feed'), person_path(person, :format => "rss"), :class => 'feed-icon')}".html_safe
   end
 end

@@ -171,8 +171,10 @@ module ApplicationHelper
     x == y ? 'selected' : nil
   end
 
+
   def fugue_icon_tag(name, opts = {})
     image_tag(fugue_icon_path(name), opts)
+    #image_tag("#{name}.png", opts)
   end
 
   def fugue_icon_path(name)
