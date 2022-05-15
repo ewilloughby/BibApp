@@ -1,9 +1,10 @@
 source "https://rubygems.org"
+ruby '2.7.6'
 
 #Rails itself
 gem "rails", "~> 6.0.4"
 
-gem 'nokogiri', '>= 1.13.4'
+gem 'nokogiri', '>= 1.13.5'
 
 #Use jquery for javascript - in Rails 3.0 this involves running a generator too
 #once we get to 3.1 all that should be necessary is adding some includes
@@ -98,20 +99,11 @@ gem 'yaml_db'
 # Puma
 gem 'puma'
 
-# authorization, replacing plugin used previously
-# We want to get rid of this, but for now we fork our own version with some ruby 1.9 fixes
-# 
-#gem 'authorization'
 #replacing authorization with cancancan
 gem 'cancancan'
 
 #authentication
-#gem 'authlogic'
-
-# Authlogic needs this
-#gem "scrypt", "~> 3.0"
-
-# Replacing authlogic authentication with Devise
+# Replaced authlogic with Devise
 gem 'devise'
 
 #TODO will require some work to go to 1.0 series
@@ -132,17 +124,17 @@ gem 'sort_alphabetical'
 #allow for HTML sanitizing for fields where we want to allow some html
 gem 'loofah-activerecord'
 
-#include thin webserver for development
-#to start it, do 'bundle exec thin start' - this is important, as
-#doing simply 'thin start' may pull in unbundled gems and cause
-#dependency conflicts
 group :development do
-  #gem 'thin'
+
   gem 'listen'
 
   # deployment
   gem "capistrano", "~> 3.10", require: false
   gem "capistrano-rails", "~> 1.6", require: false
+  gem 'capistrano-passenger'
+  gem 'capistrano-rbenv', '~> 2.2'
+  gem 'ed25519', '~> 1.2.4'
+  gem 'bcrypt_pbkdf', '~> 1.1.0'
 
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,

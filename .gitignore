@@ -31,3 +31,5 @@ public/system
 config/deploy.rb
 config/deploy/*
 Capfile
+
+/config/master.key
