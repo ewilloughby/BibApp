@@ -48,7 +48,7 @@ append :linked_files, 'config/database.yml', 'config/master.key', 'config/creden
 
 # Delayed Job Deploy Options
 # Prefix worker processes with name
-set :delayed_job_prefix, 'reports'
+set :delayed_job_prefix, 'bibapp'
 # set number of workers to manage jobs
 set :delayed_job_workers, 2
 set :delayed_job_roles, [:app, :background]
