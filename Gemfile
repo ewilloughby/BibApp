@@ -124,9 +124,9 @@ gem 'sort_alphabetical'
 #allow for HTML sanitizing for fields where we want to allow some html
 gem 'loofah-activerecord'
 
-gem 'listen'
-
 group :development do
+
+  gem 'listen'
 
   # deployment
   gem "capistrano", "~> 3.10", require: false
