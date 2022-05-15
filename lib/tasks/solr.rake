@@ -119,7 +119,7 @@ namespace :solr do
   desc 'Refresh Solr PEOPLE index' 
   task :refresh_people_index => :environment do
       
-    puts "\nRe-indexing all Synapse People in SOLR ...\n\n"
+    puts "\nRe-indexing all Bibapp People in SOLR ...\n\n"
     start_time = Time.now
     puts "People Indexing Start time: #{start_time.localtime}"
     
@@ -169,7 +169,7 @@ namespace :solr do
     puts "\nRefreshing BibApp spelling suggestions in Solr...\n"
 
     #Call build_spelling_suggestions
-    Index.build_spelling_suggestions
+    #Index.build_spelling_suggestions
 
     puts "Finished!"
   end

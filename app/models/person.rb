@@ -175,7 +175,7 @@ class Person < ActiveRecord::Base
     end
 
   def queue_update_scoring_hash
-    self.delay.update_scoring_hash
+    self.delay(:queue => 'people').update_scoring_hash
   end
 
   def recalculate_unverified_contributorship_score
@@ -207,7 +207,7 @@ class Person < ActiveRecord::Base
     self.update_attribute(:scoring_hash, scoring_hash)
 
     # Now recalc all our unverified contributorships.
-    self.delay.recalculate_unverified_contributorship_score
+    self.delay(:queue => 'people').recalculate_unverified_contributorship_score
   end
 
   #Update Machine Name of Person (called by after_save callback)
