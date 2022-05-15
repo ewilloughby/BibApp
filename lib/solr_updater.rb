@@ -3,11 +3,11 @@
 module SolrUpdater
 
   def reindex_after_save
-    self.delay.reindex_associated_works
+    self.delay(:queue => 'solr').reindex_associated_works
   end
 
   def reindex_before_destroy
-    self.delay.reindex_associated_works
+    self.delay(:queue => 'solrdel').reindex_associated_works
   end
 
   private

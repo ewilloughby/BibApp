@@ -45,3 +45,10 @@ append :linked_files, 'config/database.yml', 'config/master.key', 'config/creden
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+
+# Delayed Job Deploy Options
+# Prefix worker processes with name
+set :delayed_job_prefix, 'bibapp'
+# set number of workers to manage jobs
+set :delayed_job_workers, 2
+set :delayed_job_roles, [:app, :background]

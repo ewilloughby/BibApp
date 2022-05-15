@@ -1341,7 +1341,7 @@ class Work < ActiveRecord::Base
     #start_page = value.to_s
     start_page = get_attribute_dupe_info('start_page') 
       
-    # some lousy ris formatted data aren't correctly parsed (in one case, synapse python-based original)
+    # some lousy ris formatted data aren't correctly parsed
     start_page = start_page.split('-')[0].to_s.strip if start_page.include?('-') 
     return start_page
   end

@@ -113,7 +113,7 @@ class Import < ActiveRecord::Base
     self.works_added.each do |work_added|
       work = Work.find_by_id(work_added)
       logger.debug("\n- Work: #{work.id}") if work
-      work.delay.destroy if work
+      work.delay(:queue => 'reject').destroy if work
     end
 
     self.works_added = []
