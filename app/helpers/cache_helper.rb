@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #This exists because of the funny way that Rails caching (particularly fragment caching) works.
 #We want to expire based on model changes, using sweepers as observers, not based on controller actions
 #To do this you can make sweepers and hook them up as observers in config/application.rb. However,
@@ -18,7 +19,9 @@ module CacheHelper
   end
 
   def bibapp_cache(name = {}, options = nil, &block)
-    cache(make_key(name), options) { block.call }
+    # cache(make_key(name), options) { block.call }
+    # skip the cache, doesn't speed anything up and has issues
+    block.call
   end
 
   def bibapp_expire_fragment(name = {}, options = nil)
