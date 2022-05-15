@@ -32,7 +32,7 @@ set :tmp_dir, "/Bibapp/tmp"
 # Default value for linked_dirs is []
 # append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "tmp/webpacker", "public/system", "vendor", "storage"
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', "tmp/webpacker", 'vendor/bundle', '.bundle', 'public/system', 'public/uploads'
-append :linked_files, 'config/database.yml', 'config/secrets.yml'
+append :linked_files, 'config/database.yml', 'config/master.key', 'config/personalize.rb', 'config/solr.yml', 'config/smtp.yml', 'config/locales.yml', 'config/locales/personalize/en.yml'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
