@@ -334,7 +334,7 @@ class WorksController < ApplicationController
     #(NOTE: User will actually have to be an 'admin' on all works in this batch,
     #       otherwise he/she will not be able to destroy *all* the works)
     #permit "admin"
-    authorize!(:admin, Work)
+    authorize!(:superadmin, Work)
 
     work_ids = params[:work_id]
     return_path = params[:return_path]
