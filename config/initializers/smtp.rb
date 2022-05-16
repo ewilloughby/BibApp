@@ -15,7 +15,7 @@ if SMTP_SETTINGS and SMTP_SETTINGS['address']
 
   #determine if login required for SMTP server
   if SMTP_SETTINGS['username'] and !SMTP_SETTINGS['username'].empty?
-    ActionMailer::Base.smtp_settings = {
+    Rails.configuration.action_mailer.smtp_settings = {
       :address => SMTP_SETTINGS['address'],
       :port => port,
       :domain => SMTP_SETTINGS['domain'],
@@ -24,7 +24,7 @@ if SMTP_SETTINGS and SMTP_SETTINGS['address']
       :authentication => :login
     }
   else
-    ActionMailer::Base.smtp_settings = {
+    Rails.configuration.action_mailer.smtp_settings = {
       :address => SMTP_SETTINGS['address'],
       :port => port,
       :domain => SMTP_SETTINGS['domain']
