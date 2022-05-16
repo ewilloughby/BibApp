@@ -10,7 +10,7 @@ class ContributorshipsController < ApplicationController
   make_resourceful do
     build :index
 
-    before :index do
+     before :index do
       if params[:person_id]
         @person = Person.find(params[:person_id])
         @page = params[:page] || 1
@@ -18,10 +18,11 @@ class ContributorshipsController < ApplicationController
         @status = params[:status] || "unverified"
         #Don't want to allow an arbitrary send to @person.contributorships below - e.g. params[:status] = 'clear'
         @status = 'unverified' unless ['unverified', 'verified', 'denied'].member?(@status.to_s)
-        @title = t('common.contributorships.index_title', :display_name => @person.display_name,
+        @title = t('common.contributorships.index_title_html', :display_name => @person.display_name,
                    :status => t("common.contributorships.#{@status}").capitalize)
         @contributorships = @person.contributorships.send(@status).includes(:work).
-            order('works.publication_date_year desc, works.publication_date_month desc, works.publication_date_day desc').paginate(:page => @page, :per_page => @rows)
+          order('works.publication_date desc').paginate(:page => @page, :per_page => @rows)
+            #order('works.publication_date_year desc, works.publication_date_month desc, works.publication_date_day desc').paginate(:page => @page, :per_page => @rows)
       else
         render :status => 404
       end
