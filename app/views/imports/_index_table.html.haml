@@ -11,5 +11,5 @@
         %tr
           %td= link_to t('common.imports.batch_id', :id => import.id), user_import_url(current_user, import.id)
           %td= imported_for(import)
-          %td= import.created_at
+          %td= import.created_at.in_time_zone('America/Chicago').strftime("%Y-%m-%d at %I:%M:%S %p")
           %td= t("common.imports.states.#{import.state}")
