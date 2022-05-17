@@ -179,7 +179,8 @@ class PeopleController < ApplicationController
 
   def update
 
-    @person = Person.find(params[:id])
+    #@person = Person.find(params[:id])
+    authorize!(:admin, @person)
 
     #Check if user hit cancel button
     if params['cancel']
@@ -190,14 +191,21 @@ class PeopleController < ApplicationController
       end
 
     else #Only perform create if 'save' button was pressed
-
-      @person.update_attributes(params[:person])
-
+      peeps = person_params
+      @person.update_attributes(peeps)
+      
+      if @person.errors.any?
+        logger.debug("\n\n ============ PERSON_UPDATE_ERRORS ==============\n")
+        @person.errors.full_messages.each do |msg|
+          logger.debug(msg)
+        end
+      end
+      
       respond_to do |format|
         if @person.save
           flash[:notice] = t('common.people.flash_update_success')
-          format.html { redirect_to new_person_pen_name_path(@person.id) }
-          #TODO: not sure this is right
+          #format.html { redirect_to new_person_pen_name_path(@person.id) }
+          format.html { redirect_to edit_person_path(@person.id) }
           format.xml { head :created, :location => person_url(@person) }
         else
           flash[:warning] = t('common.people.flash_update_failure')
