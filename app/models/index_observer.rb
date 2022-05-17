@@ -16,7 +16,7 @@ class IndexObserver < ActiveRecord::Observer
 
   def before_destroy(record)
     
-    Rails.logger.debug("IN INDEX_OBSERVER_METHOD_BEFORE_DESTORY with #{record.id} AND #{record.type}")
+    Rails.logger.debug("IN INDEX_OBSERVER_METHOD_BEFORE_DESTORY with #{record.id} AND #{record.class.to_s}")
     record.try(:reindex_before_destroy)
     
   end
