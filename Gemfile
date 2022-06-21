@@ -4,7 +4,7 @@ ruby '2.7.6'
 #Rails itself
 gem "rails", "~> 6.0.4"
 
-gem 'nokogiri', '>= 1.13.5'
+gem 'nokogiri', '>= 1.13.6'
 
 #Use jquery for javascript - in Rails 3.0 this involves running a generator too
 #once we get to 3.1 all that should be necessary is adding some includes
