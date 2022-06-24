@@ -1,6 +1,8 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.17.0"
+set :rbenv_type, :user
 set :rbenv_ruby, '2.7.6'
+set :passenger_environment_variables, { rbenv_version: '2.7.6' }
 
 set :application, "bibapp"
 set :repo_url, "git@github.com:ewilloughby/BibApp.git"
