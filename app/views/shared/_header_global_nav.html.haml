@@ -10,6 +10,6 @@
   - if logged_in?
     %br
     %li
-      %span{style: 'color: #FAB123;'} Hi #{current_user.bibapp_staff.first_name.capitalize}
+      %span{} Hi #{current_user.bibapp_staff.first_name.capitalize}
     %li
       %span #{link_to t('app.logout'), destroy_user_session_path, method: :delete}
