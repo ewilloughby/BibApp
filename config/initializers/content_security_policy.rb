@@ -10,7 +10,7 @@
    policy.img_src     :self, :https, :data, "https://hsd.luc.edu/media/healthsciencesdivision/images/body-bg.jpg"
    policy.object_src  :none
    policy.script_src  :self, :https
-   policy.style_src   :self, :https, "https://fonts.googleapis.com" 
+   policy.style_src   :self, :https, "https://fonts.googleapis.com", :unsafe_inline 
 #   # If you are using webpack-dev-server then specify webpack-dev-server host
 #  policy.connect_src :self, :https, "http://localhost:3035", "ws://localhost:3035" if Rails.env.development?
 
