@@ -7,10 +7,10 @@
  Rails.application.config.content_security_policy do |policy|
    policy.default_src :self, :https
    policy.font_src    :self, :https, :data
-   policy.img_src     :self, :https, :data, "https://hsd.luc.edu/media/healthsciencesdivision/images/body-bg.jpg"
+   policy.img_src     :self, :https, :data, "https://hsd.luc.edu/media/healthsciencesdivision/images"
    policy.object_src  :none
    policy.script_src  :self, :https
-   policy.style_src   :self, :https, "https://fonts.googleapis.com", :unsafe_inline 
+   policy.style_src   :self, :https, :unsafe_inline
 #   # If you are using webpack-dev-server then specify webpack-dev-server host
 #  policy.connect_src :self, :https, "http://localhost:3035", "ws://localhost:3035" if Rails.env.development?
 
