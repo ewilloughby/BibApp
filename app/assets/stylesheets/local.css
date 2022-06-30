@@ -9,8 +9,10 @@
 
 
 body {
-background: url("/static/images/body-bg.jpg") repeat scroll 0 0 transparent;}
+background: url("/static/images/body-bg.jpg") repeat scroll 0 0 transparent;
 }
+.user-login-form{padding-left:22px;}
+
 .container {
  border-left:1px dotted #000;
  border-right:1px dotted #000;
