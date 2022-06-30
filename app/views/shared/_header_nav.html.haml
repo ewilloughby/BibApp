@@ -1,6 +1,6 @@
 -# encoding: UTF-8
 - controller_name = params[:controller]
-%ul#navigation{style: 'width:110%;'}
+%ul#navigation{}
   - if logged_in? and current_user.role?(:admin)
     - bibapp_cache(:controller => 'shared', :action => 'partial', :action_suffix => 'header_nav_admin', :controller_name => controller_name) do
       %li{give_current_id_if_equal("admin", controller_name)}
