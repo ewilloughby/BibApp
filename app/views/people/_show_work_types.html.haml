@@ -1,5 +1,5 @@
 - include_javascript('specific/keywords/timeline')
-= javascript_include_tag 'https://www.gstatic.com/charts/loader.js'
+= javascript_include_tag 'https://www.gstatic.com/charts/loader.js', nonce: true
 %h3 #{t '.header'} 
 .text-center
   - unless @work_counts.blank? 

@@ -104,7 +104,7 @@ module ApplicationHelper
 
   def include_javascripts(*paths)
     paths.each do |path|
-      new_link = javascript_include_tag(path)
+      new_link = javascript_include_tag(path, nonce: true)
       if content_for(:javascripts).nil?
         content_for(:javascripts, new_link + "\n")
       else

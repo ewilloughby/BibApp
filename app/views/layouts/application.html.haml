@@ -11,12 +11,12 @@
     = stylesheet_link_tag "vendor-print",  :media => "print"
     /[if lt IE 8]
       = stylesheet_link_tag  "vendor-ie",  :media => "screen"
-    = javascript_include_tag 'application',  nonce: true
+    = javascript_include_tag 'application', nonce: true
 
     -if $DISPLAY_GOOGLE_ANALYTICS == true
       :javascript
         var googleAnalyticsId = "#{$GOOGLE_ANALYTICS_ID}";
-      = javascript_include_tag 'specific/shared/google_analytics'
+      = javascript_include_tag 'specific/shared/google_analytics', nonce: true
 
     - if (@feeds)
       - @feeds.each do |feed|
