@@ -5,12 +5,12 @@
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 
 Rails.application.config.content_security_policy do |policy|
-  policy.default_src :self, :https, "https://fonts.googleapis.com"
-  policy.font_src    :self, :https, :data, "https://fonts.googleapis.com"
-  policy.img_src     :self, :https, :data, "http://www.google-analytics.com"
+  policy.default_src :self, :https, "fonts.googleapis.com"
+  policy.font_src    :self, :https, :data, "fonts.googleapis.com"
+  policy.img_src     :self, :https, :data, "*.google-analytics.com"
   policy.object_src  :none
-  policy.script_src  :self, :https, "https://www.google-analytics.com/ga.js", "https://www.gstatic.com"
-  policy.style_src   :self, :https, :unsafe_inline, "https://fonts.googleapis.com"
+  policy.script_src  :self, :https, "*.google-analytics.com", "*.gstatic.com"
+  policy.style_src   :self, :https, :unsafe_inline, "fonts.googleapis.com"
 #   # If you are using webpack-dev-server then specify webpack-dev-server host
 #  policy.connect_src :self, :https, "http://localhost:3035", "ws://localhost:3035" if Rails.env.development?
 
