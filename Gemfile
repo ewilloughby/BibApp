@@ -14,7 +14,7 @@ gem 'jquery-rails'
 gem 'rake'
 
 #Haml - Haml plugin will fail initialization if haml gem is not installed.
-gem "haml"
+gem "haml", '~>5.2'
 
 #Make resourceful - used by some controllers 
 #backports may be needed by a 1.8 ruby to make make_resourceful work
@@ -90,7 +90,7 @@ gem 'rails-i18n'
 #pretty quickly.
 #gem 'pg'
 
-gem 'mysql2', '0.5.3'
+gem 'mysql2', '0.5.4'
 
 #dump database in YAML form - honestly, I'm not sure why we need this, but
 #while I am porting to Rails 3 I'm not going to worry about it.
