@@ -137,6 +137,9 @@ group :development do
   gem 'ed25519', '>= 1.2', '< 2.0'
   gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 
+  # Adding rexml Gem to resolve Rails 6.1 error
+  gem 'rexml', '~> 3.2', '>= 3.2.4'
+
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,
   #so whenever adding new Gems or otherwise generating a new Gemfile.lock to check in
