@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-ruby '2.7.6'
+ruby '3.0.6'
 
 #Rails itself
 gem "rails", "~> 6.1.7"
@@ -90,7 +90,7 @@ gem 'rails-i18n'
 #pretty quickly.
 #gem 'pg'
 
-gem 'mysql2', '0.5.4'
+gem 'mysql2', '0.5.5'
 
 #dump database in YAML form - honestly, I'm not sure why we need this, but
 #while I am porting to Rails 3 I'm not going to worry about it.
@@ -129,13 +129,13 @@ group :development do
   gem 'listen'
 
   # deployment
-  gem "capistrano", "~> 3.10", require: false
-  gem "capistrano-rails", "~> 1.6", require: false
+  gem "capistrano", "~> 3.17", require: false
+  gem "capistrano-rails" #, "~> 1.6", require: false
   gem 'capistrano-passenger'
-  gem 'capistrano-rbenv', '~> 2.2'
-  gem 'capistrano3-delayed-job', '~> 1.0'
-  gem 'ed25519', '~> 1.2.4'
-  gem 'bcrypt_pbkdf', '~> 1.1.0'
+  gem 'capistrano-rbenv' #, '~> 2.2'
+  gem 'capistrano3-delayed-job' #, '~> 1.0'
+  gem 'ed25519', '>= 1.2', '< 2.0'
+  gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,
