@@ -124,6 +124,9 @@ gem 'sort_alphabetical'
 #allow for HTML sanitizing for fields where we want to allow some html
 gem 'loofah-activerecord'
 
+# Adding rexml Gem to resolve Rails 6.1 error
+gem 'rexml', '~> 3.2', '>= 3.2.4'
+
 group :development do
 
   gem 'listen'
@@ -137,8 +140,7 @@ group :development do
   gem 'ed25519', '>= 1.2', '< 2.0'
   gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 
-  # Adding rexml Gem to resolve Rails 6.1 error
-  gem 'rexml', '~> 3.2', '>= 3.2.4'
+
 
   #If you want to use newrelic for profiling you can uncomment the following.
   #HOWEVER - generating Gemfile.lock with it uncommented can mess up deployment,
