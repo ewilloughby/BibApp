@@ -1,4 +1,4 @@
-class ISSN < Identifier
+class Issn < Identifier
   validates_presence_of :name
 
   def self.id_formats

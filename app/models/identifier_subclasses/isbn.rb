@@ -1,4 +1,4 @@
-class ISBN < Identifier
+class Isbn < Identifier
   #require 'isbn/tools'
 
   validates_presence_of :name
