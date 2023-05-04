@@ -2,17 +2,17 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_12_152638) do
+ActiveRecord::Schema.define(version: 2023_04_29_164546) do
 
-  create_table "attachments", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "attachments", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "asset_id"
     t.string "asset_type"
     t.datetime "created_at"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.datetime "data_updated_at"
   end
 
-  create_table "authentications", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "authentications", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "user_id"
     t.string "provider"
     t.string "uid"
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["user_id"], name: "index_authentications_on_user_id"
   end
 
-  create_table "bibapp_staff", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "bibapp_staff", charset: "utf8", force: :cascade do |t|
     t.string "login", limit: 12
     t.string "role", limit: 10
     t.string "first_name", limit: 15
@@ -44,11 +44,11 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["user_id"], name: "index_bibapp_staff_on_user_id"
   end
 
-  create_table "contributorship_states", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "contributorship_states", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
   end
 
-  create_table "contributorships", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "contributorships", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "person_id"
     t.integer "work_id"
     t.integer "position"
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["work_id", "person_id"], name: "work_person_join"
   end
 
-  create_table "delayed_jobs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "delayed_jobs", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "priority", default: 0
     t.integer "attempts", default: 0
     t.text "handler"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["delayed_reference_type"], name: "delayed_jobs_delayed_reference_type"
   end
 
-  create_table "external_system_uris", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "external_system_uris", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "external_system_id"
     t.integer "work_id"
     t.text "uri"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.datetime "updated_at"
   end
 
-  create_table "external_systems", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "external_systems", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.text "name"
     t.string "abbreviation"
     t.text "base_url"
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["machine_name"], name: "external_system_machine_name"
   end
 
-  create_table "groups", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "groups", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "url"
     t.datetime "created_at"
@@ -118,7 +118,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["name"], name: "group_name", unique: true
   end
 
-  create_table "identifiers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "identifiers", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "type", default: "Unknown", null: false
     t.datetime "created_at"
@@ -126,7 +126,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["name", "type"], name: "index_identifiers_on_name_and_type", unique: true
   end
 
-  create_table "identifyings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "identifyings", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "identifier_id", null: false
     t.integer "identifiable_id", null: false
     t.string "identifiable_type", null: false
@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["identifier_id"], name: "index_identifyings_on_identifier_id"
   end
 
-  create_table "imports", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "imports", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "person_id"
     t.string "state"
@@ -147,7 +147,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.datetime "updated_at"
   end
 
-  create_table "keywordings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "keywordings", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "keyword_id"
     t.integer "work_id"
     t.integer "position"
@@ -156,14 +156,14 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["work_id", "keyword_id"], name: "work_keyword_join", unique: true
   end
 
-  create_table "keywords", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "keywords", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["name"], name: "keyword_name", unique: true
   end
 
-  create_table "memberships", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "memberships", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "person_id"
     t.integer "group_id"
     t.string "title"
@@ -175,7 +175,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["person_id", "group_id"], name: "person_group_join"
   end
 
-  create_table "name_strings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "name_strings", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.binary "name", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -185,7 +185,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["name"], name: "author_name"
   end
 
-  create_table "pen_names", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "pen_names", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "name_string_id"
     t.integer "person_id"
     t.datetime "created_at"
@@ -193,7 +193,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["name_string_id", "person_id"], name: "author_person_join", unique: true
   end
 
-  create_table "people", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "people", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "external_id"
     t.string "first_name"
     t.string "middle_name"
@@ -225,7 +225,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["user_id"], name: "index_people_on_user_id"
   end
 
-  create_table "publications", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "publications", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "sherpa_id"
     t.integer "publisher_id"
     t.integer "source_id"
@@ -247,7 +247,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["publisher_id"], name: "fk_publication_publisher_id"
   end
 
-  create_table "publishers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "publishers", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "sherpa_id"
     t.integer "publisher_source_id"
     t.integer "authority_id"
@@ -264,7 +264,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["machine_name"], name: "publisher_machine_name"
   end
 
-  create_table "roles", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "roles", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name", limit: 40
     t.string "authorizable_type", limit: 30
     t.integer "authorizable_id"
@@ -272,12 +272,12 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.datetime "updated_at"
   end
 
-  create_table "roles_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "roles_users", id: false, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "user_id"
     t.integer "role_id"
   end
 
-  create_table "sessions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "sessions", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
     t.datetime "created_at"
@@ -286,12 +286,12 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
-  create_table "staff_work_notes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "staff_work_notes", charset: "utf8", force: :cascade do |t|
     t.integer "work_id"
     t.text "note"
   end
 
-  create_table "taggings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "taggings", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "tag_id"
     t.integer "taggable_id"
     t.string "taggable_type"
@@ -301,25 +301,25 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["taggable_id", "taggable_type"], name: "index_taggings_on_taggable_id_and_taggable_type"
   end
 
-  create_table "tags", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "tags", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.index ["name"], name: "tag_name", unique: true
   end
 
-  create_table "tolk_locales", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "tolk_locales", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["name"], name: "index_tolk_locales_on_name", unique: true
   end
 
-  create_table "tolk_phrases", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "tolk_phrases", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.text "key"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "tolk_translations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "tolk_translations", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "phrase_id"
     t.integer "locale_id"
     t.text "text"
@@ -330,7 +330,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["phrase_id", "locale_id"], name: "index_tolk_translations_on_phrase_id_and_locale_id", unique: true
   end
 
-  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "users", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "login"
     t.string "email"
     t.string "encrypted_password"
@@ -357,7 +357,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["last_request_at"], name: "index_users_on_last_request_at"
   end
 
-  create_table "work_name_strings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "work_name_strings", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "name_string_id"
     t.integer "work_id"
     t.integer "position"
@@ -367,7 +367,7 @@ ActiveRecord::Schema.define(version: 2022_05_12_152638) do
     t.index ["work_id", "name_string_id", "role"], name: "work_name_string_role_join", unique: true
   end
 
-  create_table "works", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "works", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "type"
     t.text "title_primary"
     t.text "title_secondary"

@@ -1,4 +1,4 @@
-class ISRC < Identifier
+class Isrc < Identifier
 
   validates_presence_of :name
 
