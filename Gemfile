@@ -127,6 +127,8 @@ gem 'loofah-activerecord'
 # Adding rexml Gem to resolve Rails 6.1 error
 gem 'rexml', '~> 3.2', '>= 3.2.4'
 
+gem 'citeproc', '0.0.1', :path => File.join(File.dirname(__FILE__), '/vendor/gems/citeproc-rb-0.0.1')
+
 group :development do
 
   gem 'listen'

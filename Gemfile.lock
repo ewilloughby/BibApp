@@ -13,6 +13,11 @@ GIT
   specs:
     make_resourceful (2.0.0)
 
+PATH
+  remote: vendor/gems/citeproc-rb-0.0.1
+  specs:
+    citeproc (0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -385,6 +390,7 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rbenv
   capistrano3-delayed-job
+  citeproc (= 0.0.1)!
   cmess
   daemons
   database_cleaner
