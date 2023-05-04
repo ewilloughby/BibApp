@@ -1,3 +1,5 @@
+class PersonScoringHashUpdateJob < ApplicationJob
+end
 # dont believe Synapse uses this, or only rarely
 # it appears to be only for person imports, (not sure if MSK batch falls under this)
 # called from Imports.process_accepted_import

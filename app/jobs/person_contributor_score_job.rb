@@ -1,3 +1,5 @@
+class PersonContributorScoreJob < ApplicationJob
+end
 # doesn't appear this is being called
 =begin
 class PersonContributorScoreJob < ActiveJob::Base

@@ -1,3 +1,5 @@
+class ProcessPersonContribScoreDelayedJob < ApplicationJob
+end
 #class ProcessPersonContribScoreDelayedJob < Struct.new(:person_id)
 #  
 #  def queue_name
