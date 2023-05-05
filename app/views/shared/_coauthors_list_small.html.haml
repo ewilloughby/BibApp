@@ -1,16 +1,19 @@
 -# encoding: UTF-8
 -# require solr_people_data to be passed
 %ol#coauthors.span-6.append-1
+  - idarr = Array.new
   -@facets[:people_data].each do |p|
     - last_name, id, image_url = Person.parse_solr_data(p.name)
-    - #Skip over the current person in the co-author listing
+    - #Skip over the current person in the co-author listing or duplicate
+    - next if idarr.include?(id)
     - next if @current_object.kind_of?(Person) and @current_object.id == id.to_i
+    - idarr << id
     %li.inline
       .person-coauthor-tiny
         .person-image-wrapper
           #{ link_to(image_tag(image_url, :size => "44x55", :alt => last_name, :title => last_name, :class => "person-image"), person_path(id))}
-          .person-coauthor-link-tiny
-            = link_to fugue_icon_tag('users', :alt => t('people.co_authors_list.shared_works'), :title => t('people.co_authors_list.shared_works')), shared_works_url(:people => [@person.id, id])
+          -#.person-coauthor-link-tiny
+            -#= link_to fugue_icon_tag('users', :alt => t('people.co_authors_list.shared_works'), :title => t('people.co_authors_list.shared_works')), shared_works_url(:people => [@person.id, id])
         .person-image-metadata-tiny
           %strong #{p.value}
         .person-last-name-tiny.left
