@@ -58,7 +58,7 @@ module BatchUpload
               # blind updating that overwrites user entered values
               # or needless updating if nothings changed
               if @parser.send(:pre_process_save, db, record) == true
-                db.update_attributes(record)
+                db.update(record)
                 db.save!
                 @status[:updated] +=1
               end

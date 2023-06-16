@@ -115,7 +115,7 @@ class Publisher < PubCommon
         # this is ODD code, find or create expects unknown romeo color, and then updates it's attributes
         #add = Publisher.find_or_create_by_sherpa_id(:sherpa_id => sherpa_id, :romeo_color => 'unknown')
         add = Publisher.find_or_create_by(sherpa_id: sherpa_id, romeo_color: 'unknown')
-        add.update_attributes!({:name => name, :url => url, :romeo_color => romeo_color,
+        add.update!({:name => name, :url => url, :romeo_color => romeo_color,
                                 :sherpa_id => sherpa_id, :publisher_source_id => SHERPA_SOURCE})
       end
       return true

@@ -192,7 +192,7 @@ class PeopleController < ApplicationController
 
     else #Only perform create if 'save' button was pressed
       peeps = person_params
-      @person.update_attributes(peeps)
+      @person.update(peeps)
       
       if @person.errors.any?
         logger.debug("\n\n ============ PERSON_UPDATE_ERRORS ==============\n")

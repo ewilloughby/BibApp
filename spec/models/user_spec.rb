@@ -56,12 +56,12 @@ describe User do
     end
 
     it 'resets password' do
-      @user.update_attributes(:password => 'new password', :password_confirmation => 'new password')
+      @user.update(:password => 'new password', :password_confirmation => 'new password')
       @user.valid_password?('new_password')
     end
 
     it 'does not rehash password' do
-      @user.update_attributes(:email => 'quentin2@example.com')
+      @user.update(:email => 'quentin2@example.com')
       @user.valid_password?('password')
     end
 

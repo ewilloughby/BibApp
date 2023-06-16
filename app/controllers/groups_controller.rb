@@ -128,7 +128,7 @@ class GroupsController < ApplicationController
   def update
 
     authorize! :update, Group, message: "Not authorized to edit Groups"
-    @group.update_attributes(group_params)
+    @group.update(group_params)
     
     respond_to do |format|
       flash[:notice] = t('common.groups.flash_update_success')

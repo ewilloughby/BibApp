@@ -229,7 +229,7 @@ class MembershipsController < ApplicationController
   def update
     membership = Membership.find(params[:id])
     fix_date_parameters
-    membership.update_attributes(params[:membership])
+    membership.update(params[:membership])
     @person = membership.person
     respond_to do |format|
       format.html { render :partial => 'group', :collection => @person.groups(true) }

@@ -375,7 +375,7 @@ class Work < ActiveRecord::Base
     h.delete(:person_id) if h[:person_id]
 
     #save remaining hash attributes
-    saved = self.update_attributes(h)
+    saved = self.update(h)
 
     return self
 
@@ -433,7 +433,7 @@ class Work < ActiveRecord::Base
       Keyword.find_or_initialize_by(name: add.force_encoding('UTF-8').encode('UTF-8'))
     end
     self.set_keywords(keywords)
-    # commented out - this would seem to be duplicated in later call to update_attributes?
+    # commented out - this would seem to be duplicated in later call to update?
     # but possible repercussion with deduplicate not being called enough times. 
     # Possible fix in Imports model that calls deduplicate so commenting out again
     #self.save 
@@ -1290,7 +1290,7 @@ class Work < ActiveRecord::Base
             logger.debug(con.inspect)
             logger.debug("ASSIGNING_NEW_PEN_NAME_ID = #{pns.id} to #{con.id}")
             # update contributorship so that mapping to pen_name is updated and verify author works
-            con.update_attributes(:pen_name_id => pns.id)
+            con.update(:pen_name_id => pns.id)
           end
         else
           # this would make the association programatically, bad idea, staff need to do it manually

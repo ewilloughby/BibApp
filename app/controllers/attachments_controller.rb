@@ -139,7 +139,7 @@ class AttachmentsController < ApplicationController
     end
 
     respond_to do |format|
-      if @attachment.update_attributes(:data => params[:file].first)
+      if @attachment.update(:data => params[:file].first)
         flash[:notice] = t('common.attachments.flash_update_notice')
         if @asset.kind_of?(Person)
           format.html { redirect_to edit_person_attachment_path(@attachment.asset.id, @attachment.id) }
