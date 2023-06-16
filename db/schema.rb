@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_29_164546) do
+ActiveRecord::Schema.define(version: 2023_06_16_184533) do
 
   create_table "attachments", id: :integer, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.integer "asset_id"
@@ -142,7 +142,7 @@ ActiveRecord::Schema.define(version: 2023_04_29_164546) do
     t.integer "person_id"
     t.string "state"
     t.text "works_added"
-    t.text "import_errors"
+    t.text "import_errors", size: :long
     t.datetime "created_at"
     t.datetime "updated_at"
   end
